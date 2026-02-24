@@ -1372,42 +1372,42 @@
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Alternative</div>
+    <div class="station-num">Feature</div>
     <h3>The Brush Xylophone</h3>
     <p>Row of TUSHY Toilet Brushes mounted at different heights. Ball rolls across the handles, each one makes a different pitched sound (tuned with weights). Creates a melody as the ball passes. Could replace or combine with the Scrub Zone.</p>
     <div class="products-used"><span class="product-tag">Toilet Brush &times;8+</span><span class="product-tag mechanic">tuned weights</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Alternative</div>
+    <div class="station-num">Feature</div>
     <h3>The Candle Snuff</h3>
     <p>LED candles are all "lit." Ball rolls past each one and knocks a small lever that flips a shade over the candle, snuffing it. The corridor goes dark as the ball passes through. Last candle triggers the next station. Dramatic lighting moment.</p>
     <div class="products-used"><span class="product-tag">Candles (all 4)</span><span class="product-tag mechanic">lever shades</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Alternative</div>
+    <div class="station-num">Feature</div>
     <h3>The Towel Zip Line</h3>
     <p>Ball lands on a Bum Towel hammock attached to a zip line wire. Towel slides down the wire carrying the ball across a gap (could span the width of the space). Ball drops off at the other end into the next station. Visual wow moment.</p>
     <div class="products-used"><span class="product-tag">Bum Towels</span><span class="product-tag mechanic">zip line wire + pulley</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Alternative</div>
+    <div class="station-num">Feature</div>
     <h3>The Spiral Drain</h3>
     <p>Large funnel/spiral (like a coin donation vortex). Ball enters the rim and spirals inward, picking up speed. Drops through the center hole into the next section. Mesmerizing to watch. Could be built from acrylic with TUSHY branding etched in.</p>
     <div class="products-used"><span class="product-tag mechanic">acrylic spiral funnel</span><span class="product-tag mechanic">TUSHY etching</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Alternative</div>
-    <h3>The Pendulum Swing</h3>
-    <p>Ottoman suspended on ropes as a pendulum. Ball rolls onto it, the weight swings the ottoman forward, and the ball is launched off the other side at the apex. Newton's cradle energy. Ottoman swings back to rest position automatically.</p>
-    <div class="products-used"><span class="product-tag">Ottoman Original</span><span class="product-tag mechanic">rope suspension</span></div>
+    <div class="station-num">Feature</div>
+    <h3>The Cat's Cradle</h3>
+    <p>A web of taut ropes woven in a cat's cradle pattern. Ball enters and bounces between the elastic strings, redirecting unpredictably before dropping through the center. Each pass creates different paths. Hypnotic to watch.</p>
+    <div class="products-used"><span class="product-tag mechanic">elastic rope web</span><span class="product-tag mechanic">frame structure</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Alternative</div>
+    <div class="station-num">Feature</div>
     <h3>The Toilet Seat See-Saw</h3>
     <p>Real toilet seat mounted as a see-saw/teeter-totter. Ball rolls onto one side, tips it, slides across and launches off the lifted end. Classic Rube Goldberg energy. Multiple seats could chain together.</p>
     <div class="products-used"><span class="product-tag mechanic">toilet seat pivot</span></div>
@@ -1559,7 +1559,7 @@
           <option value="Sensory">Sensory</option>
           <option value="Water Feature">Water Feature</option>
           <option value="Kinetic / Always-On">Kinetic / Always-On</option>
-          <option value="Alternative">Alternative</option>
+          <option value="Feature">Feature</option>
         </select>
       </div>
       <div class="idea-form-group">
@@ -1722,19 +1722,47 @@
   const stationDataContainer = document.getElementById('station-cards');
 
   // Default emojis for idea categories (user can override)
-  const defaultCategoryEmojis = {
-    'Finale Option': '🎆',
-    'Interactive Option': '🕹️',
-    'Sensory': '✨',
-    'Water Feature': '💦',
-    'Kinetic / Always-On': '⚙️',
-    'Alternative': '🔄',
-    'Concept': '💡',
-    'default': '💡'
+  // Unique contextual emoji for each idea (shown on map only)
+  const ideaEmojis = {
+    // Finale Options
+    'The Water Curtain': '💧',
+    'The TP Avalanche': '🧻',
+    'The Giant Flush Handle': '🚽',
+    'The Domino Wall': '🁣',
+    'The Fog Reveal': '💨',
+    'The Ramp Drop': '⬇️',
+    // Features (alternatives)
+    'The Brush Xylophone': '🎵',
+    'The Candle Snuff': '🕯️',
+    'The Towel Zip Line': '🪂',
+    'The Spiral Drain': '🌀',
+    "The Cat's Cradle": '🪢',
+    'The Toilet Seat See-Saw': '⚖️',
+    // Interactive Options
+    'The Bidet Dunk Tank': '🎯',
+    'The Tug of TP': '🤝',
+    'The Spin Cycle': '🔄',
+    'The Stomp Pad Drum Kit': '🥁',
+    // Water Features
+    'The Water Wheel Wall': '⚙️',
+    'The TP Roll Conveyor': '🛤️',
+    // Sensory
+    'The Scent Tunnel': '👃',
+    'The Sound Bath': '🔔',
+    'The Temperature Wave': '🌡️',
+    'The Tactile Wall': '✋',
+    'The Whisper Chamber': '🤫',
+    'The Light Spectrum': '🌈',
+    // New additions
+    'The Ball Multiplier': '✖️',
+    'The Pinball Pop': '🎰',
+    'The Hindsight Station': '📱',
+    // Default fallback
+    'default': '⭐'
   };
 
-  function getDefaultEmoji(category) {
-    return defaultCategoryEmojis[category] || defaultCategoryEmojis['default'];
+  function getIdeaEmoji(title) {
+    return ideaEmojis[title] || ideaEmojis['default'];
   }
   const ideaDataContainer = document.getElementById('idea-cards');
 
@@ -1972,16 +2000,12 @@
       const item = document.createElement('div');
       item.className = 'idea-item';
       const authorHtml = idea.author ? `<div class="idea-item-author">by ${idea.author}</div>` : '';
-      const ideaEmoji = idea.emoji || getDefaultEmoji(idea.category);
       item.innerHTML = `
-        <div style="display:flex;gap:12px;align-items:flex-start;">
-          <span style="font-size:1.5rem;line-height:1;flex-shrink:0;">${ideaEmoji}</span>
-          <div style="flex:1;min-width:0;">
-            <div class="idea-item-category">${idea.category}</div>
-            <h4>${idea.title}</h4>
-            <p>${idea.desc}</p>
-            ${authorHtml}
-          </div>
+        <div>
+          <div class="idea-item-category">${idea.category}</div>
+          <h4>${idea.title}</h4>
+          <p>${idea.desc}</p>
+          ${authorHtml}
         </div>
         <div class="idea-item-actions" style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;display:flex;gap:8px;">
           <button class="use-idea-btn" style="flex:1;padding:8px 12px;background:#111;color:#fff;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">Use on Station</button>
@@ -2183,7 +2207,7 @@
       });
 
       // Add/update emoji icon on the station (for ideas from Ideas panel)
-      const ideaEmoji = idea.emoji || getDefaultEmoji(idea.category);
+      const ideaEmoji = idea.emoji || getIdeaEmoji(idea.title);
       if (ideaEmoji) {
         let emojiEl = svgStation.querySelector('.idea-emoji');
         if (!emojiEl) {
@@ -2253,7 +2277,7 @@
     if (/light|glow|led|illuminate|visual/.test(text)) return 'Sensory';
     if (/water|splash|spray|flow|fountain/.test(text)) return 'Water Feature';
     if (/always|continuous|perpetual|loop|kinetic/.test(text)) return 'Kinetic / Always-On';
-    return 'Alternative';
+    return 'Feature';
   }
 
   // Get or create blob ID
@@ -2446,7 +2470,7 @@
       category,
       title,
       description: desc,
-      emoji: emoji || getDefaultEmoji(category),
+      emoji: emoji || null,
       tags,
       is_core: false,
       created_at: new Date().toISOString()

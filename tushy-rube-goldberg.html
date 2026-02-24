@@ -1860,13 +1860,14 @@
           svgStation.dataset.desc = action.data.redoDesc;
           svgStation.classList.add('has-idea');
 
-          // Hide ALL children except rect
+          // Hide ALL children except main background rect
+          const mainRect = svgStation.querySelector('rect');
           Array.from(svgStation.children).forEach(child => {
-            const tagName = child.tagName.toLowerCase();
-            if (tagName !== 'rect' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji') && !child.classList.contains('swapped-title')) {
-              child.classList.add('hidden-illustration');
-              child.setAttribute('opacity', '0');
+            if (child === mainRect || child.classList.contains('mobile-info-icon') || child.classList.contains('idea-emoji') || child.classList.contains('swapped-title')) {
+              return; // Keep these visible
             }
+            child.classList.add('hidden-illustration');
+            child.setAttribute('opacity', '0');
           });
 
           // Remove any existing swapped title
@@ -2268,13 +2269,14 @@
       svgStation.dataset.cat = idea.category || '';
       svgStation.classList.add('has-idea');
 
-      // Hide ALL children except rect (keep rect for background)
+      // Hide ALL children except main background rect
+      const mainRect = svgStation.querySelector('rect');
       Array.from(svgStation.children).forEach(child => {
-        const tagName = child.tagName.toLowerCase();
-        if (tagName !== 'rect' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji') && !child.classList.contains('swapped-title')) {
-          child.classList.add('hidden-illustration');
-          child.setAttribute('opacity', '0');
+        if (child === mainRect || child.classList.contains('mobile-info-icon') || child.classList.contains('idea-emoji') || child.classList.contains('swapped-title')) {
+          return; // Keep these visible
         }
+        child.classList.add('hidden-illustration');
+        child.setAttribute('opacity', '0');
       });
 
       // Remove any existing swapped title

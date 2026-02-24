@@ -48,9 +48,6 @@
   .header .subtitle { font-size: 0.95rem; color: #999; font-weight: 300; letter-spacing: 0.15em; text-transform: uppercase; }
   .render-container { display: flex; justify-content: center; padding: 20px; }
   svg.loft-render { max-width: 1100px; width: 100%; height: auto; }
-  .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; padding: 10px 40px 30px; max-width: 1100px; margin: 0 auto; }
-  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: #666; font-family: 'Inter', sans-serif; }
-  .legend-sym { font-size: 1rem; width: 18px; text-align: center; }
   .features { max-width: 1100px; margin: 0 auto; padding: 0 40px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
   .feature-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 18px 22px; transition: border-color 0.3s; }
   .feature-card:hover { border-color: #999; }
@@ -61,7 +58,7 @@
   .product-tag { font-size: 0.68rem; padding: 2px 9px; border-radius: 3px; background: #f5f5f5; color: #333; border: 1px solid #ddd; font-family: 'Inter', sans-serif; }
   .product-tag.interactive { font-weight: 600; border-style: dashed; }
   .product-tag.mechanic { font-style: italic; color: #888; border-color: #e0e0e0; }
-  .section-label { max-width: 1100px; margin: 0 auto; padding: 30px 40px 14px; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #bbb; }
+  .section-label { max-width: 1100px; margin: 0 auto; padding: 40px 40px 16px; font-family: 'Space Grotesk', sans-serif; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: #111; border-bottom: 2px solid #111; margin-bottom: 20px; }
   .tooltip-overlay { position: fixed; pointer-events: none; background: #fff; border: 1px solid #ccc; border-radius: 6px; padding: 12px 16px; font-size: 0.78rem; color: #555; max-width: 280px; z-index: 100; opacity: 0; transition: opacity 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
   .tooltip-overlay.visible { opacity: 1; }
   .tooltip-overlay .tt-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #000; margin-bottom: 4px; font-size: 0.85rem; }
@@ -72,13 +69,6 @@
   .interactive-pulse { animation: pulse 2s ease-in-out infinite; }
   @keyframes waterFlow { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -40; } }
   .water-flow { stroke-dasharray: 8, 12; animation: waterFlow 2s linear infinite; }
-  .callout { max-width: 1100px; margin: 0 auto 10px; padding: 16px 40px; }
-  .callout-inner { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; }
-  .callout-inner .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-  .callout-inner p { font-size: 0.82rem; line-height: 1.55; color: #555; }
-  .callout-inner strong { color: #000; }
-  .callout.water .callout-inner { border-color: #B3E5FC; background: #F8FCFF; }
-  .callout.water .callout-inner strong { color: #0277BD; }
   /* Cost Estimate Section */
   .cost-section { max-width: 1100px; margin: 0 auto; padding: 0 40px 60px; }
   .cost-disclaimer { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 0.82rem; line-height: 1.55; color: #666; }
@@ -102,32 +92,119 @@
   .cost-item-name a:hover { text-decoration-color: #111; }
   .cost-item-qty { color: #999; font-size: 0.75rem; min-width: 50px; text-align: center; }
   .cost-item-price { font-family: 'Space Grotesk', sans-serif; font-weight: 500; color: #000; min-width: 70px; text-align: right; }
-  /* Idea swap interaction */
-  .idea-card { cursor: pointer; position: relative; transition: border-color 0.2s, box-shadow 0.2s; }
+  /* Idea cards */
+  .idea-card { position: relative; transition: border-color 0.2s, box-shadow 0.2s; }
   .idea-card:hover { border-color: #111; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
-  .idea-card::after { content: 'click to assign \2192'; position: absolute; top: 10px; right: 14px; font-size: 0.65rem; color: #bbb; font-family: 'Inter', sans-serif; transition: color 0.2s; }
-  .idea-card:hover::after { color: #111; }
-  .idea-card.swapped { border-color: #111; background: #f9f9f9; }
-  .idea-card.swapped::after { content: attr(data-assigned); color: #999; }
-  /* Add Idea button */
-  .add-idea-btn {
+  .idea-card.assigned { border-color: #111; background: linear-gradient(135deg, #f9f9f9 0%, #fff 100%); }
+  .idea-card.assigned .assigned-badge { display: flex; }
+
+  /* Station picker inline */
+  .station-picker {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #eee;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    min-height: 160px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .station-picker-label {
+    font-size: 0.72rem;
+    color: #999;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .station-picker-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .station-pick-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    color: #666;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .station-pick-btn:hover { border-color: #111; color: #111; background: #f5f5f5; }
+  .station-pick-btn.active { background: #111; color: #fff; border-color: #111; }
+
+  /* Assigned badge */
+  .assigned-badge {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #fff;
+    background: #111;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .assigned-badge .clear-assign {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 4px;
+    line-height: 1;
+  }
+  .assigned-badge .clear-assign:hover { color: #fff; }
+  /* Add Idea card - same size as idea cards */
+  .add-idea-card {
     background: #fafafa;
     border: 2px dashed #ddd;
     border-radius: 8px;
-    color: #999;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 500;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 180px;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .add-idea-btn:hover { border-color: #111; color: #111; background: #fff; }
-  .add-idea-btn .plus { font-size: 1.4rem; font-weight: 300; }
+  .add-idea-card:hover { border-color: #111; background: #fff; }
+  .add-idea-card .plus-icon {
+    width: 48px;
+    height: 48px;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: #bbb;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  .add-idea-card:hover .plus-icon { border-color: #111; color: #111; }
+  .add-idea-card h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  .add-idea-card:hover h3 { color: #111; }
+  .add-idea-card p {
+    font-size: 0.8rem;
+    color: #999;
+  }
 
   /* Idea card actions */
   .idea-actions {
@@ -159,6 +236,7 @@
   .idea-action-btn.core { color: #999; }
   .idea-action-btn.core.is-core { color: #f59e0b; border-color: #f59e0b; }
   .feature-card.user-idea { position: relative; }
+  .idea-author { font-style: italic; color: #bbb; margin-left: 8px; }
 
   /* Add Idea Modal */
   .idea-modal-overlay {
@@ -256,42 +334,6 @@
   }
   .idea-modal-btn.primary:hover { background: #333; }
 
-  /* Edit mode banner */
-  .edit-mode-banner {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 300;
-    background: #111;
-    color: #fff;
-    padding: 14px 20px;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-  .edit-mode-banner.visible { display: flex; }
-  .edit-mode-banner .cancel-btn {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.4);
-    color: #fff;
-    padding: 6px 14px;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  .edit-mode-banner .cancel-btn:hover { background: rgba(255,255,255,0.1); }
-  /* Edit mode station highlighting */
-  body.edit-mode .station { cursor: crosshair !important; }
-  body.edit-mode .station:hover rect,
-  body.edit-mode .station:hover path { stroke: #007AFF !important; stroke-width: 3 !important; }
-  body.edit-mode .station:hover text { fill: #007AFF !important; }
   .swap-flash { animation: flashGreen 0.6s ease-out; }
   @keyframes flashGreen { 0% { background: #e8f5e9; } 100% { background: #fff; } }
 </style>
@@ -692,40 +734,10 @@
 </svg>
 </div>
 
-<!-- Legend -->
-<div class="legend">
-  <div class="legend-item"><span class="legend-sym">&#x25A1;</span> Machine station</div>
-  <div class="legend-item"><span class="legend-sym">&#x25A2;</span> Interactive (dashed)</div>
-  <div class="legend-item"><span class="legend-sym">&#x2727;</span> LED candle / scent</div>
-  <div class="legend-item"><span class="legend-sym">&#x266B;</span> Bidet Symphony</div>
-  <div class="legend-item"><span class="legend-sym" style="color:#0277BD">&#x2248;</span> Water channel</div>
-  <div class="legend-item"><span class="legend-sym">&#x25CB;</span> Scrubber wheel</div>
-  <div class="legend-item"><span class="legend-sym">&#x25AD;</span> Ottoman</div>
-  <div class="legend-item"><span class="legend-sym">&#x23FA;</span> Arcade button</div>
-</div>
 
-<!-- Callouts -->
-<div class="callout">
-  <div class="callout-inner">
-    <div class="icon">&#x1F6B6;</div>
-    <p><strong>Guest Flow:</strong> Entrance (top-left) &rarr; Greeter &rarr; Installation (perimeter, Stations 1&ndash;10 clockwise) &rarr; Brand Activation zone (browse upward: accessories, scent bar, retail, demos, Golden Throne photo op) &rarr; Exit (top-left). Full loop.</p>
-  </div>
-</div>
-<div class="callout">
-  <div class="callout-inner">
-    <div class="icon">&#x1F504;</div>
-    <p><strong>Auto-Reset (~3 min):</strong> Jumbo ball caught at Finale, returned to Station 1 via pneumatic tube (left wall). TP spools rewind on motors. Gates spring-return via counterweights. LED candles fade on timers. Scrub brushes never stop.</p>
-  </div>
-</div>
-<div class="callout water">
-  <div class="callout-inner">
-    <div class="icon">&#x1F4A7;</div>
-    <p><strong>Water Channel:</strong> 6"-wide acrylic channel, LED-lit in TUSHY blue, runs along the top wall. Fed by the Great Cascade. Supplies the Spray Gate and Grand Flush Finale. ~200 gallons recirculated continuously via concealed pump.</p>
-  </div>
-</div>
 
 <!-- Station Cards -->
-<div class="section-label">MACHINE STATIONS &mdash; 10 FEATURES</div>
+<div class="section-label">STATIONS</div>
 <div class="features" id="station-cards">
 
   <div class="feature-card" data-sid="1">
@@ -868,10 +880,7 @@
 </div>
 
 <!-- IDEA CATALOG -->
-<div class="section-label">IDEA CATALOG &mdash; SWAP INTO ANY STATION</div>
-<div style="max-width:1100px;margin:0 auto;padding:0 40px 10px;">
-  <p style="font-size:0.82rem;color:#999;line-height:1.5;margin-bottom:16px;">Click any idea to assign it to a station slot. The station card above will update with the new idea.</p>
-</div>
+<div class="section-label">IDEAS</div>
 <div class="features" id="idea-cards">
 
   <div class="feature-card idea-card">
@@ -1014,12 +1023,42 @@
     <div class="products-used"><span class="product-tag mechanic">tuned surfaces</span><span class="product-tag mechanic">contact mics + speakers</span></div>
   </div>
 
+  <div class="feature-card" data-core="true">
+    <div class="station-num">Sensory</div>
+    <h3>The Temperature Wave</h3>
+    <p>Corridor with alternating warm and cool air zones. Ball triggers fans as it passes &mdash; first a warm breeze (like a heated bidet), then a cool mist. Visitors feel the contrast on their skin. Subtle but memorable sensory moment.</p>
+    <div class="products-used"><span class="product-tag">Spa 3.0 (warm water concept)</span><span class="product-tag mechanic">heat lamps</span><span class="product-tag mechanic">cool mist fans</span></div>
+  </div>
+
+  <div class="feature-card" data-core="true">
+    <div class="station-num">Sensory</div>
+    <h3>The Tactile Wall</h3>
+    <p>Interactive wall with different textures visitors can touch: smooth ceramic (toilet), soft bamboo fibers (TP), cool metal (bidet nozzle), plush towel. Ball rolling past illuminates each texture zone. Engages touch in a bathroom context.</p>
+    <div class="products-used"><span class="product-tag">Bamboo TP</span><span class="product-tag">Bum Towels</span><span class="product-tag mechanic">texture panels + LED strips</span></div>
+  </div>
+
+  <div class="feature-card" data-core="true">
+    <div class="station-num">Sensory</div>
+    <h3>The Whisper Chamber</h3>
+    <p>Sound-dampened alcove. Ball enters and triggers ASMR-style audio: gentle water sounds, soft paper rustling, quiet spray mist. Visitors step in and experience unexpected calm. Contrast station before or after high-energy segments.</p>
+    <div class="products-used"><span class="product-tag mechanic">acoustic panels</span><span class="product-tag mechanic">directional speakers</span><span class="product-tag">Room Spray (light mist)</span></div>
+  </div>
+
+  <div class="feature-card" data-core="true">
+    <div class="station-num">Sensory</div>
+    <h3>The Light Spectrum</h3>
+    <p>Ball passes through a prism-like structure that casts rainbow light across the space. As it moves, the colors shift and dance on walls and visitors. Pure visual delight &mdash; no products, just light art inspired by water refraction.</p>
+    <div class="products-used"><span class="product-tag mechanic">dichroic glass panels</span><span class="product-tag mechanic">motorized spot lights</span></div>
+  </div>
+
   <!-- User ideas will be inserted here -->
   <div id="user-ideas-container"></div>
 
-  <!-- Add Idea Button -->
-  <div class="add-idea-btn" id="add-idea-btn">
-    <span class="plus">+</span> Add Idea
+  <!-- Add Idea Card -->
+  <div class="add-idea-card" id="add-idea-btn">
+    <div class="plus-icon">+</div>
+    <h3>Add Your Idea</h3>
+    <p>Submit a new concept</p>
   </div>
 
 </div>
@@ -1033,8 +1072,8 @@
     </div>
     <div class="idea-modal-body">
       <div class="idea-form-group">
-        <label>Category</label>
-        <input type="text" id="idea-category" placeholder="e.g., Finale Option, Station Swap, Interactive">
+        <label>Your Name</label>
+        <input type="text" id="idea-author" placeholder="e.g., Chris">
       </div>
       <div class="idea-form-group">
         <label>Title</label>
@@ -1047,6 +1086,10 @@
       <div class="idea-form-group">
         <label>Tags (comma separated)</label>
         <input type="text" id="idea-tags" placeholder="e.g., Classic 3.0, fog machine, LEDs">
+      </div>
+      <div class="idea-form-group" style="display:none;">
+        <label>Category (auto-generated)</label>
+        <input type="text" id="idea-category" readonly>
       </div>
     </div>
     <div class="idea-modal-footer">
@@ -1180,11 +1223,6 @@
 
 <div class="tooltip-overlay" id="tooltip"><div class="tt-title"></div><div class="tt-desc"></div></div>
 
-<!-- Edit mode banner -->
-<div class="edit-mode-banner" id="edit-banner">
-  <span>Click a station on the map to assign idea</span>
-  <button class="cancel-btn" id="cancel-edit">Cancel (Esc)</button>
-</div>
 
 <script>
   // Tooltip for SVG stations
@@ -1194,94 +1232,100 @@
     el.addEventListener('mousemove',e=>{t.style.left=(e.clientX+16)+'px';t.style.top=(e.clientY-10)+'px'});
     el.addEventListener('mouseleave',()=>t.classList.remove('visible'))});
 
-  // === IDEA SWAP SYSTEM (Edit Mode) ===
-  const editBanner = document.getElementById('edit-banner');
-  const cancelBtn = document.getElementById('cancel-edit');
+  // === IDEA SWAP SYSTEM (Inline Station Picker) ===
   const stationContainer = document.getElementById('station-cards');
   const ideaContainer = document.getElementById('idea-cards');
-  const renderContainer = document.querySelector('.render-container');
-  const svgStations = document.querySelectorAll('.station[data-station]');
 
-  // Add idea-card class to all cards in the idea catalog
-  ideaContainer.querySelectorAll('.feature-card').forEach(c => c.classList.add('idea-card'));
-
-  let activeIdea = null;
-
-  function enterEditMode(ideaCard) {
-    activeIdea = ideaCard;
-    document.body.classList.add('edit-mode');
-    editBanner.classList.add('visible');
-    // Scroll to the map
-    renderContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  function exitEditMode() {
-    document.body.classList.remove('edit-mode');
-    editBanner.classList.remove('visible');
-    activeIdea = null;
-  }
-
-  // Cancel button
-  cancelBtn.addEventListener('click', exitEditMode);
-
-  // Escape key
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && activeIdea) {
-      exitEditMode();
-    }
+  // Add idea-card class and station picker to all cards in the idea catalog
+  ideaContainer.querySelectorAll('.feature-card').forEach(card => {
+    card.classList.add('idea-card');
+    addStationPicker(card);
   });
 
-  // Idea card click handler — enter edit mode
-  ideaContainer.addEventListener('click', e => {
-    const card = e.target.closest('.idea-card');
-    if (!card) return;
-    enterEditMode(card);
-  });
+  function addStationPicker(card) {
+    // Don't add if it's the add-idea card
+    if (card.classList.contains('add-idea-card')) return;
 
-  // SVG station click handler — perform the swap
-  svgStations.forEach(station => {
-    station.addEventListener('click', e => {
-      if (!activeIdea) return;
+    const picker = document.createElement('div');
+    picker.className = 'station-picker';
+    picker.innerHTML = `
+      <span class="station-picker-label">Assign to:</span>
+      <div class="station-picker-btns">
+        ${[1,2,3,4,5,6,7,8,9,10].map(n => `<button class="station-pick-btn" data-station="${n}">${n}</button>`).join('')}
+      </div>
+    `;
+    card.appendChild(picker);
 
-      const targetId = station.dataset.station;
-      if (!targetId || isNaN(targetId)) return; // Skip non-numbered stations like 'ba'
+    // Add assigned badge
+    const badge = document.createElement('div');
+    badge.className = 'assigned-badge';
+    badge.innerHTML = `<span class="badge-text">Station X</span><button class="clear-assign">×</button>`;
+    card.appendChild(badge);
 
-      const sCard = stationContainer.querySelector(`[data-sid="${targetId}"]`);
-      if (!sCard) return;
-
-      // Get idea content
-      const ideaTitle = activeIdea.querySelector('h3').textContent;
-      const ideaDesc = activeIdea.querySelector('p').textContent;
-      const ideaTags = activeIdea.querySelector('.products-used');
-
-      // Update station card with idea
-      sCard.querySelector('h3').textContent = ideaTitle;
-      sCard.querySelector('p').textContent = ideaDesc;
-      const oldTags = sCard.querySelector('.products-used');
-      if (ideaTags && oldTags) {
-        oldTags.innerHTML = ideaTags.innerHTML;
-      }
-
-      // Flash the station card
-      sCard.classList.remove('swap-flash');
-      void sCard.offsetWidth;
-      sCard.classList.add('swap-flash');
-
-      // Mark the idea card as assigned
-      activeIdea.classList.add('swapped');
-      activeIdea.dataset.assigned = '\u2192 Station ' + targetId;
-
-      // Exit edit mode
-      exitEditMode();
-
-      // Scroll station card into view
-      setTimeout(() => {
-        sCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
+    // Station button clicks
+    picker.querySelectorAll('.station-pick-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const stationNum = btn.dataset.station;
+        assignToStation(card, stationNum);
+      });
     });
-  });
+
+    // Clear assignment
+    badge.querySelector('.clear-assign').addEventListener('click', (e) => {
+      e.stopPropagation();
+      clearAssignment(card);
+    });
+  }
+
+  function assignToStation(card, stationNum) {
+    const sCard = stationContainer.querySelector(`[data-sid="${stationNum}"]`);
+    if (!sCard) return;
+
+    // Get idea content
+    const ideaTitle = card.querySelector('h3').textContent;
+    const ideaDesc = card.querySelector('p').textContent;
+    const ideaTags = card.querySelector('.products-used');
+
+    // Update station card
+    sCard.querySelector('h3').textContent = ideaTitle;
+    sCard.querySelector('p').textContent = ideaDesc;
+    const oldTags = sCard.querySelector('.products-used');
+    if (ideaTags && oldTags) {
+      oldTags.innerHTML = ideaTags.innerHTML;
+    }
+
+    // Flash station card
+    sCard.classList.remove('swap-flash');
+    void sCard.offsetWidth;
+    sCard.classList.add('swap-flash');
+
+    // Update picker UI
+    card.querySelectorAll('.station-pick-btn').forEach(b => b.classList.remove('active'));
+    card.querySelector(`[data-station="${stationNum}"]`).classList.add('active');
+
+    // Show assigned badge
+    card.classList.add('assigned');
+    card.querySelector('.badge-text').textContent = 'Station ' + stationNum;
+    card.dataset.assignedStation = stationNum;
+
+    // Scroll station card into view
+    setTimeout(() => {
+      sCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  }
+
+  function clearAssignment(card) {
+    card.classList.remove('assigned');
+    card.querySelectorAll('.station-pick-btn').forEach(b => b.classList.remove('active'));
+    delete card.dataset.assignedStation;
+  }
 
   // === IDEA MANAGEMENT SYSTEM ===
+  // Supabase config - set these to enable cloud persistence
+  const SUPABASE_URL = ''; // e.g., 'https://xyz.supabase.co'
+  const SUPABASE_KEY = ''; // anon key
+
   const STORAGE_KEY = 'tushy_rube_ideas';
   const userIdeasContainer = document.getElementById('user-ideas-container');
   const addIdeaBtn = document.getElementById('add-idea-btn');
@@ -1295,15 +1339,92 @@
     card.dataset.core = 'true';
   });
 
-  // Load ideas from localStorage
-  function loadIdeas() {
+  // Auto-categorize based on keywords
+  function categorizeIdea(title, desc) {
+    const text = (title + ' ' + desc).toLowerCase();
+    if (/finale|final|end|climax|last/.test(text)) return 'Finale Option';
+    if (/interact|button|press|pull|push|visitor|guest|play/.test(text)) return 'Interactive Option';
+    if (/scent|smell|aroma|fragrance|candle|mist/.test(text)) return 'Sensory';
+    if (/sound|music|audio|tone|bell|chime/.test(text)) return 'Sensory';
+    if (/light|glow|led|illuminate|visual/.test(text)) return 'Sensory';
+    if (/water|splash|spray|flow|fountain/.test(text)) return 'Water Feature';
+    if (/always|continuous|perpetual|loop|kinetic/.test(text)) return 'Kinetic / Always-On';
+    return 'Station Swap';
+  }
+
+  // Load ideas (Supabase or localStorage)
+  async function loadIdeas() {
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/ideas?order=created_at.asc`, {
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        return await res.json();
+      } catch (e) { console.error('Supabase load failed:', e); }
+    }
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     } catch { return []; }
   }
 
-  // Save ideas to localStorage
-  function saveIdeas(ideas) {
+  // Save single idea (Supabase or localStorage)
+  async function saveIdea(idea) {
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/ideas`, {
+          method: 'POST',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(idea)
+        });
+        return;
+      } catch (e) { console.error('Supabase save failed:', e); }
+    }
+    const ideas = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    ideas.push(idea);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+  }
+
+  // Update idea
+  async function updateIdea(id, updates) {
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/ideas?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updates)
+        });
+        return;
+      } catch (e) { console.error('Supabase update failed:', e); }
+    }
+    const ideas = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const idx = ideas.findIndex(i => i.id === id);
+    if (idx !== -1) {
+      Object.assign(ideas[idx], updates);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+    }
+  }
+
+  // Delete idea
+  async function deleteIdea(id) {
+    if (SUPABASE_URL && SUPABASE_KEY) {
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/ideas?id=eq.${id}`, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        });
+        return;
+      } catch (e) { console.error('Supabase delete failed:', e); }
+    }
+    const ideas = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').filter(i => i.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
   }
 
@@ -1317,39 +1438,38 @@
     const card = document.createElement('div');
     card.className = 'feature-card idea-card user-idea';
     card.dataset.ideaId = idea.id;
-    if (idea.isCore) card.dataset.core = 'true';
+    if (idea.is_core) card.dataset.core = 'true';
 
     const tags = (idea.tags || []).map(t =>
       `<span class="product-tag">${t}</span>`
     ).join('');
 
+    const authorHtml = idea.author ? `<span class="idea-author">by ${idea.author}</span>` : '';
+
     card.innerHTML = `
       <div class="idea-actions">
-        <button class="idea-action-btn core ${idea.isCore ? 'is-core' : ''}" title="${idea.isCore ? 'Core idea' : 'Make core (non-deletable)'}">★</button>
-        ${!idea.isCore ? '<button class="idea-action-btn delete" title="Delete idea">✕</button>' : ''}
+        <button class="idea-action-btn core ${idea.is_core ? 'is-core' : ''}" title="${idea.is_core ? 'Core idea' : 'Make core (non-deletable)'}">★</button>
+        ${!idea.is_core ? '<button class="idea-action-btn delete" title="Delete idea">✕</button>' : ''}
       </div>
-      <div class="station-num">${idea.category || 'Custom Idea'}</div>
+      <div class="station-num">${idea.category || 'Custom Idea'} ${authorHtml}</div>
       <h3>${idea.title}</h3>
       <p>${idea.description}</p>
       <div class="products-used">${tags}</div>
     `;
 
+    // Add station picker
+    addStationPicker(card);
+
     // Core button click - promote to core
     const coreBtn = card.querySelector('.idea-action-btn.core');
-    coreBtn.addEventListener('click', (e) => {
+    coreBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
-      if (idea.isCore) return; // Already core
-      idea.isCore = true;
-      const ideas = loadIdeas();
-      const idx = ideas.findIndex(i => i.id === idea.id);
-      if (idx !== -1) {
-        ideas[idx].isCore = true;
-        saveIdeas(ideas);
-      }
+      if (idea.is_core) return;
+      idea.is_core = true;
+      await updateIdea(idea.id, { is_core: true });
       card.dataset.core = 'true';
       coreBtn.classList.add('is-core');
       coreBtn.title = 'Core idea';
-      // Remove delete button
       const delBtn = card.querySelector('.idea-action-btn.delete');
       if (delBtn) delBtn.remove();
     });
@@ -1357,11 +1477,10 @@
     // Delete button click
     const delBtn = card.querySelector('.idea-action-btn.delete');
     if (delBtn) {
-      delBtn.addEventListener('click', (e) => {
+      delBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
         if (confirm('Delete this idea?')) {
-          const ideas = loadIdeas().filter(i => i.id !== idea.id);
-          saveIdeas(ideas);
+          await deleteIdea(idea.id);
           card.remove();
         }
       });
@@ -1371,9 +1490,9 @@
   }
 
   // Render all user ideas
-  function renderAllUserIdeas() {
+  async function renderAllUserIdeas() {
     userIdeasContainer.innerHTML = '';
-    const ideas = loadIdeas();
+    const ideas = await loadIdeas();
     ideas.forEach(idea => {
       userIdeasContainer.appendChild(renderIdeaCard(idea));
     });
@@ -1381,7 +1500,7 @@
 
   // Open modal
   function openIdeaModal() {
-    document.getElementById('idea-category').value = '';
+    document.getElementById('idea-author').value = '';
     document.getElementById('idea-title').value = '';
     document.getElementById('idea-desc').value = '';
     document.getElementById('idea-tags').value = '';
@@ -1394,8 +1513,8 @@
   }
 
   // Save new idea
-  function saveNewIdea() {
-    const category = document.getElementById('idea-category').value.trim();
+  async function saveNewIdea() {
+    const author = document.getElementById('idea-author').value.trim();
     const title = document.getElementById('idea-title').value.trim();
     const desc = document.getElementById('idea-desc').value.trim();
     const tagsStr = document.getElementById('idea-tags').value.trim();
@@ -1406,22 +1525,22 @@
     }
 
     const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
+    const category = categorizeIdea(title, desc);
 
     const idea = {
       id: genId(),
-      category: category || 'Custom Idea',
+      author: author || null,
+      category,
       title,
       description: desc,
       tags,
-      isCore: false,
-      createdAt: new Date().toISOString()
+      is_core: false,
+      created_at: new Date().toISOString()
     };
 
-    const ideas = loadIdeas();
-    ideas.push(idea);
-    saveIdeas(ideas);
-
-    userIdeasContainer.appendChild(renderIdeaCard(idea));
+    await saveIdea(idea);
+    const card = renderIdeaCard(idea);
+    userIdeasContainer.appendChild(card);
     closeIdeaModal();
   }
 

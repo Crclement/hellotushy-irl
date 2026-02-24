@@ -1349,42 +1349,42 @@
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Station Swap</div>
+    <div class="station-num">Alternative</div>
     <h3>The Brush Xylophone</h3>
     <p>Row of TUSHY Toilet Brushes mounted at different heights. Ball rolls across the handles, each one makes a different pitched sound (tuned with weights). Creates a melody as the ball passes. Could replace or combine with the Scrub Zone.</p>
     <div class="products-used"><span class="product-tag">Toilet Brush &times;8+</span><span class="product-tag mechanic">tuned weights</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Station Swap</div>
+    <div class="station-num">Alternative</div>
     <h3>The Candle Snuff</h3>
     <p>LED candles are all "lit." Ball rolls past each one and knocks a small lever that flips a shade over the candle, snuffing it. The corridor goes dark as the ball passes through. Last candle triggers the next station. Dramatic lighting moment.</p>
     <div class="products-used"><span class="product-tag">Candles (all 4)</span><span class="product-tag mechanic">lever shades</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Station Swap</div>
+    <div class="station-num">Alternative</div>
     <h3>The Towel Zip Line</h3>
     <p>Ball lands on a Bum Towel hammock attached to a zip line wire. Towel slides down the wire carrying the ball across a gap (could span the width of the space). Ball drops off at the other end into the next station. Visual wow moment.</p>
     <div class="products-used"><span class="product-tag">Bum Towels</span><span class="product-tag mechanic">zip line wire + pulley</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Station Swap</div>
+    <div class="station-num">Alternative</div>
     <h3>The Spiral Drain</h3>
     <p>Large funnel/spiral (like a coin donation vortex). Ball enters the rim and spirals inward, picking up speed. Drops through the center hole into the next section. Mesmerizing to watch. Could be built from acrylic with TUSHY branding etched in.</p>
     <div class="products-used"><span class="product-tag mechanic">acrylic spiral funnel</span><span class="product-tag mechanic">TUSHY etching</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Station Swap</div>
+    <div class="station-num">Alternative</div>
     <h3>The Pendulum Swing</h3>
     <p>Ottoman suspended on ropes as a pendulum. Ball rolls onto it, the weight swings the ottoman forward, and the ball is launched off the other side at the apex. Newton's cradle energy. Ottoman swings back to rest position automatically.</p>
     <div class="products-used"><span class="product-tag">Ottoman Original</span><span class="product-tag mechanic">rope suspension</span></div>
   </div>
 
   <div class="feature-card">
-    <div class="station-num">Station Swap</div>
+    <div class="station-num">Alternative</div>
     <h3>The Toilet Seat See-Saw</h3>
     <p>Real toilet seat mounted as a see-saw/teeter-totter. Ball rolls onto one side, tips it, slides across and launches off the lifted end. Classic Rube Goldberg energy. Multiple seats could chain together.</p>
     <div class="products-used"><span class="product-tag mechanic">toilet seat pivot</span></div>
@@ -1538,6 +1538,10 @@
           <option value="Kinetic / Always-On">Kinetic / Always-On</option>
           <option value="Alternative">Alternative</option>
         </select>
+      </div>
+      <div class="idea-form-group">
+        <label>Emoji Icon (for map display)</label>
+        <input type="text" id="idea-emoji" placeholder="e.g., 💦 🎯 🔔 ⚡" maxlength="4" style="width:80px;text-align:center;font-size:1.5rem;" autocomplete="off" data-lpignore="true" data-1p-ignore data-form-type="other">
       </div>
       <div class="idea-form-group">
         <label>Tags (comma separated)</label>
@@ -1694,20 +1698,20 @@
 
   const stationDataContainer = document.getElementById('station-cards');
 
-  // Emoji icons for idea categories
-  const categoryIcons = {
+  // Default emojis for idea categories (user can override)
+  const defaultCategoryEmojis = {
     'Finale Option': '🎆',
     'Interactive Option': '🕹️',
     'Sensory': '✨',
     'Water Feature': '💦',
     'Kinetic / Always-On': '⚙️',
-    'Station Swap': '🔄',
+    'Alternative': '🔄',
     'Concept': '💡',
     'default': '💡'
   };
 
-  function getIdeaIcon(category) {
-    return categoryIcons[category] || categoryIcons['default'];
+  function getDefaultEmoji(category) {
+    return defaultCategoryEmojis[category] || defaultCategoryEmojis['default'];
   }
   const ideaDataContainer = document.getElementById('idea-cards');
 
@@ -1945,13 +1949,12 @@
       const item = document.createElement('div');
       item.className = 'idea-item';
       const authorHtml = idea.author ? `<div class="idea-item-author">by ${idea.author}</div>` : '';
-      const coreLabel = idea.isCore ? '<span style="color:#f59e0b;margin-left:6px;">★</span>' : '';
-      const ideaIcon = getIdeaIcon(idea.category);
+      const ideaEmoji = idea.emoji || getDefaultEmoji(idea.category);
       item.innerHTML = `
         <div style="display:flex;gap:12px;align-items:flex-start;">
-          <span style="font-size:1.5rem;line-height:1;">${ideaIcon}</span>
+          <span style="font-size:1.5rem;line-height:1;flex-shrink:0;">${ideaEmoji}</span>
           <div style="flex:1;min-width:0;">
-            <div class="idea-item-category">${idea.category}${coreLabel}</div>
+            <div class="idea-item-category">${idea.category}</div>
             <h4>${idea.title}</h4>
             <p>${idea.desc}</p>
             ${authorHtml}
@@ -2133,7 +2136,6 @@
     const svgStation = document.querySelector(`.station[data-station="${stationNum}"]`);
     if (svgStation) {
       const icon = stationIcons[stationNum] || '⑩';
-      const ideaIcon = getIdeaIcon(idea.category);
       svgStation.dataset.name = icon + ' ' + idea.title;
       svgStation.dataset.desc = idea.desc;
       svgStation.classList.add('has-idea');
@@ -2151,24 +2153,27 @@
         }
       });
 
-      // Add/update idea icon on the station
-      let iconEl = svgStation.querySelector('.idea-icon');
-      if (!iconEl) {
-        iconEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        iconEl.classList.add('idea-icon');
-        iconEl.setAttribute('font-size', '14');
-        iconEl.setAttribute('text-anchor', 'middle');
-        // Position based on station's bounding box
-        const rect = svgStation.querySelector('rect');
-        if (rect) {
-          const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
-          const y = parseFloat(rect.getAttribute('y')) + 20;
-          iconEl.setAttribute('x', x);
-          iconEl.setAttribute('y', y);
+      // Add/update emoji icon on the station (for ideas from Ideas panel)
+      const ideaEmoji = idea.emoji || getDefaultEmoji(idea.category);
+      if (ideaEmoji) {
+        let emojiEl = svgStation.querySelector('.idea-emoji');
+        if (!emojiEl) {
+          emojiEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          emojiEl.classList.add('idea-emoji');
+          emojiEl.setAttribute('font-size', '16');
+          emojiEl.setAttribute('text-anchor', 'middle');
+          // Position based on station's bounding box
+          const rect = svgStation.querySelector('rect');
+          if (rect) {
+            const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+            const y = parseFloat(rect.getAttribute('y')) + 22;
+            emojiEl.setAttribute('x', x);
+            emojiEl.setAttribute('y', y);
+          }
+          svgStation.appendChild(emojiEl);
         }
-        svgStation.appendChild(iconEl);
+        emojiEl.textContent = ideaEmoji;
       }
-      iconEl.textContent = ideaIcon;
 
       // Visual feedback - briefly flash the station green
       svgStation.querySelectorAll('rect').forEach(el => {
@@ -2219,7 +2224,7 @@
     if (/light|glow|led|illuminate|visual/.test(text)) return 'Sensory';
     if (/water|splash|spray|flow|fountain/.test(text)) return 'Water Feature';
     if (/always|continuous|perpetual|loop|kinetic/.test(text)) return 'Kinetic / Always-On';
-    return 'Station Swap';
+    return 'Alternative';
   }
 
   // Get or create blob ID
@@ -2374,6 +2379,7 @@
     document.getElementById('idea-author').value = '';
     document.getElementById('idea-title').value = '';
     document.getElementById('idea-desc').value = '';
+    document.getElementById('idea-emoji').value = '';
     document.getElementById('idea-tags').value = '';
     ideaModal.classList.add('visible');
   }
@@ -2389,6 +2395,8 @@
     const title = document.getElementById('idea-title').value.trim();
     const desc = document.getElementById('idea-desc').value.trim();
     const tagsStr = document.getElementById('idea-tags').value.trim();
+    const category = document.getElementById('idea-category').value;
+    const emoji = document.getElementById('idea-emoji').value.trim();
 
     if (!title) {
       alert('Please enter a title');
@@ -2402,7 +2410,6 @@
     saveBtn.disabled = true;
 
     const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
-    const category = categorizeIdea(title, desc);
 
     const idea = {
       id: genId(),
@@ -2410,6 +2417,7 @@
       category,
       title,
       description: desc,
+      emoji: emoji || getDefaultEmoji(category),
       tags,
       is_core: false,
       created_at: new Date().toISOString()
@@ -2427,6 +2435,7 @@
       document.getElementById('idea-author').value = '';
       document.getElementById('idea-title').value = '';
       document.getElementById('idea-desc').value = '';
+      document.getElementById('idea-emoji').value = '';
       document.getElementById('idea-tags').value = '';
 
       // Re-render ideas panel with new idea

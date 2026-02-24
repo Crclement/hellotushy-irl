@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TUSHY Rube Goldberg Machine — SoHo Loft Render v5</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #fff; color: #111; font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+  .main-ui {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    overflow-y: auto;
+  }
+
+  .content-wrapper {
+    padding: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .content-wrapper {
+      padding: 1rem;
+    }
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #999;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: #111; }
+  .back-link::before { content: '\2190'; }
+
+  .header { text-align: center; padding: 10px 20px 10px; }
+  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; color: #000; margin-bottom: 6px; }
+  .header .subtitle { font-size: 0.95rem; color: #999; font-weight: 300; letter-spacing: 0.15em; text-transform: uppercase; }
+  .render-container { display: flex; justify-content: center; padding: 20px; }
+  svg.loft-render { max-width: 1100px; width: 100%; height: auto; }
+  .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; padding: 10px 40px 30px; max-width: 1100px; margin: 0 auto; }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: #666; font-family: 'Inter', sans-serif; }
+  .legend-sym { font-size: 1rem; width: 18px; text-align: center; }
+  .features { max-width: 1100px; margin: 0 auto; padding: 0 40px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
+  .feature-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 18px 22px; transition: border-color 0.3s; }
+  .feature-card:hover { border-color: #999; }
+  .feature-card .station-num { font-family: 'Space Grotesk', sans-serif; font-size: 0.68rem; font-weight: 600; color: #999; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 5px; }
+  .feature-card h3 { font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; color: #000; }
+  .feature-card p { font-size: 0.84rem; line-height: 1.6; color: #555; }
+  .feature-card .products-used { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+  .product-tag { font-size: 0.68rem; padding: 2px 9px; border-radius: 3px; background: #f5f5f5; color: #333; border: 1px solid #ddd; font-family: 'Inter', sans-serif; }
+  .product-tag.interactive { font-weight: 600; border-style: dashed; }
+  .product-tag.mechanic { font-style: italic; color: #888; border-color: #e0e0e0; }
+  .section-label { max-width: 1100px; margin: 0 auto; padding: 30px 40px 14px; font-family: 'Space Grotesk', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: #bbb; }
+  .tooltip-overlay { position: fixed; pointer-events: none; background: #fff; border: 1px solid #ccc; border-radius: 6px; padding: 12px 16px; font-size: 0.78rem; color: #555; max-width: 280px; z-index: 100; opacity: 0; transition: opacity 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+  .tooltip-overlay.visible { opacity: 1; }
+  .tooltip-overlay .tt-title { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #000; margin-bottom: 4px; font-size: 0.85rem; }
+  .dims-bar { text-align: center; padding: 0 0 6px; font-size: 0.72rem; color: #bbb; letter-spacing: 0.1em; }
+  @keyframes dash { to { stroke-dashoffset: 0; } }
+  .machine-path { stroke-dasharray: 3200; stroke-dashoffset: 3200; animation: dash 5s ease-in-out forwards; }
+  @keyframes pulse { 0%, 100% { r: 6; opacity: 0.3; } 50% { r: 10; opacity: 0.7; } }
+  .interactive-pulse { animation: pulse 2s ease-in-out infinite; }
+  @keyframes waterFlow { 0% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -40; } }
+  .water-flow { stroke-dasharray: 8, 12; animation: waterFlow 2s linear infinite; }
+  .callout { max-width: 1100px; margin: 0 auto 10px; padding: 16px 40px; }
+  .callout-inner { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; }
+  .callout-inner .icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .callout-inner p { font-size: 0.82rem; line-height: 1.55; color: #555; }
+  .callout-inner strong { color: #000; }
+  .callout.water .callout-inner { border-color: #B3E5FC; background: #F8FCFF; }
+  .callout.water .callout-inner strong { color: #0277BD; }
+  /* Cost Estimate Section */
+  .cost-section { max-width: 1100px; margin: 0 auto; padding: 0 40px 60px; }
+  .cost-disclaimer { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 0.82rem; line-height: 1.55; color: #666; }
+  .cost-disclaimer strong { color: #000; }
+  .cost-total { background: #fff; border: 2px solid #111; border-radius: 8px; padding: 20px 24px; margin-bottom: 20px; text-align: center; }
+  .cost-total .amount { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700; color: #000; }
+  .cost-total .label { font-size: 0.8rem; color: #999; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+  details.cost-category { background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 8px; overflow: hidden; }
+  details.cost-category:hover { border-color: #999; }
+  details.cost-category[open] { border-color: #999; }
+  details.cost-category summary { padding: 14px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.92rem; color: #111; list-style: none; user-select: none; }
+  details.cost-category summary::-webkit-details-marker { display: none; }
+  details.cost-category summary::before { content: '\25B8'; margin-right: 10px; color: #bbb; transition: transform 0.2s; display: inline-block; }
+  details.cost-category[open] summary::before { transform: rotate(90deg); }
+  .cost-subtotal { font-family: 'Space Grotesk', sans-serif; font-weight: 600; color: #000; font-size: 0.9rem; }
+  .cost-items { padding: 0 20px 16px; }
+  .cost-item { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.82rem; gap: 8px; }
+  .cost-item:last-child { border-bottom: none; }
+  .cost-item-name { color: #555; flex: 1; }
+  .cost-item-name a { color: #111; text-decoration: underline; text-decoration-color: #ccc; text-underline-offset: 2px; }
+  .cost-item-name a:hover { text-decoration-color: #111; }
+  .cost-item-qty { color: #999; font-size: 0.75rem; min-width: 50px; text-align: center; }
+  .cost-item-price { font-family: 'Space Grotesk', sans-serif; font-weight: 500; color: #000; min-width: 70px; text-align: right; }
+  /* Idea swap interaction */
+  .idea-card { cursor: pointer; position: relative; transition: border-color 0.2s, box-shadow 0.2s; }
+  .idea-card:hover { border-color: #111; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .idea-card::after { content: 'click to assign \2192'; position: absolute; top: 10px; right: 14px; font-size: 0.65rem; color: #bbb; font-family: 'Inter', sans-serif; transition: color 0.2s; }
+  .idea-card:hover::after { color: #111; }
+  .idea-card.swapped { border-color: #111; background: #f9f9f9; }
+  .idea-card.swapped::after { content: attr(data-assigned); color: #999; }
+  .swap-popup { position: fixed; z-index: 200; background: #fff; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); padding: 8px 0; min-width: 260px; display: none; }
+  .swap-popup.visible { display: block; }
+  .swap-popup-title { padding: 8px 16px 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 600; color: #bbb; letter-spacing: 0.12em; text-transform: uppercase; }
+  .swap-popup-item { padding: 9px 16px; font-size: 0.84rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif; color: #333; transition: background 0.15s; }
+  .swap-popup-item:hover { background: #f5f5f5; }
+  .swap-popup-item .stn-num { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.78rem; color: #999; min-width: 28px; }
+  .swap-popup-item .stn-name { flex: 1; }
+  .swap-popup-item .stn-current { font-size: 0.7rem; color: #bbb; margin-left: 8px; }
+  .swap-flash { animation: flashGreen 0.6s ease-out; }
+  @keyframes flashGreen { 0% { background: #e8f5e9; } 100% { background: #fff; } }
+</style>
+</head>
+<body>
+
+<div class="main-ui">
+<div class="content-wrapper">
+<a href="index.html" class="back-link">Back to Projects</a>
+
+<div class="header">
+  <h1>TUSHY &times; Rube Goldberg Machine</h1>
+  <div class="subtitle">SoHo Loft Installation &mdash; Overhead Render v5</div>
+</div>
+<div class="dims-bar">30 ft wide &times; 60 ft long &times; 20 ft ceilings&ensp;&middot;&ensp;hover stations for details&ensp;&middot;&ensp;auto-reset</div>
+
+<div class="render-container">
+<svg class="loft-render" viewBox="0 0 1060 600" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="ss"><feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.06)"/></filter>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M20 0L0 0 0 20" fill="none" stroke="rgba(0,0,0,0.04)" stroke-width="0.5"/>
+    </pattern>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0L8,3L0,6" fill="none" stroke="#333" stroke-width="1"/>
+    </marker>
+    <marker id="arr-w" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0L8,3L0,6" fill="none" stroke="#0277BD" stroke-width="1"/>
+    </marker>
+  </defs>
+
+  <!-- LOFT FLOOR -->
+  <rect x="50" y="40" width="960" height="520" rx="4" fill="#fff" stroke="#222" stroke-width="2"/>
+  <rect x="50" y="40" width="960" height="520" rx="4" fill="url(#grid)"/>
+
+  <!-- WINDOWS (top wall) -->
+  <g opacity="0.35">
+    <rect x="220" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="285" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="350" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="415" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="480" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="545" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="610" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="675" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="740" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="805" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="870" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="935" y="38" width="50" height="5" rx="2" fill="#bbb"/>
+  </g>
+  <!-- WINDOWS (bottom wall) -->
+  <g opacity="0.35">
+    <rect x="220" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="285" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="350" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="415" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="480" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="545" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="610" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="675" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="740" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="805" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="870" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+    <rect x="935" y="557" width="50" height="5" rx="2" fill="#bbb"/>
+  </g>
+
+  <!-- ENTRANCE (top of left wall) -->
+  <rect x="47" y="55" width="7" height="55" rx="2" fill="#111"/>
+  <text x="28" y="82" fill="#111" font-size="7" text-anchor="middle" transform="rotate(-90,28,82)" font-family="Space Grotesk, sans-serif" letter-spacing="0.12em" font-weight="700">ENTER</text>
+
+  <!-- EXIT (below entrance) -->
+  <rect x="47" y="115" width="7" height="45" rx="2" fill="none" stroke="#111" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <text x="28" y="138" fill="#666" font-size="7" text-anchor="middle" transform="rotate(-90,28,138)" font-family="Space Grotesk, sans-serif" letter-spacing="0.12em" font-weight="600">EXIT</text>
+
+  <!-- DIMENSIONS -->
+  <line x1="50" y1="24" x2="1010" y2="24" stroke="#ddd" stroke-width="0.5" stroke-dasharray="2,4"/>
+  <text x="530" y="19" fill="#bbb" font-size="7.5" text-anchor="middle" font-family="Inter, sans-serif">60 FT</text>
+  <line x1="1028" y1="40" x2="1028" y2="560" stroke="#ddd" stroke-width="0.5" stroke-dasharray="2,4"/>
+  <text x="1043" y="303" fill="#bbb" font-size="7.5" text-anchor="middle" font-family="Inter, sans-serif" transform="rotate(90,1043,303)">30 FT</text>
+
+  <!-- DIVIDER -->
+  <line x1="210" y1="130" x2="210" y2="440" stroke="#ccc" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="216" y="84" fill="#999" font-size="4.5" font-family="Inter, sans-serif">&rarr; IN</text>
+  <text x="195" y="460" fill="#999" font-size="4.5" font-family="Inter, sans-serif" text-anchor="end">BA &larr;</text>
+
+  <!-- OPEN CENTER -->
+  <text x="610" y="292" fill="#ddd" font-size="9" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="300" letter-spacing="0.25em">OPEN VIEWING AREA</text>
+  <text x="610" y="308" fill="#e0e0e0" font-size="6" text-anchor="middle" font-family="Inter, sans-serif">spectators watch from center</text>
+
+  <!-- ========== MACHINE PATH ========== -->
+  <path class="machine-path" d="
+    M 260,100
+    L 950,100
+    C 970,100 980,115 980,130
+    L 980,470
+    C 980,490 965,500 950,500
+    L 260,500
+  " fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round" opacity="0.2"/>
+
+  <!-- Direction arrows -->
+  <path d="M400,100 L425,100" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arr)" opacity="0.35"/>
+  <path d="M650,100 L675,100" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arr)" opacity="0.35"/>
+  <path d="M980,280 L980,305" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arr)" opacity="0.35"/>
+  <path d="M800,500 L775,500" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arr)" opacity="0.35"/>
+  <path d="M500,500 L475,500" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arr)" opacity="0.35"/>
+
+  <!-- Jumbo ball at start -->
+  <text x="245" y="96" font-size="13" text-anchor="middle">&#x1F4A9;</text>
+  <text x="245" y="114" fill="#999" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif">jumbo ball</text>
+
+  <!-- ========== BRAND ACTIVATION (left zone) ========== -->
+  <g class="station" data-station="ba" data-name="Brand Activation Zone" data-desc="After completing the machine, visitors enter the BA zone. Walking upward: Accessories Wall, Scent Bar, Retail + Merch, Bidet Demos, Golden Throne photo op. Then exit.">
+    <rect x="58" y="50" width="144" height="440" rx="4" fill="#fafafa" stroke="#ccc" stroke-width="1"/>
+
+    <!-- GREETER (same height as station boxes) -->
+    <rect x="68" y="58" width="55" height="80" rx="3" fill="#fff" stroke="#999" stroke-width="0.8"/>
+    <text x="95" y="85" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GREETER</text>
+    <text x="95" y="98" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">welcome desk</text>
+    <text x="95" y="111" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">door person</text>
+    <text x="95" y="124" fill="#bbb" font-size="3.5" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" letter-spacing="0.08em">FIRST STOP</text>
+
+    <!-- GOLDEN THRONE -->
+    <rect x="68" y="150" width="124" height="80" rx="4" fill="#fff" stroke="#999" stroke-width="1"/>
+    <text x="130" y="175" fill="#000" font-size="12" text-anchor="middle">&#x1F451;</text>
+    <text x="130" y="195" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GOLDEN THRONE</text>
+    <text x="130" y="207" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">photo op &middot; ring light</text>
+    <text x="130" y="218" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">branded backdrop</text>
+    <text x="130" y="228" fill="#bbb" font-size="3.2" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" letter-spacing="0.08em">LAST STOP</text>
+
+    <!-- BIDET DEMOS -->
+    <rect x="68" y="240" width="124" height="42" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
+    <text x="130" y="258" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">BIDET DEMOS</text>
+    <text x="130" y="270" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">all models &middot; try before buy</text>
+
+    <!-- RETAIL + MERCH -->
+    <rect x="68" y="292" width="124" height="40" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
+    <text x="130" y="310" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">RETAIL + MERCH</text>
+    <text x="130" y="322" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">full product lineup</text>
+
+    <!-- SCENT BAR -->
+    <rect x="68" y="342" width="124" height="40" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
+    <text x="130" y="360" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">SCENT BAR</text>
+    <text x="130" y="372" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">candles &middot; sprays &middot; sampling</text>
+
+    <!-- ACCESSORIES -->
+    <rect x="68" y="392" width="124" height="45" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
+    <text x="130" y="411" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">ACCESSORIES</text>
+    <text x="130" y="423" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">TP &middot; towels &middot; brushes</text>
+    <text x="130" y="433" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">ottomans &middot; stands</text>
+
+    <!-- BA flow arrow -->
+    <line x1="185" y1="435" x2="185" y2="155" stroke="#999" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
+    <text x="196" y="295" fill="#bbb" font-size="3.8" font-family="Inter, sans-serif" transform="rotate(-90,196,295)">VISITOR FLOW &uarr;</text>
+
+    <!-- Label -->
+    <text x="130" y="462" fill="#000" font-size="5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" letter-spacing="0.06em">BRAND ACTIVATION</text>
+    <text x="130" y="474" fill="#999" font-size="4" text-anchor="middle" font-family="Inter, sans-serif">enter from Stn &#9321; &middot; exit top</text>
+  </g>
+
+  <!-- Guest flow annotation -->
+  <text x="130" y="540" fill="#bbb" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="0.05em">IN &rarr; GREETER &rarr; MACHINE &rarr; BA &rarr; OUT</text>
+
+  <!-- ========== TOP WALL STATIONS ========== -->
+
+  <!-- STATION 1: GREAT CASCADE -->
+  <g class="station" data-station="1" data-name="&#9312; The Great Cascade" data-desc="A TUSHY Classic 3.0 mounted on a real toilet fires a jet of water that launches the &#x1F4A9; jumbo ball down the first ramp. Water feeds into the recirculating channel. AUTO-RESET: Pneumatic tube returns the jumbo ball from the Finale.">
+    <rect x="225" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
+    <!-- Bidet/water icon -->
+    <circle cx="290" cy="85" r="16" fill="none" stroke="#555" stroke-width="1.2"/>
+    <path d="M284,79 L290,92 L296,79" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="290" cy="100" r="1.5" fill="#999"/>
+    <circle cx="286" cy="104" r="1" fill="#bbb"/>
+    <circle cx="294" cy="103" r="1" fill="#bbb"/>
+    <text x="290" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">THE GREAT CASCADE</text>
+    <text x="290" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9312; START</text>
+  </g>
+
+  <!-- STATION 2: BAMBOO GROVE -->
+  <g class="station" data-station="2" data-name="&#9313; The Bamboo Grove" data-desc="A dense grove of real green bamboo poles with TUSHY Bamboo TP rolls, Tissue Squares, and fabric (cut to look like giant TP rolls) mounted on them. Jumbo ball weaves through, triggering TP to unroll like scrolls. Bum Towels drape between poles. AUTO-RESET: Motorized rewind spools.">
+    <rect x="375" y="55" width="150" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
+    <!-- Bamboo poles (black vertical lines) -->
+    <line x1="400" y1="62" x2="400" y2="128" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+    <line x1="418" y1="62" x2="418" y2="128" stroke="#444" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+    <line x1="436" y1="62" x2="436" y2="128" stroke="#666" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+    <line x1="454" y1="62" x2="454" y2="128" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+    <line x1="472" y1="62" x2="472" y2="128" stroke="#444" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
+    <line x1="490" y1="62" x2="490" y2="128" stroke="#666" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
+    <line x1="505" y1="62" x2="505" y2="128" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+    <!-- TP rolls on poles -->
+    <circle cx="418" cy="82" r="6" fill="none" stroke="#999" stroke-width="1.2"/>
+    <circle cx="454" cy="90" r="5" fill="none" stroke="#999" stroke-width="1"/>
+    <circle cx="490" cy="78" r="6" fill="none" stroke="#999" stroke-width="1.2"/>
+    <text x="450" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">THE BAMBOO GROVE</text>
+    <text x="450" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9313;</text>
+  </g>
+
+  <!-- STATION 3: SPRAY GATE -->
+  <g class="station interactive" data-station="3" data-name="&#9314; The Spray Gate &#x270B;" data-desc="INTERACTIVE: Jumbo ball jams behind a translucent gate. Visitors smash a lit arcade button that triggers real wall-mounted bidets to spray the gate clean. Counterweighted gate swings open. AUTO-RESET: Gate springs back.">
+    <rect x="545" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
+    <circle class="interactive-pulse" cx="610" cy="85" r="6" fill="rgba(0,0,0,0.1)"/>
+    <circle cx="610" cy="85" r="14" fill="none" stroke="#444" stroke-width="1.2"/>
+    <circle cx="610" cy="85" r="7" fill="none" stroke="#333" stroke-width="1"/>
+    <text x="610" y="89" fill="#111" font-size="7" text-anchor="middle" font-weight="700">&#x23FA;</text>
+    <line x1="595" y1="104" x2="590" y2="114" stroke="#999" stroke-width="0.8" opacity="0.4"/>
+    <line x1="610" y1="106" x2="610" y2="116" stroke="#999" stroke-width="0.8" opacity="0.4"/>
+    <line x1="625" y1="104" x2="630" y2="114" stroke="#999" stroke-width="0.8" opacity="0.4"/>
+    <text x="610" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">SPRAY GATE</text>
+    <text x="610" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9314; &#x270B; INTERACTIVE</text>
+  </g>
+
+  <!-- STATION 4: OTTOMAN STAIRCASE -->
+  <g class="station" data-station="4" data-name="&#9315; The Ottoman Staircase" data-desc="Descending staircase of TUSHY Ottoman Original (9&quot;) stools. Jumbo ball bounces down each padded step. Final Ottoman triggers a seesaw lever. AUTO-RESET: Spring-loaded surfaces pop back.">
+    <rect x="695" y="55" width="140" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
+    <rect x="715" y="75" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
+    <rect x="745" y="82" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
+    <rect x="775" y="89" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
+    <rect x="805" y="96" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
+    <path d="M727,73 Q736,63 746,80" fill="none" stroke="#999" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <path d="M757,80 Q766,70 776,87" fill="none" stroke="#999" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <path d="M787,87 Q796,77 806,94" fill="none" stroke="#999" stroke-width="0.7" stroke-dasharray="2,2"/>
+    <text x="765" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">OTTOMAN STAIRCASE</text>
+    <text x="765" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9315;</text>
+  </g>
+
+  <!-- STATION 5: CANDLE LANE -->
+  <g class="station" data-station="5" data-name="&#9316; Candle Lane" data-desc="A corridor of TUSHY candles. LED bulbs simulate warm flickering flame (no real fire). Jumbo ball rolls over pressure plates triggering LEDs in sequence. Room Spray misters release scent zones. AUTO-RESET: LEDs fade on 30s timer.">
+    <rect x="855" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
+    <!-- Candle shapes (monochrome) -->
+    <rect x="878" y="72" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
+    <text x="882" y="69" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
+    <rect x="898" y="78" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
+    <text x="902" y="75" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
+    <rect x="918" y="70" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
+    <text x="922" y="67" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
+    <rect x="938" y="76" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
+    <text x="942" y="73" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
+    <text x="920" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">CANDLE LANE</text>
+    <text x="920" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9316;</text>
+  </g>
+
+  <!-- ========== RIGHT WALL STATIONS ========== -->
+
+  <!-- STATION 6: GREAT UNROLL -->
+  <g class="station interactive" data-station="6" data-name="&#9317; The Great Unroll &#x270B;" data-desc="INTERACTIVE: Giant spool of fabric (cut to look like a giant TP roll) mounted on the wall. Visitors physically pull it — acts as a pulley rope lifting a gate and releasing the jumbo ball. AUTO-RESET: Motorized spool rewinds (~90s).">
+    <rect x="920" y="155" width="65" height="120" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
+    <circle class="interactive-pulse" cx="952" cy="205" r="6" fill="rgba(0,0,0,0.08)"/>
+    <circle cx="952" cy="205" r="20" fill="none" stroke="#555" stroke-width="1"/>
+    <circle cx="952" cy="205" r="9" fill="none" stroke="#333" stroke-width="0.8"/>
+    <path d="M972,205 Q988,195 992,210" fill="none" stroke="#999" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="952" y="250" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GREAT</text>
+    <text x="952" y="260" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">UNROLL</text>
+    <text x="952" y="150" fill="#999" font-size="5" text-anchor="middle" font-family="Inter, sans-serif">&#9317; &#x270B;</text>
+  </g>
+
+  <!-- STATION 7: SCRUB ZONE -->
+  <g class="station" data-station="7" data-name="&#9318; The Scrub Zone" data-desc="TUSHY Toilet Brushes with coconut husk scrubbing pads as spinning paddle wheels. Jumbo ball enters a cleaning gauntlet. Brushes run continuously. AUTO-RESET: Always running.">
+    <rect x="920" y="295" width="65" height="120" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
+    <g transform="translate(948,330)">
+      <circle r="12" fill="none" stroke="#555" stroke-width="1"/>
+      <line x1="-8" y1="0" x2="8" y2="0" stroke="#555" stroke-width="1.2"/>
+      <line x1="0" y1="-8" x2="0" y2="8" stroke="#555" stroke-width="1.2"/>
+      <line x1="-6" y1="-6" x2="6" y2="6" stroke="#777" stroke-width="0.8"/>
+      <line x1="6" y1="-6" x2="-6" y2="6" stroke="#777" stroke-width="0.8"/>
+    </g>
+    <g transform="translate(958,365)">
+      <circle r="9" fill="none" stroke="#555" stroke-width="0.8"/>
+      <line x1="-6" y1="0" x2="6" y2="0" stroke="#555" stroke-width="1"/>
+      <line x1="0" y1="-6" x2="0" y2="6" stroke="#555" stroke-width="1"/>
+    </g>
+    <text x="952" y="395" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">SCRUB</text>
+    <text x="952" y="405" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">ZONE</text>
+    <text x="952" y="290" fill="#999" font-size="5" text-anchor="middle" font-family="Inter, sans-serif">&#9318;</text>
+  </g>
+
+  <!-- ========== BOTTOM WALL STATIONS ========== -->
+
+  <!-- STATION 8: THRONE STOMP -->
+  <g class="station interactive" data-station="8" data-name="&#9319; The Throne Stomp &#x270B;" data-desc="INTERACTIVE: TUSHY Ottoman with pressure plate. Visitor steps on it to release the jumbo ball. TUSHY Ace / Aura displayed as the Royal Throne. AUTO-RESET: Pressure plate springs back.">
+    <rect x="765" y="460" width="140" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
+    <circle class="interactive-pulse" cx="835" cy="490" r="6" fill="rgba(0,0,0,0.08)"/>
+    <rect x="812" y="480" width="46" height="20" rx="7" fill="none" stroke="#555" stroke-width="1.2"/>
+    <text x="835" y="495" fill="#333" font-size="10" text-anchor="middle">&#x1F463;</text>
+    <text x="835" y="527" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">THRONE STOMP</text>
+    <text x="835" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9319; &#x270B;</text>
+  </g>
+
+  <!-- STATION 9: BIDET SYMPHONY -->
+  <g class="station" data-station="9" data-name="&#9320; The Bidet Symphony &#x1F3B5;" data-desc="10 real bidets with Arduino-controlled solenoids play water choreography to classical music. Jumbo ball triggers each bidet in sequence. Visitors freestyle with arcade buttons between runs. Screen plays original TUSHY commercial. AUTO-RESET: Solenoids auto-off.">
+    <rect x="530" y="460" width="215" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
+    <!-- Music notes (monochrome) -->
+    <text x="565" y="487" fill="#555" font-size="9" text-anchor="middle">&#9833;</text>
+    <text x="585" y="482" fill="#777" font-size="7" text-anchor="middle">&#9834;</text>
+    <text x="605" y="490" fill="#444" font-size="10" text-anchor="middle">&#9835;</text>
+    <text x="625" y="484" fill="#777" font-size="7" text-anchor="middle">&#9833;</text>
+    <text x="645" y="488" fill="#555" font-size="9" text-anchor="middle">&#9834;</text>
+    <text x="665" y="482" fill="#666" font-size="8" text-anchor="middle">&#9835;</text>
+    <text x="685" y="487" fill="#555" font-size="9" text-anchor="middle">&#9833;</text>
+    <text x="705" y="484" fill="#777" font-size="7" text-anchor="middle">&#9834;</text>
+    <text x="725" y="490" fill="#666" font-size="8" text-anchor="middle">&#9835;</text>
+    <!-- Bidet row -->
+    <g opacity="0.5">
+      <rect x="555" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="570" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="585" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="600" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="615" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="630" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="645" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="660" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="675" y="496" width="7" height="4" rx="1" fill="#555"/>
+      <rect x="690" y="496" width="7" height="4" rx="1" fill="#555"/>
+    </g>
+    <!-- Arcade console -->
+    <rect x="700" y="506" width="35" height="14" rx="3" fill="none" stroke="#555" stroke-width="0.8" stroke-dasharray="2,2"/>
+    <circle cx="710" cy="513" r="2.5" fill="none" stroke="#555" stroke-width="0.6"/>
+    <circle cx="720" cy="513" r="2.5" fill="none" stroke="#555" stroke-width="0.6"/>
+    <circle cx="730" cy="513" r="2.5" fill="none" stroke="#555" stroke-width="0.6"/>
+    <!-- Video screen -->
+    <rect x="555" y="508" width="30" height="15" rx="2" fill="#f5f5f5" stroke="#bbb" stroke-width="0.6"/>
+    <text x="570" y="517" fill="#999" font-size="3.5" text-anchor="middle" font-family="Inter, sans-serif">VIDEO</text>
+    <text x="637" y="527" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">BIDET SYMPHONY</text>
+    <text x="637" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9320; &#x270B; + MACHINE</text>
+  </g>
+
+  <!-- STATION 10: GRAND FLUSH FINALE -->
+  <g class="station" data-station="10" data-name="&#9321; The Grand Flush Finale" data-desc="Every bidet model fires in choreographed sequence. Bamboo TP unfurls like confetti. Sound system plays flush fanfare. TUSHY logo blazes. AUTO-RESET: Ball caught in net, pneumatic tube returns it to Station 1.">
+    <rect x="225" y="460" width="285" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="2" filter="url(#ss)"/>
+    <circle cx="368" cy="492" r="20" fill="none" stroke="#ccc" stroke-width="0.8"/>
+    <circle cx="368" cy="492" r="12" fill="none" stroke="#555" stroke-width="1"/>
+    <!-- Burst lines -->
+    <line x1="368" y1="470" x2="368" y2="463" stroke="#555" stroke-width="1"/>
+    <line x1="386" y1="476" x2="393" y2="470" stroke="#555" stroke-width="1"/>
+    <line x1="390" y1="492" x2="398" y2="492" stroke="#555" stroke-width="1"/>
+    <line x1="350" y1="476" x2="343" y2="470" stroke="#555" stroke-width="1"/>
+    <line x1="346" y1="492" x2="338" y2="492" stroke="#555" stroke-width="1"/>
+    <line x1="386" y1="508" x2="393" y2="514" stroke="#777" stroke-width="1"/>
+    <line x1="350" y1="508" x2="343" y2="514" stroke="#777" stroke-width="1"/>
+    <text x="368" y="496" fill="#000" font-size="8" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="800" letter-spacing="0.04em">TUSHY</text>
+    <text x="368" y="527" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GRAND FLUSH FINALE</text>
+    <text x="368" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9321; FINALE</text>
+  </g>
+
+  <!-- GUEST WALKPATH — U-shape: Greeter → right along top → down right wall → left along bottom → into BA zone -->
+  <!-- Clear of all stations: top at y=195, right at x=880, bottom at y=420 -->
+  <path d="
+    M 130,140
+    L 130,165
+    C 130,190 150,195 270,195
+    L 860,195
+    C 878,195 885,210 885,225
+    L 885,395
+    C 885,415 872,420 855,420
+    L 270,420
+    C 240,420 220,425 220,445
+    L 220,460
+  " fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
+  <!-- U-shape labels -->
+  <text x="530" y="188" fill="#bbb" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="0.08em">GUEST WALKPATH &rarr;</text>
+  <text x="896" y="310" fill="#bbb" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" transform="rotate(90,896,310)" letter-spacing="0.08em">WALKPATH &darr;</text>
+  <text x="560" y="432" fill="#bbb" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="0.08em">&larr; WALKPATH TO BA</text>
+  <!-- Direction arrows along path -->
+  <path d="M380,195 L395,195" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
+  <path d="M720,195 L735,195" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
+  <path d="M885,275 L885,290" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
+  <path d="M700,420 L685,420" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
+  <path d="M400,420 L385,420" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
+  <!-- Arrow into BA zone -->
+  <path d="M220,445 L220,455" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
+
+  <!-- PNEUMATIC RETURN -->
+  <line x1="230" y1="460" x2="230" y2="140" stroke="#999" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.3"/>
+  <text x="222" y="300" fill="#bbb" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" transform="rotate(-90,222,300)">PNEUMATIC RETURN &uarr;</text>
+
+  <!-- WATER CHANNEL — full perimeter (THE ONE COLOR ELEMENT) -->
+  <!-- Channel background (subtle fill tracing the perimeter) -->
+  <path d="
+    M 225,142
+    L 985,142
+    C 998,142 1000,155 1000,160
+    L 1000,448
+    C 1000,458 992,460 985,460
+    L 225,460
+  " fill="none" stroke="rgba(79,195,247,0.25)" stroke-width="5" stroke-linecap="round"/>
+  <!-- Animated water flow line -->
+  <path d="
+    M 225,142
+    L 985,142
+    C 998,142 1000,155 1000,160
+    L 1000,448
+    C 1000,458 992,460 985,460
+    L 225,460
+  " fill="none" class="water-flow" stroke="#0288D1" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
+  <!-- Labels -->
+  <text x="610" y="155" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.6">WATER CHANNEL &rarr;</text>
+  <text x="1007" y="300" fill="#0277BD" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5" transform="rotate(90,1007,300)">&darr; WATER</text>
+  <text x="610" y="472" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5">&larr; WATER RETURN</text>
+
+</svg>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><span class="legend-sym">&#x25A1;</span> Machine station</div>
+  <div class="legend-item"><span class="legend-sym">&#x25A2;</span> Interactive (dashed)</div>
+  <div class="legend-item"><span class="legend-sym">&#x2727;</span> LED candle / scent</div>
+  <div class="legend-item"><span class="legend-sym">&#x266B;</span> Bidet Symphony</div>
+  <div class="legend-item"><span class="legend-sym" style="color:#0277BD">&#x2248;</span> Water channel</div>
+  <div class="legend-item"><span class="legend-sym">&#x25CB;</span> Scrubber wheel</div>
+  <div class="legend-item"><span class="legend-sym">&#x25AD;</span> Ottoman</div>
+  <div class="legend-item"><span class="legend-sym">&#x23FA;</span> Arcade button</div>
+</div>
+
+<!-- Callouts -->
+<div class="callout">
+  <div class="callout-inner">
+    <div class="icon">&#x1F6B6;</div>
+    <p><strong>Guest Flow:</strong> Entrance (top-left) &rarr; Greeter &rarr; Installation (perimeter, Stations 1&ndash;10 clockwise) &rarr; Brand Activation zone (browse upward: accessories, scent bar, retail, demos, Golden Throne photo op) &rarr; Exit (top-left). Full loop.</p>
+  </div>
+</div>
+<div class="callout">
+  <div class="callout-inner">
+    <div class="icon">&#x1F504;</div>
+    <p><strong>Auto-Reset (~3 min):</strong> Jumbo ball caught at Finale, returned to Station 1 via pneumatic tube (left wall). TP spools rewind on motors. Gates spring-return via counterweights. LED candles fade on timers. Scrub brushes never stop.</p>
+  </div>
+</div>
+<div class="callout water">
+  <div class="callout-inner">
+    <div class="icon">&#x1F4A7;</div>
+    <p><strong>Water Channel:</strong> 6"-wide acrylic channel, LED-lit in TUSHY blue, runs along the top wall. Fed by the Great Cascade. Supplies the Spray Gate and Grand Flush Finale. ~200 gallons recirculated continuously via concealed pump.</p>
+  </div>
+</div>
+
+<!-- Station Cards -->
+<div class="section-label">MACHINE STATIONS &mdash; 10 FEATURES</div>
+<div class="features" id="station-cards">
+
+  <div class="feature-card" data-sid="1">
+    <div class="station-num">&#9312; Start &middot; Top Wall</div>
+    <h3>The Great Cascade</h3>
+    <p>A TUSHY Classic 3.0 mounted on a real toilet fires a jet of water that launches the &#x1F4A9; jumbo ball down the first ramp. Water feeds into the recirculating acrylic channel along the top wall.</p>
+    <div class="products-used">
+      <span class="product-tag">Classic 3.0</span>
+      <span class="product-tag">Spa 3.0</span>
+      <span class="product-tag">Fresh</span>
+      <span class="product-tag mechanic">pneumatic return</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="2">
+    <div class="station-num">&#9313; Top Wall</div>
+    <h3>The Bamboo Grove</h3>
+    <p>Dense grove of real green bamboo poles with TUSHY Bamboo TP rolls and fabric (cut to look like giant TP rolls). Jumbo ball weaves through, triggering TP to unroll from poles like scrolls &mdash; counterweights that lower bridges and release gates. Bum Towels drape between poles.</p>
+    <div class="products-used">
+      <span class="product-tag">Bamboo TP</span>
+      <span class="product-tag">TUSHY Stand</span>
+      <span class="product-tag">Tissues / Squares</span>
+      <span class="product-tag">Bum Towels</span>
+      <span class="product-tag mechanic">motorized rewind</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="3">
+    <div class="station-num">&#9314; &#x270B; Interactive &middot; Top Wall</div>
+    <h3>The Spray Gate</h3>
+    <p>Jumbo ball jams behind a translucent gate. Visitors smash a lit arcade button that triggers real wall-mounted bidets (Classic 3.0 + Spa 3.0) to spray the gate clean. Counterweighted gate swings open.</p>
+    <div class="products-used">
+      <span class="product-tag interactive">Arcade Button &rarr; Bidet</span>
+      <span class="product-tag">Classic 3.0</span>
+      <span class="product-tag">Spa 3.0</span>
+      <span class="product-tag mechanic">counterweight return</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="4">
+    <div class="station-num">&#9315; Top Wall</div>
+    <h3>The Ottoman Staircase</h3>
+    <p>Descending staircase of TUSHY Ottoman Original (9") stools. Jumbo ball bounces down each padded step, compressing the padding and springing forward. Final Ottoman triggers a seesaw lever.</p>
+    <div class="products-used">
+      <span class="product-tag">Ottoman Original (9")</span>
+      <span class="product-tag mechanic">spring-loaded surfaces</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="5">
+    <div class="station-num">&#9316; Corner</div>
+    <h3>Candle Lane</h3>
+    <p>A corridor of TUSHY candles &mdash; Morning Zest, Late Bloomer, Evening Wood, Midnight Ash. LED bulbs simulate warm flickering flame. Jumbo ball rolls over pressure plates, triggering LEDs in sequence. Room Spray misters release scent zones.</p>
+    <div class="products-used">
+      <span class="product-tag">Candles (all 4)</span>
+      <span class="product-tag">Room Spray</span>
+      <span class="product-tag">Toilet Spray</span>
+      <span class="product-tag mechanic">LED + pressure plates</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="6">
+    <div class="station-num">&#9317; &#x270B; Interactive &middot; Right Wall</div>
+    <h3>The Great Unroll</h3>
+    <p>Giant spool of fabric (cut to look like a giant TP roll) mounted on the wall. Visitors physically pull it &mdash; acts as a pulley rope lifting a gate and releasing the jumbo ball. Fabric streams across the room.</p>
+    <div class="products-used">
+      <span class="product-tag interactive">Fabric TP spool (pull)</span>
+      <span class="product-tag">TUSHY Stand</span>
+      <span class="product-tag mechanic">motorized rewind (~90s)</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="7">
+    <div class="station-num">&#9318; Right Wall</div>
+    <h3>The Scrub Zone</h3>
+    <p>TUSHY Toilet Brushes with coconut husk scrubbing pads become spinning paddle wheels and conveyors. Jumbo ball enters a cleaning gauntlet. Lemon + tea tree scent. Runs continuously.</p>
+    <div class="products-used">
+      <span class="product-tag">Toilet Brush</span>
+      <span class="product-tag">Scrubbing Pads</span>
+      <span class="product-tag mechanic">always running</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="8">
+    <div class="station-num">&#9319; &#x270B; Interactive &middot; Bottom Wall</div>
+    <h3>The Throne Stomp</h3>
+    <p>TUSHY Ottoman with a pressure plate. Visitor steps on it to release the jumbo ball into the final stretch. Display TUSHY Ace / Aura as the "Royal Throne."</p>
+    <div class="products-used">
+      <span class="product-tag interactive">Ottoman (pressure plate)</span>
+      <span class="product-tag">Ace 2.0</span>
+      <span class="product-tag">Aura</span>
+      <span class="product-tag mechanic">spring plate return</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="9">
+    <div class="station-num">&#9320; &#x270B; + Machine &middot; Bottom Wall</div>
+    <h3>The Bidet Symphony</h3>
+    <p>10 real bidets with Arduino-controlled solenoids play water choreography to classical music. Jumbo ball triggers each bidet in sequence &mdash; like a music box made of water. Between runs, visitors freestyle with an arcade button console. Screen loops the original TUSHY commercial.</p>
+    <div class="products-used">
+      <span class="product-tag interactive">10 Arcade Buttons</span>
+      <span class="product-tag">10&times; Bidet Units</span>
+      <span class="product-tag">Arduino + Solenoids</span>
+      <span class="product-tag mechanic">solenoid auto-reset</span>
+    </div>
+  </div>
+
+  <div class="feature-card" data-sid="10">
+    <div class="station-num">&#9321; Finale &middot; Bottom Left</div>
+    <h3>The Grand Flush Finale</h3>
+    <p>Every bidet model (Classic, Spa, Wave, Oasis, Cloud, Cloud+, Aura) fires in choreographed sequence. Bamboo TP unfurls like confetti. Flush fanfare. TUSHY logo blazes.</p>
+    <div class="products-used">
+      <span class="product-tag">All bidet models</span>
+      <span class="product-tag">Oasis</span>
+      <span class="product-tag">Cloud / Cloud+</span>
+      <span class="product-tag">Bamboo TP confetti</span>
+      <span class="product-tag mechanic">pneumatic &rarr; Station 1</span>
+    </div>
+  </div>
+
+</div>
+
+<div class="section-label">BRAND ACTIVATION &mdash; EXIT EXPERIENCE</div>
+<div class="features">
+  <div class="feature-card">
+    <div class="station-num">Welcome</div>
+    <h3>Entrance + Greeter</h3>
+    <p>Visitors enter through an archway at the top of the left wall. A door person / brand ambassador welcomes guests and gives a brief overview before directing them into the installation.</p>
+  </div>
+  <div class="feature-card">
+    <div class="station-num">Exit Flow</div>
+    <h3>Brand Activation Walkthrough</h3>
+    <p>After Station 10, visitors enter the BA zone. Browsing upward: Accessories Wall, Scent Bar, Retail + Merch, Bidet Demo stations (try every model), and the Golden Throne photo op as the final moment before exit.</p>
+  </div>
+  <div class="feature-card">
+    <div class="station-num">Photo Op &middot; Last Stop</div>
+    <h3>The Golden Throne</h3>
+    <p>Gold-leafed display toilet with a TUSHY Aura installed. Branded backdrop, ring light, hashtag signage. Last stop before exit &mdash; every visitor leaves with a shareable photo.</p>
+  </div>
+</div>
+
+<!-- IDEA CATALOG -->
+<div class="section-label">IDEA CATALOG &mdash; SWAP INTO ANY STATION</div>
+<div style="max-width:1100px;margin:0 auto;padding:0 40px 10px;">
+  <p style="font-size:0.82rem;color:#999;line-height:1.5;margin-bottom:16px;">Click any idea to assign it to a station slot. The station card above will update with the new idea.</p>
+</div>
+<div class="features" id="idea-cards">
+
+  <div class="feature-card idea-card">
+    <div class="station-num">Finale Option</div>
+    <h3>The Water Curtain</h3>
+    <p>Thin sheet of water falls from a ceiling-mounted bar. Ball breaks through it like a finish line. TUSHY logo projects onto the water curtain from behind. Visitors see the logo materialize in water, then it collapses into the drain. Pure spectacle, zero bidet overlap with the Symphony.</p>
+    <div class="products-used"><span class="product-tag mechanic">water pump + bar</span><span class="product-tag mechanic">projector</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Finale Option</div>
+    <h3>The TP Avalanche</h3>
+    <p>Ball triggers a release mechanism holding hundreds of TP rolls stacked floor-to-ceiling behind a gate. Gate drops, rolls cascade down a ramp in a satisfying avalanche. Sound system plays a thunderous flush. Fabric TP streamers unfurl from the ceiling. Purely mechanical &mdash; no water.</p>
+    <div class="products-used"><span class="product-tag">Bamboo TP (bulk)</span><span class="product-tag">Fabric TP streamers</span><span class="product-tag mechanic">gravity release gate</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Finale Option</div>
+    <h3>The Giant Flush Handle</h3>
+    <p>Oversized toilet flush lever (6 ft tall). Ball lands on the lever arm, its weight pushes it down. This triggers: lights sweep, sound system plays a cinematic flush, and a single dramatic water cannon fires a geyser straight up. One big moment, not a sequence.</p>
+    <div class="products-used"><span class="product-tag mechanic">custom lever</span><span class="product-tag mechanic">single water cannon</span><span class="product-tag mechanic">lighting rig</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Finale Option</div>
+    <h3>The Domino Wall</h3>
+    <p>200+ TP rolls standing upright on a tilted shelf. Ball knocks the first one and they domino across the entire back wall in a wave. Each roll is color-banded (white + TUSHY blue tape) creating a visual pattern as they fall. Auto-reset via motorized tilt shelf that stands them all back up.</p>
+    <div class="products-used"><span class="product-tag">Bamboo TP &times;200+</span><span class="product-tag mechanic">motorized tilt shelf</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Finale Option</div>
+    <h3>The Fog Reveal</h3>
+    <p>Ball enters a dark chamber. Fog fills the space. Then LEDs punch through the fog tracing the TUSHY logo in light. Scent misters (Room Spray) activate so the finale smells incredible. Ball rolls out the other side into a catch net. Atmospheric, sensory, memorable.</p>
+    <div class="products-used"><span class="product-tag">Room Spray</span><span class="product-tag">Toilet Spray</span><span class="product-tag mechanic">fog machine + LEDs</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Finale Option</div>
+    <h3>The Ramp Drop</h3>
+    <p>Ball rolls off a high ramp and drops 8+ feet into a bullseye splash pool below. Impact triggers a gong/bell and a ring of LED lights. Simple, visceral, crowd-pleaser. The drop IS the finale &mdash; everyone watches the ball fall.</p>
+    <div class="products-used"><span class="product-tag mechanic">elevated ramp</span><span class="product-tag mechanic">splash pool + drain</span><span class="product-tag mechanic">gong / bell</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Station Swap</div>
+    <h3>The Brush Xylophone</h3>
+    <p>Row of TUSHY Toilet Brushes mounted at different heights. Ball rolls across the handles, each one makes a different pitched sound (tuned with weights). Creates a melody as the ball passes. Could replace or combine with the Scrub Zone.</p>
+    <div class="products-used"><span class="product-tag">Toilet Brush &times;8+</span><span class="product-tag mechanic">tuned weights</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Station Swap</div>
+    <h3>The Candle Snuff</h3>
+    <p>LED candles are all "lit." Ball rolls past each one and knocks a small lever that flips a shade over the candle, snuffing it. The corridor goes dark as the ball passes through. Last candle triggers the next station. Dramatic lighting moment.</p>
+    <div class="products-used"><span class="product-tag">Candles (all 4)</span><span class="product-tag mechanic">lever shades</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Station Swap</div>
+    <h3>The Towel Zip Line</h3>
+    <p>Ball lands on a Bum Towel hammock attached to a zip line wire. Towel slides down the wire carrying the ball across a gap (could span the width of the space). Ball drops off at the other end into the next station. Visual wow moment.</p>
+    <div class="products-used"><span class="product-tag">Bum Towels</span><span class="product-tag mechanic">zip line wire + pulley</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Station Swap</div>
+    <h3>The Spiral Drain</h3>
+    <p>Large funnel/spiral (like a coin donation vortex). Ball enters the rim and spirals inward, picking up speed. Drops through the center hole into the next section. Mesmerizing to watch. Could be built from acrylic with TUSHY branding etched in.</p>
+    <div class="products-used"><span class="product-tag mechanic">acrylic spiral funnel</span><span class="product-tag mechanic">TUSHY etching</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Station Swap</div>
+    <h3>The Pendulum Swing</h3>
+    <p>Ottoman suspended on ropes as a pendulum. Ball rolls onto it, the weight swings the ottoman forward, and the ball is launched off the other side at the apex. Newton's cradle energy. Ottoman swings back to rest position automatically.</p>
+    <div class="products-used"><span class="product-tag">Ottoman Original</span><span class="product-tag mechanic">rope suspension</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Station Swap</div>
+    <h3>The Toilet Seat See-Saw</h3>
+    <p>Real toilet seat mounted as a see-saw/teeter-totter. Ball rolls onto one side, tips it, slides across and launches off the lifted end. Classic Rube Goldberg energy. Multiple seats could chain together.</p>
+    <div class="products-used"><span class="product-tag mechanic">toilet seat pivot</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Interactive Option</div>
+    <h3>The Bidet Dunk Tank</h3>
+    <p>Visitor hits a target (arcade button or thrown ball). Direct hit triggers a bidet mounted above a clear tank, filling it with water. When the tank fills to a line, the weight tips a gate releasing the jumbo ball. Carnival energy.</p>
+    <div class="products-used"><span class="product-tag interactive">Arcade Button / throw</span><span class="product-tag">Classic 3.0</span><span class="product-tag mechanic">weight-triggered gate</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Interactive Option</div>
+    <h3>The Tug of TP</h3>
+    <p>Two visitors each grab an end of a long fabric TP strip and pull in opposite directions (tug of war). The pull raises a platform in the middle via pulley, lifting the ball to the next level. Cooperative moment &mdash; takes two people.</p>
+    <div class="products-used"><span class="product-tag interactive">2-person pull</span><span class="product-tag">Fabric TP</span><span class="product-tag mechanic">dual pulley lift</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Interactive Option</div>
+    <h3>The Spin Cycle</h3>
+    <p>Large wheel (like Wheel of Fortune) with Scrubbing Pads as grip texture. Visitor spins it. The wheel's rotation powers a belt that moves the ball forward along a track. Faster spin = faster ball. Satisfying physical interaction.</p>
+    <div class="products-used"><span class="product-tag interactive">Spin wheel</span><span class="product-tag">Scrubbing Pads</span><span class="product-tag mechanic">belt drive</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Interactive Option</div>
+    <h3>The Stomp Pad Drum Kit</h3>
+    <p>4 Ottomans on the floor, each wired to a different sound + action. Visitor stomps them in the right sequence (shown on a display) to open a gate. Wrong sequence = funny buzzer. Gets the crowd involved, game-show energy.</p>
+    <div class="products-used"><span class="product-tag interactive">4&times; Ottoman (pressure pads)</span><span class="product-tag mechanic">sequence logic + display</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Kinetic / Always-On</div>
+    <h3>The Water Wheel Wall</h3>
+    <p>Vertical wall with 5&ndash;6 water wheels at different sizes, fed by the recirculating channel. Always spinning. Ball rides one wheel up, drops to the next, rides it across. Mesmerizing perpetual motion. Works even between runs.</p>
+    <div class="products-used"><span class="product-tag mechanic">water wheels (acrylic)</span><span class="product-tag mechanic">water channel fed</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Kinetic / Always-On</div>
+    <h3>The TP Roll Conveyor</h3>
+    <p>Dozens of TP rolls mounted side by side as rollers (like a roller conveyor). Ball rolls across them. The rolls spin freely &mdash; satisfying visual of all the rolls turning in unison. Always ready, no reset needed.</p>
+    <div class="products-used"><span class="product-tag">Bamboo TP (mounted)</span><span class="product-tag mechanic">free-spin axles</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Sensory</div>
+    <h3>The Scent Tunnel</h3>
+    <p>Enclosed walkthrough tunnel (fabric walls). Ball triggers misters inside that release the 4 candle scents in zones: Morning Zest &rarr; Late Bloomer &rarr; Evening Wood &rarr; Midnight Ash. Visitors walk through the scent journey while the ball travels overhead on a rail.</p>
+    <div class="products-used"><span class="product-tag">Candles (scent only)</span><span class="product-tag">Room Spray</span><span class="product-tag mechanic">overhead rail</span></div>
+  </div>
+
+  <div class="feature-card">
+    <div class="station-num">Sensory</div>
+    <h3>The Sound Bath</h3>
+    <p>Ball passes through a chamber where it strikes different materials &mdash; metal bowls, wood blocks, water surfaces &mdash; creating ambient tones. Each TUSHY product category has its own sound signature. Meditative contrast to the high-energy stations.</p>
+    <div class="products-used"><span class="product-tag mechanic">tuned surfaces</span><span class="product-tag mechanic">contact mics + speakers</span></div>
+  </div>
+
+</div>
+
+<!-- COST ESTIMATES (hidden for now) -->
+<div style="display:none">
+<div class="section-label">CONCEPTUAL COST ESTIMATE</div>
+<div class="cost-section">
+  <div class="cost-disclaimer">
+    <strong>&#x26A0; Conceptual Estimate Only.</strong> Rough order-of-magnitude based on publicly listed retail prices (early 2026). Actual costs vary with vendor negotiations, bulk discounts, local labor rates, and design refinements. Starting point for budgeting &mdash; not a formal bid.
+  </div>
+
+  <div class="cost-total">
+    <div class="amount">~$32,000</div>
+    <div class="label">Estimated Total (Conceptual)</div>
+  </div>
+
+  <!-- TUSHY Products -->
+  <details class="cost-category">
+    <summary>
+      <span>TUSHY Products (provided by TUSHY)</span>
+      <span class="cost-subtotal">$0</span>
+    </summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name" style="color:#999;font-style:italic">All TUSHY products donated by TUSHY for the installation</span><span class="cost-item-qty">&mdash;</span><span class="cost-item-price" style="color:#999">$0</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://hellotushy.com/products/classic-affordable-bidet" target="_blank">Classic 3.0</a> &times;8, <a href="https://hellotushy.com/products/warm-water-bidet-tushy-spa" target="_blank">Spa 3.0</a> &times;4, <a href="https://hellotushy.com/products/tushy-fresh" target="_blank">Fresh</a> &times;2, <a href="https://hellotushy.com/products/ace-electric-bidet" target="_blank">Ace 2.0</a>, <a href="https://hellotushy.com/products/tushy-aura-luxury-bidet-seat" target="_blank">Aura</a>, <a href="https://hellotushy.com/products/non-electric-bidet" target="_blank">Wave</a></span><span class="cost-item-qty">bidets</span><span class="cost-item-price" style="color:#999">incl.</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://hellotushy.com/products/tushy-ottoman-toilet-stool" target="_blank">Ottoman Original 9"</a> &times;8, <a href="https://hellotushy.com/products/ottoman-go-toilet-stool" target="_blank">Ottoman Go</a> &times;2</span><span class="cost-item-qty">stools</span><span class="cost-item-price" style="color:#999">incl.</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://hellotushy.com/products/premium-bamboo-toilet-paper-36-rolls" target="_blank">Bamboo TP</a> &times;6 packs, <a href="https://hellotushy.com/products/tushy-tissues-24-pack" target="_blank">Tissues</a> &times;3, <a href="https://hellotushy.com/products/bidet-towels" target="_blank">Bum Towels</a> &times;3, <a href="https://hellotushy.com/products/tushy-stand" target="_blank">TUSHY Stand</a> &times;2</span><span class="cost-item-qty">paper &amp; acc.</span><span class="cost-item-price" style="color:#999">incl.</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://hellotushy.com/products/bathroom-candle" target="_blank">Candles</a> &times;12, <a href="https://hellotushy.com/products/tushy-toilet-brush-2-0" target="_blank">Toilet Brush</a> &times;4, <a href="https://hellotushy.com/products/tushy-scrubbing-pads" target="_blank">Scrubbing Pads</a> &times;4, <a href="https://hellotushy.com/products/tushy-travel-bidet" target="_blank">Travel Bidet</a> &times;3</span><span class="cost-item-qty">scent &amp; clean</span><span class="cost-item-price" style="color:#999">incl.</span></div>
+    </div>
+  </details>
+
+  <!-- Plumbing -->
+  <details class="cost-category">
+    <summary><span>Plumbing &amp; Water Systems</span><span class="cost-subtotal">~$2,300</span></summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/s/NDS%20Spee-D%20Channel%20Drain" target="_blank">NDS Spee-D Channel Drain 4ft</a></span><span class="cost-item-qty">&times;15 @ $65</span><span class="cost-item-price">$975</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/s/submersible%20pump%20recirculating" target="_blank">Little Giant Submersible Pump</a></span><span class="cost-item-qty">&times;2 @ $110</span><span class="cost-item-price">$220</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/b/Plumbing-Pipes-Fittings/N-5yc1vZbqp8" target="_blank">PVC Pipe, Fittings &amp; Valves</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$350</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/s/200%20gallon%20water%20tank" target="_blank">200-Gallon Water Storage Tank</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$300</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=12v+solenoid+water+valve" target="_blank">12V Solenoid Water Valves</a></span><span class="cost-item-qty">&times;20 @ $10</span><span class="cost-item-price">$200</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/s/pvc%20tubing%20hose%20clamps" target="_blank">Tubing, Hose Clamps, Misc</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$250</span></div>
+    </div>
+  </details>
+
+  <!-- Electronics -->
+  <details class="cost-category">
+    <summary><span>Electronics &amp; Controls</span><span class="cost-subtotal">~$860</span></summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=arduino+mega+2560" target="_blank">Arduino Mega 2560 R3</a></span><span class="cost-item-qty">&times;3 @ $29</span><span class="cost-item-price">$87</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=30mm+led+arcade+button+illuminated" target="_blank">LED Arcade Buttons 30mm (10-pack)</a></span><span class="cost-item-qty">&times;2 @ $40</span><span class="cost-item-price">$80</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=16+channel+relay+module+12v" target="_blank">16-Channel Relay Module (12V)</a></span><span class="cost-item-qty">&times;2 @ $35</span><span class="cost-item-price">$70</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=12v+500w+switching+power+supply" target="_blank">12V 500W Switching Power Supply</a></span><span class="cost-item-qty">&times;3 @ $40</span><span class="cost-item-price">$120</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=electronics+wiring+kit+breadboard" target="_blank">Wiring, Breadboards &amp; Connectors</a></span><span class="cost-item-qty">&times;3 @ $35</span><span class="cost-item-price">$105</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=led+flame+effect+bulb+e26" target="_blank">LED Flickering Flame Bulbs (4-pack)</a></span><span class="cost-item-qty">&times;3 @ $20</span><span class="cost-item-price">$60</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=force+sensitive+resistor+FSR" target="_blank">Force Sensitive Resistors (FSR)</a></span><span class="cost-item-qty">&times;6 @ $9</span><span class="cost-item-price">$54</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=55+inch+4k+smart+tv" target="_blank">55" Display TV</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$280</span></div>
+    </div>
+  </details>
+
+  <!-- Structural -->
+  <details class="cost-category">
+    <summary><span>Structural &amp; Fabrication</span><span class="cost-subtotal">~$3,600</span></summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=bamboo+poles+8ft+natural" target="_blank">Bamboo Poles 8ft (25-pack)</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$150</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/s/4%20inch%20pvc%20pipe%20schedule%2040" target="_blank">PVC 4" Schedule 40 (pneumatic, ~40ft)</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$180</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=4+inch+inline+duct+fan" target="_blank">4" Inline Duct Fan (pneumatic)</a></span><span class="cost-item-qty">&times;2 @ $35</span><span class="cost-item-price">$70</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=80+20+t-slot+aluminum+extrusion" target="_blank">80/20 T-Slot Aluminum Extrusion</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$1,500</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=clear+acrylic+plexiglass+sheet" target="_blank">Acrylic / Plexiglass Sheets</a></span><span class="cost-item-qty">&times;10 @ $30</span><span class="cost-item-price">$300</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=spring+loaded+hinges+self+closing" target="_blank">Spring Hinges &amp; Return Springs</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$200</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=iron+weight+plate" target="_blank">Counterweight Plates</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$100</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/b/Lumber-Composites/N-5yc1vZbqm7" target="_blank">Lumber, Ramp Materials &amp; Track</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$800</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/b/Hardware/N-5yc1vZc21m" target="_blank">Misc Hardware (bolts, brackets, casters)</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$300</span></div>
+    </div>
+  </details>
+
+  <!-- AV -->
+  <details class="cost-category">
+    <summary><span>AV, Sound &amp; Lighting</span><span class="cost-subtotal">~$600</span></summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=portable+pa+speaker+system+700w" target="_blank">PA Speaker System (powered pair)</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$200</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=18+inch+ring+light+with+stand" target="_blank">18" LED Ring Light w/ Stand</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$80</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=led+strip+lights+rgb+100ft" target="_blank">LED Strip Lights RGB 100ft</a></span><span class="cost-item-qty">&times;2 @ $40</span><span class="cost-item-price">$80</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=track+lighting+kit+6+light+led" target="_blank">6-Head LED Track Lighting Kit</a></span><span class="cost-item-qty">&times;2 @ $90</span><span class="cost-item-price">$180</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=streaming+media+player" target="_blank">Media Player (video loop)</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$50</span></div>
+    </div>
+  </details>
+
+  <!-- Decor -->
+  <details class="cost-category">
+    <summary><span>Decor &amp; Branded Elements</span><span class="cost-subtotal">~$2,750</span></summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name">Giant TP Roll Fabric (custom cut &amp; sewn)</span><span class="cost-item-qty">custom</span><span class="cost-item-price">$500</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=gold+leaf+paint+spray" target="_blank">Gold Paint / Leaf (Golden Throne)</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$150</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=retractable+banner+stand+8ft+backdrop" target="_blank">Branded Backdrop (8ft retractable)</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$300</span></div>
+      <div class="cost-item"><span class="cost-item-name">Signage, Hashtag Displays &amp; Wayfinding</span><span class="cost-item-qty">custom</span><span class="cost-item-price">$400</span></div>
+      <div class="cost-item"><span class="cost-item-name">Custom Bidet Box (arcade console)</span><span class="cost-item-qty">custom fab</span><span class="cost-item-price">$500</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=display+shelving+retail+store" target="_blank">Scent Bar Display Fixtures</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$300</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=retail+display+shelving+unit" target="_blank">Retail Display Shelving (BA zone)</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$600</span></div>
+    </div>
+  </details>
+
+  <!-- Labor -->
+  <details class="cost-category">
+    <summary><span>Labor &amp; Professional Services</span><span class="cost-subtotal">~$16,000</span></summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name">Installation Crew (3 people &times; 5 days)</span><span class="cost-item-qty">$300/day ea</span><span class="cost-item-price">$4,500</span></div>
+      <div class="cost-item"><span class="cost-item-name">Licensed Plumber (2 days)</span><span class="cost-item-qty">$1,000/day</span><span class="cost-item-price">$2,000</span></div>
+      <div class="cost-item"><span class="cost-item-name">Electrician (power + inspection)</span><span class="cost-item-qty">1.5 days</span><span class="cost-item-price">$1,500</span></div>
+      <div class="cost-item"><span class="cost-item-name">Electronics / Arduino Developer (3 days)</span><span class="cost-item-qty">$1,000/day</span><span class="cost-item-price">$3,000</span></div>
+      <div class="cost-item"><span class="cost-item-name">Custom Fabrication Shop</span><span class="cost-item-qty">project</span><span class="cost-item-price">$5,000</span></div>
+    </div>
+  </details>
+
+  <!-- Contingency -->
+  <details class="cost-category">
+    <summary><span>Contingency &amp; Miscellaneous</span><span class="cost-subtotal">~$5,900</span></summary>
+    <div class="cost-items">
+      <div class="cost-item"><span class="cost-item-name">Permits &amp; Event Insurance</span><span class="cost-item-qty">&mdash;</span><span class="cost-item-price">$2,000</span></div>
+      <div class="cost-item"><span class="cost-item-name">Contingency Buffer (15%)</span><span class="cost-item-qty">15%</span><span class="cost-item-price">$3,900</span></div>
+    </div>
+  </details>
+
+</div>
+</div><!-- end hidden cost section -->
+
+<div class="tooltip-overlay" id="tooltip"><div class="tt-title"></div><div class="tt-desc"></div></div>
+
+<!-- Swap popup -->
+<div class="swap-popup" id="swap-popup">
+  <div class="swap-popup-title">Assign to station</div>
+</div>
+
+<script>
+  // Tooltip for SVG stations
+  const t=document.getElementById('tooltip'),s=document.querySelectorAll('.station');
+  s.forEach(el=>{el.style.cursor='pointer';
+    el.addEventListener('mouseenter',e=>{const n=el.dataset.name,d=el.dataset.desc;if(!n)return;t.querySelector('.tt-title').textContent=n;t.querySelector('.tt-desc').textContent=d;t.classList.add('visible')});
+    el.addEventListener('mousemove',e=>{t.style.left=(e.clientX+16)+'px';t.style.top=(e.clientY-10)+'px'});
+    el.addEventListener('mouseleave',()=>t.classList.remove('visible'))});
+
+  // === IDEA SWAP SYSTEM ===
+  const popup = document.getElementById('swap-popup');
+  const stationContainer = document.getElementById('station-cards');
+  const ideaContainer = document.getElementById('idea-cards');
+
+  // Add idea-card class to all cards in the idea catalog
+  ideaContainer.querySelectorAll('.feature-card').forEach(c => c.classList.add('idea-card'));
+
+  // Station position labels
+  const posLabels = {
+    1: '\u2460 Start \u00B7 Top Wall',
+    2: '\u2461 Top Wall',
+    3: '\u2462 \u270B Interactive \u00B7 Top Wall',
+    4: '\u2463 Top Wall',
+    5: '\u2464 Corner',
+    6: '\u2465 \u270B Interactive \u00B7 Right Wall',
+    7: '\u2466 Right Wall',
+    8: '\u2467 \u270B Interactive \u00B7 Bottom Wall',
+    9: '\u2468 \u270B + Machine \u00B7 Bottom Wall',
+    10: '\u2469 Finale \u00B7 Bottom Left'
+  };
+
+  let activeIdea = null;
+
+  // Close popup on outside click
+  document.addEventListener('click', e => {
+    if (!popup.contains(e.target) && !e.target.closest('.idea-card')) {
+      popup.classList.remove('visible');
+      activeIdea = null;
+    }
+  });
+
+  // Idea card click handler
+  ideaContainer.addEventListener('click', e => {
+    const card = e.target.closest('.idea-card');
+    if (!card) return;
+    activeIdea = card;
+
+    // Build popup menu with current station names
+    const items = popup.querySelectorAll('.swap-popup-item');
+    items.forEach(i => i.remove());
+
+    for (let i = 1; i <= 10; i++) {
+      const sCard = stationContainer.querySelector(`[data-sid="${i}"]`);
+      const currentName = sCard ? sCard.querySelector('h3').textContent : '—';
+      const row = document.createElement('div');
+      row.className = 'swap-popup-item';
+      row.dataset.target = i;
+      row.innerHTML = `<span class="stn-num">${i}.</span><span class="stn-name">${currentName}</span><span class="stn-current">${posLabels[i].split(' ')[0]}</span>`;
+      popup.appendChild(row);
+    }
+
+    // Position popup near the click
+    const r = card.getBoundingClientRect();
+    let left = r.right + 8;
+    let top = r.top;
+    // Keep on screen
+    if (left + 280 > window.innerWidth) left = r.left - 280;
+    if (top + 400 > window.innerHeight) top = window.innerHeight - 410;
+    if (top < 10) top = 10;
+    popup.style.left = left + 'px';
+    popup.style.top = top + 'px';
+    popup.classList.add('visible');
+  });
+
+  // Popup item click — perform the swap
+  popup.addEventListener('click', e => {
+    const row = e.target.closest('.swap-popup-item');
+    if (!row || !activeIdea) return;
+
+    const targetId = row.dataset.target;
+    const sCard = stationContainer.querySelector(`[data-sid="${targetId}"]`);
+    if (!sCard) return;
+
+    // Get idea content
+    const ideaTitle = activeIdea.querySelector('h3').textContent;
+    const ideaDesc = activeIdea.querySelector('p').textContent;
+    const ideaTags = activeIdea.querySelector('.products-used');
+    const ideaType = activeIdea.querySelector('.station-num').textContent;
+
+    // Save old station content before overwriting
+    const oldTitle = sCard.querySelector('h3').textContent;
+    const oldDesc = sCard.querySelector('p').textContent;
+    const oldTags = sCard.querySelector('.products-used');
+
+    // Update station card with idea
+    sCard.querySelector('h3').textContent = ideaTitle;
+    sCard.querySelector('p').textContent = ideaDesc;
+    if (ideaTags && oldTags) {
+      oldTags.innerHTML = ideaTags.innerHTML;
+    }
+
+    // Flash the station card
+    sCard.classList.remove('swap-flash');
+    void sCard.offsetWidth;
+    sCard.classList.add('swap-flash');
+
+    // Mark the idea card as assigned
+    activeIdea.classList.add('swapped');
+    activeIdea.dataset.assigned = '\u2192 Station ' + targetId;
+
+    // Close popup
+    popup.classList.remove('visible');
+    activeIdea = null;
+
+    // Scroll station card into view
+    sCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+</script>
+
+</div><!-- .content-wrapper -->
+</div><!-- .main-ui -->
+
+</body>
+</html>

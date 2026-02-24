@@ -1606,17 +1606,17 @@
           <div class="emoji-picker" id="emoji-picker">
             <div class="emoji-selected" id="emoji-selected">💧</div>
             <div class="emoji-grid" id="emoji-grid">
-              <span data-emoji="💧">💧</span><span data-emoji="🚿">🚿</span><span data-emoji="💦">💦</span><span data-emoji="🌊">🌊</span>
-              <span data-emoji="🧻">🧻</span><span data-emoji="🚽">🚽</span><span data-emoji="🪠">🪠</span><span data-emoji="🧼">🧼</span>
-              <span data-emoji="🕯️">🕯️</span><span data-emoji="🔥">🔥</span><span data-emoji="💨">💨</span><span data-emoji="✨">✨</span>
-              <span data-emoji="🎯">🎯</span><span data-emoji="🏁">🏁</span><span data-emoji="🎪">🎪</span><span data-emoji="🎭">🎭</span>
-              <span data-emoji="🔔">🔔</span><span data-emoji="🎵">🎵</span><span data-emoji="🥁">🥁</span><span data-emoji="🎹">🎹</span>
-              <span data-emoji="⚙️">⚙️</span><span data-emoji="🔄">🔄</span><span data-emoji="⚡">⚡</span><span data-emoji="💡">💡</span>
-              <span data-emoji="🌈">🌈</span><span data-emoji="🌀">🌀</span><span data-emoji="⬇️">⬇️</span><span data-emoji="🪂">🪂</span>
-              <span data-emoji="👃">👃</span><span data-emoji="👁️">👁️</span><span data-emoji="✋">✋</span><span data-emoji="🤝">🤝</span>
+              <span data-emoji="☵">☵</span><span data-emoji="☰">☰</span><span data-emoji="≋">≋</span><span data-emoji="∿">∿</span>
+              <span data-emoji="◎">◎</span><span data-emoji="◉">◉</span><span data-emoji="⊙">⊙</span><span data-emoji="⊕">⊕</span>
+              <span data-emoji="♦">♦</span><span data-emoji="♢">♢</span><span data-emoji="◇">◇</span><span data-emoji="☼">☼</span>
+              <span data-emoji="⊡">⊡</span><span data-emoji="⊞">⊞</span><span data-emoji="⬚">⬚</span><span data-emoji="▣">▣</span>
+              <span data-emoji="♪">♪</span><span data-emoji="♫">♫</span><span data-emoji="♬">♬</span><span data-emoji="⏺">⏺</span>
+              <span data-emoji="⚙">⚙</span><span data-emoji="⟳">⟳</span><span data-emoji="⟲">⟲</span><span data-emoji="↻">↻</span>
+              <span data-emoji="⏷">⏷</span><span data-emoji="⤹">⤹</span><span data-emoji="⇿">⇿</span><span data-emoji="⏥">⏥</span>
+              <span data-emoji="●">●</span><span data-emoji="○">○</span><span data-emoji="◯">◯</span><span data-emoji="◆">◆</span>
             </div>
           </div>
-          <input type="hidden" id="idea-emoji" value="💧">
+          <input type="hidden" id="idea-emoji" value="◇">
         </div>
       </div>
       <div class="idea-form-group">
@@ -1774,44 +1774,54 @@
 
   const stationDataContainer = document.getElementById('station-cards');
 
-  // Default emojis for idea categories (user can override)
-  // Unique contextual emoji for each idea (shown on map only)
+  // Simple black line-style icons (Tesla-style)
   const ideaEmojis = {
     // Finale Options
-    'The Water Curtain': '💧',
-    'The TP Avalanche': '🧻',
-    'The Giant Flush Handle': '🚽',
-    'The Domino Wall': '🁣',
-    'The Fog Reveal': '💨',
-    'The Ramp Drop': '⬇️',
-    // Features (alternatives)
-    'The Brush Xylophone': '🎵',
-    'The Candle Snuff': '🕯️',
-    'The Towel Zip Line': '🪂',
-    'The Spiral Drain': '🌀',
-    "The Cat's Cradle": '🪢',
-    'The Toilet Seat See-Saw': '⚖️',
-    // Interactive Options
-    'The Bidet Dunk Tank': '🎯',
-    'The Tug of TP': '🤝',
-    'The Spin Cycle': '🔄',
-    'The Stomp Pad Drum Kit': '🥁',
-    // Water Features
-    'The Water Wheel Wall': '⚙️',
-    'The TP Roll Conveyor': '🛤️',
+    'The Water Curtain': '☵',
+    'The TP Avalanche': '☰',
+    'The Giant Flush Handle': '⎋',
+    'The Domino Wall': '⫶',
+    'The Fog Reveal': '☁',
+    'The Ramp Drop': '⏷',
+    // Features
+    'The Brush Xylophone': '♫',
+    'The Candle Snuff': '♢',
+    'The Towel Zip Line': '⤹',
+    'The Spiral Drain': '⟲',
+    "The Cat's Cradle": '⨳',
+    'The Toilet Seat See-Saw': '⏥',
+    // Interactive
+    'The Bidet Dunk Tank': '⊕',
+    'The Tug of TP': '⇿',
+    'The Spin Cycle': '⟳',
+    'The Stomp Pad Drum Kit': '⏺',
+    // Water
+    'The Water Wheel Wall': '⚙',
+    'The TP Roll Conveyor': '⏤',
     // Sensory
-    'The Scent Tunnel': '👃',
-    'The Sound Bath': '🔔',
-    'The Temperature Wave': '🌡️',
-    'The Tactile Wall': '✋',
-    'The Whisper Chamber': '🤫',
-    'The Light Spectrum': '🌈',
-    // New additions
-    'The Ball Multiplier': '✖️',
-    'The Pinball Pop': '🎰',
-    'The Hindsight Station': '📱',
-    // Default fallback
-    'default': '⭐'
+    'The Scent Tunnel': '∽',
+    'The Sound Bath': '♪',
+    'The Temperature Wave': '∿',
+    'The Tactile Wall': '⊞',
+    'The Whisper Chamber': '◯',
+    'The Light Spectrum': '☼',
+    // Other
+    'The Ball Multiplier': '⊗',
+    'The Pinball Pop': '●',
+    'The Hindsight Station': '⬚',
+    // Default stations (line icons)
+    'The Great Cascade': '⏆',
+    'The Bamboo Grove': '⫴',
+    'The Spray Gate': '⊡',
+    'The Ottoman Staircase': '⋮',
+    'Candle Lane': '♦',
+    'The Great Unroll': '⊙',
+    'The Ball Wash': '☰',
+    'The Throne Stomp': '⏍',
+    'The Bidet Symphony': '♬',
+    'The Grand Flush Finale': '◉',
+    // Default
+    'default': '◇'
   };
 
   function getIdeaEmoji(title) {

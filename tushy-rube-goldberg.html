@@ -109,6 +109,153 @@
   .idea-card:hover::after { color: #111; }
   .idea-card.swapped { border-color: #111; background: #f9f9f9; }
   .idea-card.swapped::after { content: attr(data-assigned); color: #999; }
+  /* Add Idea button */
+  .add-idea-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 160px;
+    background: #fafafa;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    color: #999;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .add-idea-btn:hover { border-color: #111; color: #111; background: #fff; }
+  .add-idea-btn .plus { font-size: 1.4rem; font-weight: 300; }
+
+  /* Idea card actions */
+  .idea-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .feature-card:hover .idea-actions { opacity: 1; }
+  .idea-action-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    color: #999;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .idea-action-btn:hover { border-color: #111; color: #111; }
+  .idea-action-btn.delete:hover { border-color: #e53935; color: #e53935; }
+  .idea-action-btn.core { color: #999; }
+  .idea-action-btn.core.is-core { color: #f59e0b; border-color: #f59e0b; }
+  .feature-card.user-idea { position: relative; }
+
+  /* Add Idea Modal */
+  .idea-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 400;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .idea-modal-overlay.visible { display: flex; }
+  .idea-modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .idea-modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .idea-modal-header h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .idea-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .idea-modal-close:hover { color: #111; }
+  .idea-modal-body { padding: 24px; }
+  .idea-form-group { margin-bottom: 18px; }
+  .idea-form-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .idea-form-group input,
+  .idea-form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .idea-form-group input:focus,
+  .idea-form-group textarea:focus { border-color: #111; }
+  .idea-form-group textarea { min-height: 100px; resize: vertical; }
+  .idea-modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  .idea-modal-btn {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .idea-modal-btn.secondary {
+    background: #fff;
+    border: 1px solid #ddd;
+    color: #555;
+  }
+  .idea-modal-btn.secondary:hover { border-color: #111; color: #111; }
+  .idea-modal-btn.primary {
+    background: #111;
+    border: 1px solid #111;
+    color: #fff;
+  }
+  .idea-modal-btn.primary:hover { background: #333; }
+
   /* Edit mode banner */
   .edit-mode-banner {
     position: fixed;
@@ -860,13 +1007,53 @@
     <div class="products-used"><span class="product-tag">Candles (scent only)</span><span class="product-tag">Room Spray</span><span class="product-tag mechanic">overhead rail</span></div>
   </div>
 
-  <div class="feature-card">
+  <div class="feature-card" data-core="true">
     <div class="station-num">Sensory</div>
     <h3>The Sound Bath</h3>
     <p>Ball passes through a chamber where it strikes different materials &mdash; metal bowls, wood blocks, water surfaces &mdash; creating ambient tones. Each TUSHY product category has its own sound signature. Meditative contrast to the high-energy stations.</p>
     <div class="products-used"><span class="product-tag mechanic">tuned surfaces</span><span class="product-tag mechanic">contact mics + speakers</span></div>
   </div>
 
+  <!-- User ideas will be inserted here -->
+  <div id="user-ideas-container"></div>
+
+  <!-- Add Idea Button -->
+  <div class="add-idea-btn" id="add-idea-btn">
+    <span class="plus">+</span> Add Idea
+  </div>
+
+</div>
+
+<!-- Add Idea Modal -->
+<div class="idea-modal-overlay" id="idea-modal">
+  <div class="idea-modal">
+    <div class="idea-modal-header">
+      <h3>Add New Idea</h3>
+      <button class="idea-modal-close" id="idea-modal-close">&times;</button>
+    </div>
+    <div class="idea-modal-body">
+      <div class="idea-form-group">
+        <label>Category</label>
+        <input type="text" id="idea-category" placeholder="e.g., Finale Option, Station Swap, Interactive">
+      </div>
+      <div class="idea-form-group">
+        <label>Title</label>
+        <input type="text" id="idea-title" placeholder="e.g., The Water Curtain">
+      </div>
+      <div class="idea-form-group">
+        <label>Description</label>
+        <textarea id="idea-desc" placeholder="Describe the idea, how it works, what makes it special..."></textarea>
+      </div>
+      <div class="idea-form-group">
+        <label>Tags (comma separated)</label>
+        <input type="text" id="idea-tags" placeholder="e.g., Classic 3.0, fog machine, LEDs">
+      </div>
+    </div>
+    <div class="idea-modal-footer">
+      <button class="idea-modal-btn secondary" id="idea-cancel">Cancel</button>
+      <button class="idea-modal-btn primary" id="idea-save">Save Idea</button>
+    </div>
+  </div>
 </div>
 
 <!-- COST ESTIMATES (hidden for now) -->
@@ -1093,6 +1280,162 @@
       }, 100);
     });
   });
+
+  // === IDEA MANAGEMENT SYSTEM ===
+  const STORAGE_KEY = 'tushy_rube_ideas';
+  const userIdeasContainer = document.getElementById('user-ideas-container');
+  const addIdeaBtn = document.getElementById('add-idea-btn');
+  const ideaModal = document.getElementById('idea-modal');
+  const ideaModalClose = document.getElementById('idea-modal-close');
+  const ideaCancelBtn = document.getElementById('idea-cancel');
+  const ideaSaveBtn = document.getElementById('idea-save');
+
+  // Mark all existing HTML idea cards as core (non-deletable)
+  ideaContainer.querySelectorAll('.feature-card').forEach(card => {
+    card.dataset.core = 'true';
+  });
+
+  // Load ideas from localStorage
+  function loadIdeas() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch { return []; }
+  }
+
+  // Save ideas to localStorage
+  function saveIdeas(ideas) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+  }
+
+  // Generate unique ID
+  function genId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  }
+
+  // Render a single idea card
+  function renderIdeaCard(idea) {
+    const card = document.createElement('div');
+    card.className = 'feature-card idea-card user-idea';
+    card.dataset.ideaId = idea.id;
+    if (idea.isCore) card.dataset.core = 'true';
+
+    const tags = (idea.tags || []).map(t =>
+      `<span class="product-tag">${t}</span>`
+    ).join('');
+
+    card.innerHTML = `
+      <div class="idea-actions">
+        <button class="idea-action-btn core ${idea.isCore ? 'is-core' : ''}" title="${idea.isCore ? 'Core idea' : 'Make core (non-deletable)'}">★</button>
+        ${!idea.isCore ? '<button class="idea-action-btn delete" title="Delete idea">✕</button>' : ''}
+      </div>
+      <div class="station-num">${idea.category || 'Custom Idea'}</div>
+      <h3>${idea.title}</h3>
+      <p>${idea.description}</p>
+      <div class="products-used">${tags}</div>
+    `;
+
+    // Core button click - promote to core
+    const coreBtn = card.querySelector('.idea-action-btn.core');
+    coreBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (idea.isCore) return; // Already core
+      idea.isCore = true;
+      const ideas = loadIdeas();
+      const idx = ideas.findIndex(i => i.id === idea.id);
+      if (idx !== -1) {
+        ideas[idx].isCore = true;
+        saveIdeas(ideas);
+      }
+      card.dataset.core = 'true';
+      coreBtn.classList.add('is-core');
+      coreBtn.title = 'Core idea';
+      // Remove delete button
+      const delBtn = card.querySelector('.idea-action-btn.delete');
+      if (delBtn) delBtn.remove();
+    });
+
+    // Delete button click
+    const delBtn = card.querySelector('.idea-action-btn.delete');
+    if (delBtn) {
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm('Delete this idea?')) {
+          const ideas = loadIdeas().filter(i => i.id !== idea.id);
+          saveIdeas(ideas);
+          card.remove();
+        }
+      });
+    }
+
+    return card;
+  }
+
+  // Render all user ideas
+  function renderAllUserIdeas() {
+    userIdeasContainer.innerHTML = '';
+    const ideas = loadIdeas();
+    ideas.forEach(idea => {
+      userIdeasContainer.appendChild(renderIdeaCard(idea));
+    });
+  }
+
+  // Open modal
+  function openIdeaModal() {
+    document.getElementById('idea-category').value = '';
+    document.getElementById('idea-title').value = '';
+    document.getElementById('idea-desc').value = '';
+    document.getElementById('idea-tags').value = '';
+    ideaModal.classList.add('visible');
+  }
+
+  // Close modal
+  function closeIdeaModal() {
+    ideaModal.classList.remove('visible');
+  }
+
+  // Save new idea
+  function saveNewIdea() {
+    const category = document.getElementById('idea-category').value.trim();
+    const title = document.getElementById('idea-title').value.trim();
+    const desc = document.getElementById('idea-desc').value.trim();
+    const tagsStr = document.getElementById('idea-tags').value.trim();
+
+    if (!title) {
+      alert('Please enter a title');
+      return;
+    }
+
+    const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
+
+    const idea = {
+      id: genId(),
+      category: category || 'Custom Idea',
+      title,
+      description: desc,
+      tags,
+      isCore: false,
+      createdAt: new Date().toISOString()
+    };
+
+    const ideas = loadIdeas();
+    ideas.push(idea);
+    saveIdeas(ideas);
+
+    userIdeasContainer.appendChild(renderIdeaCard(idea));
+    closeIdeaModal();
+  }
+
+  // Event listeners
+  addIdeaBtn.addEventListener('click', openIdeaModal);
+  ideaModalClose.addEventListener('click', closeIdeaModal);
+  ideaCancelBtn.addEventListener('click', closeIdeaModal);
+  ideaSaveBtn.addEventListener('click', saveNewIdea);
+  ideaModal.addEventListener('click', (e) => {
+    if (e.target === ideaModal) closeIdeaModal();
+  });
+
+  // Initialize
+  renderAllUserIdeas();
 </script>
 
 </div><!-- .content-wrapper -->

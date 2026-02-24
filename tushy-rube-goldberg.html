@@ -1859,9 +1859,15 @@
 </script>
 
 <script>
-  // Hide back link when embedded
+  // Adjust for embed mode
   if (new URLSearchParams(window.location.search).get('embed') === '1') {
     document.querySelector('.top-bar').style.display = 'none';
+    const mv = document.querySelector('.map-viewport');
+    mv.style.padding = '20px';
+    mv.style.position = 'absolute';
+    mv.style.inset = '0';
+    const svg = mv.querySelector('svg');
+    if (svg) svg.style.maxHeight = 'calc(100% - 40px)';
   }
 </script>
 </body>

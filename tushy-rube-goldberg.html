@@ -1982,17 +1982,29 @@
     const popupCat = document.getElementById('popupCategory');
     popupCat.textContent = stationData.dataset.cat || '';
 
-    // Position popup near click
-    const rect = stationPopup.getBoundingClientRect();
+    // Position popup near click - ensure it stays in viewport
+    stationPopup.classList.add('visible');
+    const popupRect = stationPopup.getBoundingClientRect();
+    const popupHeight = popupRect.height || 220;
+    const popupWidth = popupRect.width || 320;
+
     let left = x + 20;
     let top = y - 50;
-    if (left + 320 > window.innerWidth) left = x - 340;
-    if (top < 70) top = 70;
-    if (top + 200 > window.innerHeight) top = window.innerHeight - 220;
+
+    // Keep within horizontal bounds
+    if (left + popupWidth > window.innerWidth - 10) {
+      left = window.innerWidth - popupWidth - 10;
+    }
+    if (left < 10) left = 10;
+
+    // Keep within vertical bounds
+    if (top + popupHeight > window.innerHeight - 10) {
+      top = window.innerHeight - popupHeight - 10;
+    }
+    if (top < 10) top = 10;
 
     stationPopup.style.left = left + 'px';
     stationPopup.style.top = top + 'px';
-    stationPopup.classList.add('visible');
   }
 
   function hideStationPopup() {

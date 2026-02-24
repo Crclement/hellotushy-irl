@@ -1322,11 +1322,10 @@
   }
 
   // === IDEA MANAGEMENT SYSTEM ===
-  // Supabase config - set these to enable cloud persistence
-  const SUPABASE_URL = ''; // e.g., 'https://xyz.supabase.co'
-  const SUPABASE_KEY = ''; // anon key
-
+  // JSONBlob - free cloud storage, no account needed
+  const BLOB_ID_KEY = 'tushy_rube_blob_id';
   const STORAGE_KEY = 'tushy_rube_ideas';
+
   const userIdeasContainer = document.getElementById('user-ideas-container');
   const addIdeaBtn = document.getElementById('add-idea-btn');
   const ideaModal = document.getElementById('idea-modal');
@@ -1352,80 +1351,67 @@
     return 'Station Swap';
   }
 
-  // Load ideas (Supabase or localStorage)
-  async function loadIdeas() {
-    if (SUPABASE_URL && SUPABASE_KEY) {
+  // Get or create blob ID
+  async function getBlobId() {
+    let blobId = localStorage.getItem(BLOB_ID_KEY);
+    if (!blobId) {
+      // Create new blob
       try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/ideas?order=created_at.asc`, {
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+        const res = await fetch('https://jsonblob.com/api/jsonBlob', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ideas: [] })
         });
-        return await res.json();
-      } catch (e) { console.error('Supabase load failed:', e); }
+        const location = res.headers.get('Location');
+        blobId = location.split('/').pop();
+        localStorage.setItem(BLOB_ID_KEY, blobId);
+      } catch (e) {
+        console.error('Failed to create blob:', e);
+        return null;
+      }
     }
+    return blobId;
+  }
+
+  // Load ideas from JSONBlob
+  async function loadIdeas() {
+    const blobId = await getBlobId();
+    if (blobId) {
+      try {
+        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`);
+        const data = await res.json();
+        return data.ideas || [];
+      } catch (e) { console.error('JSONBlob load failed:', e); }
+    }
+    // Fallback to localStorage
     try {
       return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     } catch { return []; }
   }
 
-  // Save single idea (Supabase or localStorage)
-  async function saveIdea(idea) {
-    if (SUPABASE_URL && SUPABASE_KEY) {
-      try {
-        await fetch(`${SUPABASE_URL}/rest/v1/ideas`, {
-          method: 'POST',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json',
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify(idea)
-        });
-        return;
-      } catch (e) { console.error('Supabase save failed:', e); }
-    }
-    const ideas = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    ideas.push(idea);
+  // Save all ideas to JSONBlob
+  async function saveAllIdeas(ideas) {
+    // Always save to localStorage as backup
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
-  }
 
-  // Update idea
-  async function updateIdea(id, updates) {
-    if (SUPABASE_URL && SUPABASE_KEY) {
+    const blobId = await getBlobId();
+    if (blobId) {
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/ideas?id=eq.${id}`, {
-          method: 'PATCH',
-          headers: {
-            'apikey': SUPABASE_KEY,
-            'Authorization': `Bearer ${SUPABASE_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updates)
+        await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ideas })
         });
-        return;
-      } catch (e) { console.error('Supabase update failed:', e); }
-    }
-    const ideas = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    const idx = ideas.findIndex(i => i.id === id);
-    if (idx !== -1) {
-      Object.assign(ideas[idx], updates);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+      } catch (e) { console.error('JSONBlob save failed:', e); }
     }
   }
 
-  // Delete idea
-  async function deleteIdea(id) {
-    if (SUPABASE_URL && SUPABASE_KEY) {
-      try {
-        await fetch(`${SUPABASE_URL}/rest/v1/ideas?id=eq.${id}`, {
-          method: 'DELETE',
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-        });
-        return;
-      } catch (e) { console.error('Supabase delete failed:', e); }
-    }
-    const ideas = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').filter(i => i.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+  // Helper to get current ideas, modify, and save
+  async function modifyIdeas(fn) {
+    const ideas = await loadIdeas();
+    const result = fn(ideas);
+    await saveAllIdeas(result !== undefined ? result : ideas);
+    return ideas;
   }
 
   // Generate unique ID
@@ -1466,7 +1452,11 @@
       e.stopPropagation();
       if (idea.is_core) return;
       idea.is_core = true;
-      await updateIdea(idea.id, { is_core: true });
+      await modifyIdeas(ideas => {
+        const idx = ideas.findIndex(i => i.id === idea.id);
+        if (idx !== -1) ideas[idx].is_core = true;
+        return ideas;
+      });
       card.dataset.core = 'true';
       coreBtn.classList.add('is-core');
       coreBtn.title = 'Core idea';
@@ -1480,7 +1470,7 @@
       delBtn.addEventListener('click', async (e) => {
         e.stopPropagation();
         if (confirm('Delete this idea?')) {
-          await deleteIdea(idea.id);
+          await modifyIdeas(ideas => ideas.filter(i => i.id !== idea.id));
           card.remove();
         }
       });
@@ -1538,7 +1528,7 @@
       created_at: new Date().toISOString()
     };
 
-    await saveIdea(idea);
+    await modifyIdeas(ideas => { ideas.push(idea); return ideas; });
     const card = renderIdeaCard(idea);
     userIdeasContainer.appendChild(card);
     closeIdeaModal();

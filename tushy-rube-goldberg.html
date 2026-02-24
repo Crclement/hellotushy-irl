@@ -1813,6 +1813,17 @@
           const icon = stationIcons[action.data.stationNum] || '⑩';
           svgStation.dataset.name = icon + ' ' + action.data.previousTitle;
           svgStation.dataset.desc = action.data.previousDesc;
+          svgStation.classList.remove('has-idea');
+
+          // Restore hidden illustration elements
+          svgStation.querySelectorAll('.hidden-illustration').forEach(el => {
+            el.classList.remove('hidden-illustration');
+            el.style.display = '';
+          });
+
+          // Remove the emoji
+          const emojiEl = svgStation.querySelector('.idea-emoji');
+          if (emojiEl) emojiEl.remove();
 
           // Update SVG text
           const textElements = svgStation.querySelectorAll('text');
@@ -1846,6 +1857,37 @@
           const icon = stationIcons[action.data.stationNum] || '⑩';
           svgStation.dataset.name = icon + ' ' + action.data.redoTitle;
           svgStation.dataset.desc = action.data.redoDesc;
+          svgStation.classList.add('has-idea');
+
+          // Hide illustration elements
+          Array.from(svgStation.children).forEach(child => {
+            const tagName = child.tagName.toLowerCase();
+            if (tagName !== 'rect' && tagName !== 'text') {
+              child.classList.add('hidden-illustration');
+              child.style.display = 'none';
+            }
+          });
+
+          // Add emoji
+          const ideaEmoji = action.data.idea?.emoji || getIdeaEmoji(action.data.redoTitle);
+          if (ideaEmoji) {
+            let emojiEl = svgStation.querySelector('.idea-emoji');
+            if (!emojiEl) {
+              emojiEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+              emojiEl.classList.add('idea-emoji');
+              emojiEl.setAttribute('font-size', '20');
+              emojiEl.setAttribute('text-anchor', 'middle');
+              const rect = svgStation.querySelector('rect');
+              if (rect) {
+                const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+                const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2 + 6;
+                emojiEl.setAttribute('x', x);
+                emojiEl.setAttribute('y', y);
+              }
+              svgStation.appendChild(emojiEl);
+            }
+            emojiEl.textContent = ideaEmoji;
+          }
 
           // Update SVG text
           const textElements = svgStation.querySelectorAll('text');
@@ -2195,6 +2237,15 @@
       svgStation.dataset.desc = idea.desc;
       svgStation.classList.add('has-idea');
 
+      // Hide original illustration elements (keep rect and texts)
+      Array.from(svgStation.children).forEach(child => {
+        const tagName = child.tagName.toLowerCase();
+        if (tagName !== 'rect' && tagName !== 'text') {
+          child.classList.add('hidden-illustration');
+          child.style.display = 'none';
+        }
+      });
+
       // Update the visible text inside the SVG station
       const textElements = svgStation.querySelectorAll('text');
       let titleUpdated = false;
@@ -2215,13 +2266,13 @@
         if (!emojiEl) {
           emojiEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
           emojiEl.classList.add('idea-emoji');
-          emojiEl.setAttribute('font-size', '16');
+          emojiEl.setAttribute('font-size', '20');
           emojiEl.setAttribute('text-anchor', 'middle');
           // Position based on station's bounding box
           const rect = svgStation.querySelector('rect');
           if (rect) {
             const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
-            const y = parseFloat(rect.getAttribute('y')) + 22;
+            const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2 + 6;
             emojiEl.setAttribute('x', x);
             emojiEl.setAttribute('y', y);
           }

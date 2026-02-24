@@ -77,6 +77,11 @@
   }
   .toolbar button.primary:hover { background: #333; }
 
+  @media (max-width: 768px) {
+    .toolbar { gap: 6px; }
+    .toolbar button { padding: 8px 12px; font-size: 0.8rem; }
+  }
+
   /* Map section - natural aspect ratio */
   .map-viewport {
     position: relative;
@@ -241,6 +246,17 @@
   }
   .station-popup-btn.primary:hover { background: #333; }
 
+  /* Mobile: center popup */
+  @media (max-width: 768px) {
+    .station-popup {
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%);
+      width: calc(100vw - 40px);
+      max-width: 320px;
+    }
+  }
+
   /* Ideas panel (slide-in from right) */
   .ideas-panel {
     position: fixed;
@@ -258,6 +274,13 @@
     box-shadow: -10px 0 40px rgba(0,0,0,0.1);
   }
   .ideas-panel.open { transform: translateX(0); }
+
+  /* Hide ideas panel when selecting station on map */
+  body.selecting-station .ideas-panel { transform: translateX(100%); }
+
+  @media (max-width: 768px) {
+    .ideas-panel { width: 100vw; }
+  }
 
   .ideas-panel-header {
     padding: 20px 24px;
@@ -2026,6 +2049,8 @@
   }
 
   function showStationSelectionOverlay() {
+    // Add editing state to body (hides sidebar on mobile)
+    document.body.classList.add('selecting-station');
     // Add editing state to map
     const mapViewport = document.querySelector('.map-viewport');
     if (mapViewport) {
@@ -2047,8 +2072,11 @@
       document.getElementById('cancelStationSelect').addEventListener('click', cancelStationSelection);
     }
 
-    // Position centered over the map viewport
-    if (mapViewport) {
+    // Position centered over the map viewport (or center of screen on mobile)
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:150;pointer-events:auto;max-width:calc(100vw - 32px);';
+    } else if (mapViewport) {
       const rect = mapViewport.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
@@ -2067,7 +2095,8 @@
   function hideStationSelectionOverlay() {
     const overlay = document.getElementById('stationSelectOverlay');
     if (overlay) overlay.style.display = 'none';
-    // Remove editing state from map
+    // Remove editing state from body and map
+    document.body.classList.remove('selecting-station');
     const mapViewport = document.querySelector('.map-viewport');
     if (mapViewport) mapViewport.classList.remove('selecting-mode');
     svgStations.forEach(station => {

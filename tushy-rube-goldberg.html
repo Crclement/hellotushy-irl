@@ -78,8 +78,10 @@
   .toolbar button.primary:hover { background: #333; }
 
   @media (max-width: 768px) {
-    .toolbar { gap: 6px; }
-    .toolbar button { padding: 8px 12px; font-size: 0.8rem; }
+    .map-header h2 { font-size: 0.85rem !important; letter-spacing: 0.08em !important; }
+    .toolbar { gap: 4px; }
+    .toolbar button { padding: 6px 10px; font-size: 0.75rem; }
+    .toolbar button svg { display: none; }
   }
 
   /* Map section - natural aspect ratio */
@@ -102,11 +104,11 @@
   /* Map editing/selecting state */
   .map-viewport.selecting-mode {
     background: #f0fdf4;
-    border-color: #22c55e;
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2), inset 0 0 20px rgba(34, 197, 94, 0.05);
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.25), inset 0 0 20px rgba(22, 163, 74, 0.05);
   }
   .map-viewport.selecting-mode svg {
-    box-shadow: 0 0 0 2px #22c55e;
+    box-shadow: 0 0 0 2px #16a34a;
   }
 
   /* Hide non-embed elements in embed mode */
@@ -334,8 +336,8 @@
     background: #fafafa;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 12px 14px;
-    margin-bottom: 10px;
+    padding: 10px 14px 8px;
+    margin-bottom: 8px;
     cursor: pointer;
     transition: all 0.2s;
   }
@@ -356,6 +358,9 @@
     font-weight: 600;
     margin-bottom: 0;
   }
+  .idea-item-icon svg { width: 16px; height: 16px; stroke-width: 2; }
+  .use-idea-btn { transition: background 0.2s; }
+  .use-idea-btn:hover { background: #333 !important; }
   .idea-item p {
     font-size: 0.76rem;
     line-height: 1.45;
@@ -411,7 +416,7 @@
   .station.selecting { cursor: pointer; }
   .station.selecting:hover { cursor: pointer; }
   .station.selecting:hover rect,
-  .station.selecting:hover path { stroke: #22c55e !important; stroke-width: 3 !important; fill: #dcfce7 !important; }
+  .station.selecting:hover path { stroke: #16a34a !important; stroke-width: 3 !important; fill: #dcfce7 !important; }
 
   /* Hidden elements */
   .hidden { display: none !important; }
@@ -620,7 +625,7 @@
     justify-content: center;
     padding: 20px;
   }
-  .idea-modal-overlay.visible { display: flex; }
+  .idea-modal-overlay.visible { display: flex !important; }
   .idea-modal {
     background: #fff;
     border-radius: 12px;
@@ -681,24 +686,28 @@
   .idea-form-row .idea-form-group.emoji-group { flex: 0 0 100px; }
   /* Category Select */
   .category-select { position: relative; }
-  .category-selected { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; background: #fff; transition: border-color 0.2s; }
+  .category-selected { display: flex; align-items: center; gap: 8px; padding: 10px 12px; height: 44px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; background: #fff; transition: border-color 0.2s; }
   .category-selected:hover { border-color: #999; }
-  .category-selected .cat-icon { font-size: 1.1rem; }
+  .category-selected .cat-icon { display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; }
+  .category-selected .cat-icon svg { width: 18px; height: 18px; color: #111; }
   .category-selected .cat-label { flex: 1; font-size: 0.95rem; }
   .category-selected svg { color: #999; }
   .category-options { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-radius: 6px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 10; overflow: hidden; }
   .category-options.open { display: block; }
   .category-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; transition: background 0.15s; }
   .category-option:hover { background: #f5f5f5; }
-  .category-option .cat-icon { font-size: 1.1rem; }
-  /* Emoji Picker */
+  .category-option .cat-icon { display: flex; align-items: center; justify-content: center; width: 18px; height: 18px; }
+  .category-option .cat-icon svg { width: 18px; height: 18px; color: #111; }
+  /* Icon Picker */
   .emoji-picker { position: relative; }
-  .emoji-selected { width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; background: #fff; transition: border-color 0.2s; }
+  .emoji-selected { width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; background: #fff; transition: border-color 0.2s; color: #111; }
   .emoji-selected:hover { border-color: #999; }
-  .emoji-grid { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-top: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); display: none; z-index: 10; padding: 8px; width: 200px; }
-  .emoji-grid.open { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-  .emoji-grid span { font-size: 1.4rem; padding: 8px; text-align: center; cursor: pointer; border-radius: 6px; transition: background 0.15s; }
+  .emoji-selected svg { width: 22px; height: 22px; }
+  .emoji-grid { position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-top: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); display: none; z-index: 10; padding: 12px; width: calc(100vw - 96px); max-width: 400px; }
+  .emoji-grid.open { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+  .emoji-grid span { display: flex; align-items: center; justify-content: center; padding: 10px; cursor: pointer; border-radius: 6px; transition: background 0.15s; color: #111; }
   .emoji-grid span:hover { background: #f0f0f0; }
+  .emoji-grid span svg { width: 20px; height: 20px; }
   .idea-modal-footer {
     padding: 16px 24px;
     border-top: 1px solid #eee;
@@ -727,10 +736,69 @@
     color: #fff;
   }
   .idea-modal-btn.primary:hover { background: #333; }
+  .modal-section { margin-bottom: 16px; }
+  .modal-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 12px;
+  }
+  .ai-section-row {
+    display: flex;
+    gap: 10px;
+    align-items: stretch;
+  }
+  .ai-section-row .category-select { flex: 1; }
+  .ai-section-row .generate-ai-btn { flex-shrink: 0; margin: 0; width: auto; padding: 10px 16px; }
+  .modal-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: #999;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .modal-divider::before, .modal-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+  }
+  .generate-ai-btn {
+    padding: 10px 16px;
+    height: 44px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .generate-ai-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
+  .generate-ai-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+  .generate-ai-btn.loading svg { animation: spin 1s linear infinite; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
   .swap-flash { animation: flashGreen 0.6s ease-out; }
   @keyframes flashGreen { 0% { background: #e8f5e9; } 100% { background: #fff; } }
 </style>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -754,8 +822,8 @@
 <hr style="border:none;border-top:1px solid #ddd;margin:48px 0 32px;width:100vw;position:relative;left:50%;transform:translateX(-50%);">
 
 <!-- Map Section Header -->
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
-  <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#111;letter-spacing:0.12em;text-transform:uppercase;margin:0;">Installation Layout</h2>
+<div class="map-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:nowrap;gap:10px;">
+  <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#111;letter-spacing:0.12em;text-transform:uppercase;margin:0;white-space:nowrap;">Installation Layout</h2>
   <div class="toolbar" style="margin:0;">
     <button id="undoBtn" disabled title="Undo (Cmd+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Undo</button>
     <button id="redoBtn" disabled title="Redo (Cmd+Shift+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>Redo</button>
@@ -778,7 +846,7 @@
   </defs>
 
   <!-- LOFT FLOOR -->
-  <rect x="50" y="40" width="960" height="520" rx="4" fill="#fff" stroke="#222" stroke-width="2"/>
+  <rect x="50" y="40" width="960" height="520" rx="4" fill="#fff" stroke="#222" stroke-width="1"/>
   <rect x="50" y="40" width="960" height="520" rx="4" fill="url(#grid)"/>
 
   <!-- WINDOWS (top wall) -->
@@ -1212,7 +1280,7 @@
     <!-- Ideas will be rendered here -->
   </div>
   <div class="ideas-panel-footer">
-    <button class="ideas-btn" style="width:100%;" id="addIdeaBtnPanel">+ Add New Idea</button>
+    <button class="ideas-btn" style="width:100%;" id="addIdeaBtnPanel" onclick="document.getElementById('idea-modal').classList.add('visible')">+ Add New Idea</button>
   </div>
 </div>
 
@@ -1556,7 +1624,7 @@
   <div id="user-ideas-container"></div>
 
   <!-- Add Idea Card -->
-  <div class="add-idea-card" id="add-idea-btn">
+  <div class="add-idea-card" id="add-idea-btn" onclick="document.getElementById('idea-modal').classList.add('visible')">
     <div class="plus-icon">+</div>
     <h3>Add Your Idea</h3>
     <p>Submit a new concept</p>
@@ -1566,57 +1634,97 @@
 </div><!-- .hidden data containers -->
 
 <!-- Add Idea Modal -->
-<div class="idea-modal-overlay" id="idea-modal">
+<div class="idea-modal-overlay" id="idea-modal" style="/* debug */">
   <div class="idea-modal">
     <div class="idea-modal-header">
       <h3>Add New Idea</h3>
       <button class="idea-modal-close" id="idea-modal-close">&times;</button>
     </div>
     <div class="idea-modal-body">
-      <div class="idea-form-group">
-        <label>Title</label>
-        <input type="text" id="idea-title" placeholder="e.g., The Water Curtain" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
-      </div>
-      <div class="idea-form-group">
-        <label>Description</label>
-        <textarea id="idea-desc" placeholder="Describe the idea, how it works, what makes it special..." autocomplete="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other"></textarea>
-      </div>
-      <div class="idea-form-row">
-        <div class="idea-form-group">
+      <!-- Category + Generate AI on same row -->
+      <div class="idea-form-row" style="margin-bottom:16px;gap:12px;">
+        <div class="idea-form-group" style="flex:1;margin-bottom:0;">
           <label>Category</label>
           <div class="category-select" id="category-select">
             <div class="category-selected" id="category-selected">
-              <span class="cat-icon">🏁</span>
+              <span class="cat-icon"><i data-lucide="flag"></i></span>
               <span class="cat-label">Finale Option</span>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
             </div>
             <div class="category-options" id="category-options">
-              <div class="category-option" data-value="Finale Option"><span class="cat-icon">🏁</span>Finale Option</div>
-              <div class="category-option" data-value="Interactive Option"><span class="cat-icon">🕹️</span>Interactive Option</div>
-              <div class="category-option" data-value="Sensory"><span class="cat-icon">✨</span>Sensory</div>
-              <div class="category-option" data-value="Water Feature"><span class="cat-icon">💦</span>Water Feature</div>
-              <div class="category-option" data-value="Kinetic / Always-On"><span class="cat-icon">⚙️</span>Kinetic / Always-On</div>
-              <div class="category-option" data-value="Feature"><span class="cat-icon">⭐</span>Feature</div>
+              <div class="category-option" data-value="Finale Option" data-icon="flag"><span class="cat-icon"><i data-lucide="flag"></i></span>Finale Option</div>
+              <div class="category-option" data-value="Interactive Option" data-icon="gamepad-2"><span class="cat-icon"><i data-lucide="gamepad-2"></i></span>Interactive Option</div>
+              <div class="category-option" data-value="Sensory" data-icon="sparkles"><span class="cat-icon"><i data-lucide="sparkles"></i></span>Sensory</div>
+              <div class="category-option" data-value="Water Feature" data-icon="droplets"><span class="cat-icon"><i data-lucide="droplets"></i></span>Water Feature</div>
+              <div class="category-option" data-value="Kinetic / Always-On" data-icon="cog"><span class="cat-icon"><i data-lucide="cog"></i></span>Kinetic / Always-On</div>
+              <div class="category-option" data-value="Feature" data-icon="star"><span class="cat-icon"><i data-lucide="star"></i></span>Feature</div>
             </div>
             <input type="hidden" id="idea-category" value="Finale Option">
           </div>
         </div>
-        <div class="idea-form-group emoji-group">
-          <label>Emoji</label>
-          <div class="emoji-picker" id="emoji-picker">
-            <div class="emoji-selected" id="emoji-selected">💧</div>
-            <div class="emoji-grid" id="emoji-grid">
-              <span data-emoji="☵">☵</span><span data-emoji="☰">☰</span><span data-emoji="≋">≋</span><span data-emoji="∿">∿</span>
-              <span data-emoji="◎">◎</span><span data-emoji="◉">◉</span><span data-emoji="⊙">⊙</span><span data-emoji="⊕">⊕</span>
-              <span data-emoji="♦">♦</span><span data-emoji="♢">♢</span><span data-emoji="◇">◇</span><span data-emoji="☼">☼</span>
-              <span data-emoji="⊡">⊡</span><span data-emoji="⊞">⊞</span><span data-emoji="⬚">⬚</span><span data-emoji="▣">▣</span>
-              <span data-emoji="♪">♪</span><span data-emoji="♫">♫</span><span data-emoji="♬">♬</span><span data-emoji="⏺">⏺</span>
-              <span data-emoji="⚙">⚙</span><span data-emoji="⟳">⟳</span><span data-emoji="⟲">⟲</span><span data-emoji="↻">↻</span>
-              <span data-emoji="⏷">⏷</span><span data-emoji="⤹">⤹</span><span data-emoji="⇿">⇿</span><span data-emoji="⏥">⏥</span>
-              <span data-emoji="●">●</span><span data-emoji="○">○</span><span data-emoji="◯">◯</span><span data-emoji="◆">◆</span>
-            </div>
+        <div class="idea-form-group" style="margin-bottom:0;flex-shrink:0;">
+          <label>&nbsp;</label>
+          <button type="button" class="generate-ai-btn" id="generate-ai-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg>
+            Generate with AI
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-divider"><span>or fill in manually</span></div>
+
+      <!-- Manual Section -->
+      <div class="modal-section manual-section">
+        <div class="idea-form-row" style="margin-bottom:16px;">
+          <div class="idea-form-group" style="flex:1;margin-bottom:0;">
+            <label>Title</label>
+            <input type="text" id="idea-title" placeholder="e.g., The Water Curtain" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
           </div>
-          <input type="hidden" id="idea-emoji" value="◇">
+          <div class="idea-form-group emoji-group" style="margin-bottom:0;">
+            <label>Icon</label>
+            <div class="emoji-picker" id="emoji-picker">
+              <div class="emoji-selected" id="emoji-selected"><i data-lucide="diamond"></i></div>
+              <div class="emoji-grid" id="emoji-grid">
+                <span data-icon="waves"><i data-lucide="waves"></i></span>
+                <span data-icon="droplets"><i data-lucide="droplets"></i></span>
+                <span data-icon="droplet"><i data-lucide="droplet"></i></span>
+                <span data-icon="cloud"><i data-lucide="cloud"></i></span>
+                <span data-icon="flame"><i data-lucide="flame"></i></span>
+                <span data-icon="flame-kindling"><i data-lucide="flame-kindling"></i></span>
+                <span data-icon="sun"><i data-lucide="sun"></i></span>
+                <span data-icon="wind"><i data-lucide="wind"></i></span>
+                <span data-icon="music"><i data-lucide="music"></i></span>
+                <span data-icon="music-2"><i data-lucide="music-2"></i></span>
+                <span data-icon="audio-lines"><i data-lucide="audio-lines"></i></span>
+                <span data-icon="volume-1"><i data-lucide="volume-1"></i></span>
+                <span data-icon="chevrons-down"><i data-lucide="chevrons-down"></i></span>
+                <span data-icon="arrow-big-down"><i data-lucide="arrow-big-down"></i></span>
+                <span data-icon="arrow-down-to-line"><i data-lucide="arrow-down-to-line"></i></span>
+                <span data-icon="move-diagonal"><i data-lucide="move-diagonal"></i></span>
+                <span data-icon="rotate-ccw"><i data-lucide="rotate-ccw"></i></span>
+                <span data-icon="refresh-cw"><i data-lucide="refresh-cw"></i></span>
+                <span data-icon="cog"><i data-lucide="cog"></i></span>
+                <span data-icon="sparkles"><i data-lucide="sparkles"></i></span>
+                <span data-icon="hand"><i data-lucide="hand"></i></span>
+                <span data-icon="footprints"><i data-lucide="footprints"></i></span>
+                <span data-icon="disc"><i data-lucide="disc"></i></span>
+                <span data-icon="target"><i data-lucide="target"></i></span>
+                <span data-icon="circle-dot"><i data-lucide="circle-dot"></i></span>
+                <span data-icon="split"><i data-lucide="split"></i></span>
+                <span data-icon="waypoints"><i data-lucide="waypoints"></i></span>
+                <span data-icon="scale"><i data-lucide="scale"></i></span>
+                <span data-icon="thermometer"><i data-lucide="thermometer"></i></span>
+                <span data-icon="scan"><i data-lucide="scan"></i></span>
+                <span data-icon="diamond"><i data-lucide="diamond"></i></span>
+                <span data-icon="stairs"><i data-lucide="stairs"></i></span>
+              </div>
+            </div>
+            <input type="hidden" id="idea-icon" value="diamond">
+          </div>
+        </div>
+        <div class="idea-form-group" style="margin-bottom:16px;">
+          <label>Description</label>
+          <textarea id="idea-desc" placeholder="Describe how this station works..." rows="3"></textarea>
         </div>
       </div>
       <div class="idea-form-group">
@@ -1774,58 +1882,85 @@
 
   const stationDataContainer = document.getElementById('station-cards');
 
-  // Simple black line-style icons (Tesla-style)
-  const ideaEmojis = {
+  // Lucide icon names for stations
+  const ideaIcons = {
     // Finale Options
-    'The Water Curtain': '☵',
-    'The TP Avalanche': '☰',
-    'The Giant Flush Handle': '⎋',
-    'The Domino Wall': '⫶',
-    'The Fog Reveal': '☁',
-    'The Ramp Drop': '⏷',
+    'The Water Curtain': 'waves',
+    'The TP Avalanche': 'chevrons-down',
+    'The Giant Flush Handle': 'arrow-big-down',
+    'The Domino Wall': 'align-vertical-justify-end',
+    'The Fog Reveal': 'cloud',
+    'The Ramp Drop': 'arrow-down-to-line',
     // Features
-    'The Brush Xylophone': '♫',
-    'The Candle Snuff': '♢',
-    'The Towel Zip Line': '⤹',
-    'The Spiral Drain': '⟲',
-    "The Cat's Cradle": '⨳',
-    'The Toilet Seat See-Saw': '⏥',
+    'The Brush Xylophone': 'music',
+    'The Candle Snuff': 'flame',
+    'The Towel Zip Line': 'move-diagonal',
+    'The Spiral Drain': 'rotate-ccw',
+    "The Cat's Cradle": 'waypoints',
+    'The Toilet Seat See-Saw': 'scale',
     // Interactive
-    'The Bidet Dunk Tank': '⊕',
-    'The Tug of TP': '⇿',
-    'The Spin Cycle': '⟳',
-    'The Stomp Pad Drum Kit': '⏺',
+    'The Bidet Dunk Tank': 'droplets',
+    'The Tug of TP': 'move-horizontal',
+    'The Spin Cycle': 'refresh-cw',
+    'The Stomp Pad Drum Kit': 'disc',
     // Water
-    'The Water Wheel Wall': '⚙',
-    'The TP Roll Conveyor': '⏤',
+    'The Water Wheel Wall': 'cog',
+    'The TP Roll Conveyor': 'arrow-right-to-line',
     // Sensory
-    'The Scent Tunnel': '∽',
-    'The Sound Bath': '♪',
-    'The Temperature Wave': '∿',
-    'The Tactile Wall': '⊞',
-    'The Whisper Chamber': '◯',
-    'The Light Spectrum': '☼',
+    'The Scent Tunnel': 'wind',
+    'The Sound Bath': 'audio-lines',
+    'The Temperature Wave': 'thermometer',
+    'The Tactile Wall': 'hand',
+    'The Whisper Chamber': 'volume-1',
+    'The Light Spectrum': 'sun',
     // Other
-    'The Ball Multiplier': '⊗',
-    'The Pinball Pop': '●',
-    'The Hindsight Station': '⬚',
-    // Default stations (line icons)
-    'The Great Cascade': '⏆',
-    'The Bamboo Grove': '⫴',
-    'The Spray Gate': '⊡',
-    'The Ottoman Staircase': '⋮',
-    'Candle Lane': '♦',
-    'The Great Unroll': '⊙',
-    'The Ball Wash': '☰',
-    'The Throne Stomp': '⏍',
-    'The Bidet Symphony': '♬',
-    'The Grand Flush Finale': '◉',
+    'The Ball Multiplier': 'split',
+    'The Pinball Pop': 'circle-dot',
+    'The Hindsight Station': 'scan',
+    // Default stations
+    'The Great Cascade': 'chevrons-down',
+    'The Bamboo Grove': 'tree-palm',
+    'The Spray Gate': 'sparkles',
+    'The Ottoman Staircase': 'stairs',
+    'Candle Lane': 'flame-kindling',
+    'The Great Unroll': 'unfold-vertical',
+    'The Ball Wash': 'droplet',
+    'The Throne Stomp': 'footprints',
+    'The Bidet Symphony': 'music-2',
+    'The Grand Flush Finale': 'target',
     // Default
-    'default': '◇'
+    'default': 'diamond'
   };
 
-  function getIdeaEmoji(title) {
-    return ideaEmojis[title] || ideaEmojis['default'];
+  // Create Lucide icon SVG elements for embedding in SVG
+  function createLucideIconElements(iconName, targetSvg) {
+    try {
+      if (typeof lucide === 'undefined') return false;
+      // Create temp element and extract the rendered SVG content
+      const temp = document.createElement('div');
+      temp.innerHTML = `<i data-lucide="${iconName}"></i>`;
+      lucide.createIcons({ nodes: temp.querySelectorAll('[data-lucide]') });
+      const svg = temp.querySelector('svg');
+      if (svg) {
+        // Clone all child elements with proper SVG namespace
+        Array.from(svg.children).forEach(child => {
+          const clone = child.cloneNode(true);
+          targetSvg.appendChild(clone);
+        });
+        return true;
+      }
+      // Fallback to diamond
+      if (iconName !== 'diamond') {
+        return createLucideIconElements('diamond', targetSvg);
+      }
+    } catch (e) {
+      console.warn('Lucide icon error:', e);
+    }
+    return false;
+  }
+
+  function getIdeaIcon(title) {
+    return ideaIcons[title] || ideaIcons['default'];
   }
   const ideaDataContainer = document.getElementById('idea-cards');
 
@@ -1941,28 +2076,37 @@
             titleEl.setAttribute('text-anchor', 'middle');
             titleEl.setAttribute('font-family', 'Space Grotesk, sans-serif');
             titleEl.setAttribute('font-weight', '700');
-            titleEl.textContent = action.data.redoTitle.toUpperCase().substring(0, 18);
+            titleEl.textContent = action.data.redoTitle.toUpperCase().substring(0, 24);
             svgStation.appendChild(titleEl);
           }
 
-          // Add emoji
-          const ideaEmoji = action.data.idea?.emoji || getIdeaEmoji(action.data.redoTitle);
-          if (ideaEmoji) {
-            let emojiEl = svgStation.querySelector('.idea-emoji');
-            if (!emojiEl) {
-              emojiEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-              emojiEl.classList.add('idea-emoji');
-              emojiEl.setAttribute('font-size', '20');
-              emojiEl.setAttribute('text-anchor', 'middle');
-              if (rect) {
-                const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
-                const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2 + 6;
-                emojiEl.setAttribute('x', x);
-                emojiEl.setAttribute('y', y);
-              }
-              svgStation.appendChild(emojiEl);
+          // Add Lucide icon (support both 'icon' and legacy 'emoji' fields)
+          const ideaIconName = action.data.idea?.icon || action.data.idea?.emoji || getIdeaIcon(action.data.redoTitle);
+          if (ideaIconName && rect) {
+            let iconContainer = svgStation.querySelector('.idea-icon-container');
+            if (!iconContainer) {
+              iconContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+              iconContainer.classList.add('idea-icon-container');
+              iconContainer.classList.add('idea-emoji');
+              svgStation.appendChild(iconContainer);
             }
-            emojiEl.textContent = ideaEmoji;
+            iconContainer.innerHTML = '';
+            const cx = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+            const cy = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2;
+            const iconSize = 20;
+            const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            iconSvg.setAttribute('x', cx - iconSize / 2);
+            iconSvg.setAttribute('y', cy - iconSize / 2);
+            iconSvg.setAttribute('width', iconSize);
+            iconSvg.setAttribute('height', iconSize);
+            iconSvg.setAttribute('viewBox', '0 0 24 24');
+            iconSvg.setAttribute('fill', 'none');
+            iconSvg.setAttribute('stroke', '#111');
+            iconSvg.setAttribute('stroke-width', '2');
+            iconSvg.setAttribute('stroke-linecap', 'round');
+            iconSvg.setAttribute('stroke-linejoin', 'round');
+            createLucideIconElements(ideaIconName, iconSvg);
+            iconContainer.appendChild(iconSvg);
           }
         }
       }
@@ -2139,18 +2283,28 @@
       const item = document.createElement('div');
       item.className = 'idea-item';
       const authorHtml = idea.author ? `<div class="idea-item-author">by ${idea.author}</div>` : '';
+      const iconName = idea.icon || idea.emoji || getIdeaIcon(idea.title);
       item.innerHTML = `
-        <div>
-          <div class="idea-item-category">${idea.category}</div>
-          <h4>${idea.title}</h4>
-          <p>${idea.desc}</p>
-          ${authorHtml}
+        <div style="display:flex;gap:10px;align-items:flex-start;">
+          <div class="idea-item-icon" style="flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border-radius:6px;"><i data-lucide="${iconName}"></i></div>
+          <div style="flex:1;min-width:0;">
+            <div class="idea-item-category">${idea.category}</div>
+            <h4>${idea.title}</h4>
+            <p>${idea.desc}</p>
+            ${authorHtml}
+          </div>
         </div>
         <div class="idea-item-actions" style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;display:flex;gap:8px;">
           <button class="use-idea-btn" style="flex:1;padding:8px 12px;background:#111;color:#fff;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">${swapMode && currentStation ? `Use on Station ${currentStation}` : 'Use on Station'}</button>
           ${!idea.isCore && idea.isUserIdea ? '<button class="delete-idea-btn" style="padding:8px 12px;background:#fff;color:#e53935;border:1px solid #e53935;border-radius:6px;font-size:0.8rem;cursor:pointer;">Delete</button>' : ''}
         </div>
       `;
+      // Initialize Lucide icons in this item
+      try {
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons({ nodes: item.querySelectorAll('[data-lucide]') });
+        }
+      } catch (e) { console.warn('Lucide error:', e); }
 
       // Click to expand/collapse
       item.addEventListener('click', (e) => {
@@ -2226,7 +2380,7 @@
       overlay = document.createElement('div');
       overlay.id = 'stationSelectOverlay';
       overlay.innerHTML = `
-        <div style="background:#22c55e;color:#fff;padding:14px 24px;border-radius:10px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3);display:flex;align-items:center;gap:16px;">
+        <div style="background:#16a34a;color:#fff;padding:14px 24px;border-radius:10px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3);display:flex;align-items:center;gap:16px;">
           <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">👆 Click a station to place your idea</span>
           <button id="cancelStationSelect" style="padding:6px 14px;background:rgba(0,0,0,0.2);border:none;border-radius:4px;cursor:pointer;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:500;">Cancel</button>
         </div>
@@ -2362,30 +2516,43 @@
         titleEl.setAttribute('text-anchor', 'middle');
         titleEl.setAttribute('font-family', 'Space Grotesk, sans-serif');
         titleEl.setAttribute('font-weight', '700');
-        titleEl.textContent = idea.title.toUpperCase().substring(0, 18);
+        titleEl.textContent = idea.title.toUpperCase().substring(0, 24);
         svgStation.appendChild(titleEl);
       }
 
-      // Add/update emoji icon on the station (for ideas from Ideas panel)
-      const ideaEmoji = idea.emoji || getIdeaEmoji(idea.title);
-      if (ideaEmoji) {
-        let emojiEl = svgStation.querySelector('.idea-emoji');
-        if (!emojiEl) {
-          emojiEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-          emojiEl.classList.add('idea-emoji');
-          emojiEl.setAttribute('font-size', '20');
-          emojiEl.setAttribute('text-anchor', 'middle');
-          // Position based on station's bounding box
-          const rect = svgStation.querySelector('rect');
-          if (rect) {
-            const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
-            const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2 + 6;
-            emojiEl.setAttribute('x', x);
-            emojiEl.setAttribute('y', y);
-          }
-          svgStation.appendChild(emojiEl);
+      // Add/update Lucide icon on the station (for ideas from Ideas panel)
+      // Support both new 'icon' and legacy 'emoji' fields
+      const ideaIconName = idea.icon || idea.emoji || getIdeaIcon(idea.title);
+      if (ideaIconName) {
+        let iconContainer = svgStation.querySelector('.idea-icon-container');
+        if (!iconContainer) {
+          iconContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          iconContainer.classList.add('idea-icon-container');
+          iconContainer.classList.add('idea-emoji'); // Keep class for compatibility
+          svgStation.appendChild(iconContainer);
         }
-        emojiEl.textContent = ideaEmoji;
+        // Clear and recreate icon
+        iconContainer.innerHTML = '';
+        const rect = svgStation.querySelector('rect');
+        if (rect) {
+          const cx = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+          const cy = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2;
+          const iconSize = 20;
+          // Create nested SVG for the Lucide icon
+          const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          iconSvg.setAttribute('x', cx - iconSize / 2);
+          iconSvg.setAttribute('y', cy - iconSize / 2);
+          iconSvg.setAttribute('width', iconSize);
+          iconSvg.setAttribute('height', iconSize);
+          iconSvg.setAttribute('viewBox', '0 0 24 24');
+          iconSvg.setAttribute('fill', 'none');
+          iconSvg.setAttribute('stroke', '#111');
+          iconSvg.setAttribute('stroke-width', '2');
+          iconSvg.setAttribute('stroke-linecap', 'round');
+          iconSvg.setAttribute('stroke-linejoin', 'round');
+          createLucideIconElements(ideaIconName, iconSvg);
+          iconContainer.appendChild(iconSvg);
+        }
       }
 
       // Visual feedback - briefly flash the station green
@@ -2599,7 +2766,15 @@
     document.getElementById('idea-author').value = '';
     document.getElementById('idea-title').value = '';
     document.getElementById('idea-desc').value = '';
-    document.getElementById('idea-emoji').value = '';
+    document.getElementById('idea-icon').value = 'diamond';
+    // Reset icon picker display
+    const iconSelected = document.getElementById('emoji-selected');
+    iconSelected.innerHTML = '<i data-lucide="diamond"></i>';
+    try {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons({ nodes: iconSelected.querySelectorAll('[data-lucide]') });
+      }
+    } catch (e) { console.warn('Lucide error:', e); }
     document.getElementById('idea-tags').value = '';
     ideaModal.classList.add('visible');
   }
@@ -2616,7 +2791,7 @@
     const desc = document.getElementById('idea-desc').value.trim();
     const tagsStr = document.getElementById('idea-tags').value.trim();
     const category = document.getElementById('idea-category').value;
-    const emoji = document.getElementById('idea-emoji').value.trim();
+    const icon = document.getElementById('idea-icon').value.trim();
 
     if (!title) {
       alert('Please enter a title');
@@ -2637,7 +2812,7 @@
       category,
       title,
       description: desc,
-      emoji: emoji || null,
+      icon: icon || null,
       tags,
       is_core: false,
       created_at: new Date().toISOString()
@@ -2655,7 +2830,7 @@
       document.getElementById('idea-author').value = '';
       document.getElementById('idea-title').value = '';
       document.getElementById('idea-desc').value = '';
-      document.getElementById('idea-emoji').value = '';
+      document.getElementById('idea-icon').value = 'diamond';
       document.getElementById('idea-tags').value = '';
 
       // Re-render ideas panel with new idea
@@ -2680,6 +2855,130 @@
     }
   }
 
+  // AI Generation
+  const generateAiBtn = document.getElementById('generate-ai-btn');
+  function getAnthropicKey() {
+    let key = localStorage.getItem('anthropic_api_key');
+    if (!key) {
+      key = prompt('Enter your Anthropic API key to use AI generation:');
+      if (key) localStorage.setItem('anthropic_api_key', key);
+    }
+    return key;
+  }
+
+  async function generateWithAI() {
+    const btn = generateAiBtn;
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6l2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6l2.1-2.1"/></svg> Generating...';
+
+    const categories = ['Finale Option', 'Interactive Option', 'Sensory', 'Water Feature', 'Kinetic / Always-On', 'Feature'];
+    const availableIcons = ['waves', 'droplets', 'droplet', 'cloud', 'flame', 'flame-kindling', 'sun', 'wind', 'music', 'music-2', 'audio-lines', 'volume-1', 'chevrons-down', 'arrow-big-down', 'arrow-down-to-line', 'move-diagonal', 'rotate-ccw', 'refresh-cw', 'cog', 'sparkles', 'hand', 'footprints', 'disc', 'target', 'circle-dot', 'split', 'waypoints', 'scale', 'thermometer', 'scan', 'diamond', 'stairs'];
+    const selectedCategory = document.getElementById('idea-category').value;
+    const prompt = `You are helping design creative station ideas for a TUSHY bidet brand Rube Goldberg machine installation.
+
+## INSTALLATION OVERVIEW
+- Location: 30ft x 60ft SoHo loft space
+- Concept: A 10-station Rube Goldberg machine that celebrates TUSHY's bathroom revolution
+- Theme: Playful, irreverent, Instagram-worthy moments that showcase TUSHY products
+- A jumbo poop emoji ball travels through all stations
+- Water is recirculated throughout (sustainable)
+- Mix of automated stations and visitor-interactive moments
+
+## TUSHY PRODUCTS AVAILABLE
+- TUSHY Classic 3.0 & Spa 3.0 bidets (wall-mounted, spray water)
+- TUSHY Bamboo TP (eco-friendly toilet paper)
+- TUSHY Stand (toilet paper holder)
+- TUSHY Ottoman Original 9" (bathroom stool)
+- TUSHY Toilet Brush (coconut husk bristles)
+- TUSHY Bum Towels (fabric towels)
+- TUSHY Candles: Morning Zest, Late Bloomer, Evening Wood, Midnight Ash
+- TUSHY Room Spray & Toilet Spray
+- TUSHY Fresh (wet wipes)
+- Hindsight App (poop tracking app)
+
+## SAMPLE EXISTING IDEAS
+- "The Great Cascade": Bidet fires water to launch ball down first ramp
+- "The Bamboo Grove": Ball weaves through bamboo poles with TP unrolling like scrolls
+- "The Spray Gate": Visitors press arcade button to trigger bidets that spray a gate clean
+- "The Ottoman Staircase": Ball bounces down padded ottoman stools
+- "Candle Lane": LED candles light up in sequence as ball rolls over pressure plates
+- "The Great Unroll": Visitors pull giant TP spool to lift a gate
+- "The Ball Wash": Spinning toilet brushes and bum towels clean the ball
+- "The Throne Stomp": Visitors stomp a pedal to launch the ball
+- "The Bidet Symphony": Ball triggers a musical sequence of bidet sprays
+- "The Water Curtain": Final reveal through a parting water curtain
+
+## AVAILABLE ICONS
+Choose the most fitting icon: ${availableIcons.join(', ')}
+
+Generate ONE creative, fun, and on-brand station idea for the "${selectedCategory}" category that's DIFFERENT from the samples above. Be playful and think about:
+- Water choreography and kinetic art
+- Interactive moments for visitors
+- Instagram-worthy visual moments
+- Clever use of TUSHY products
+
+Respond with ONLY valid JSON (no markdown, no explanation):
+{"title": "The [Creative Name]", "description": "2-3 sentences describing how it works, what TUSHY products it uses, and what makes it special", "category": "${selectedCategory}", "icon": "[most fitting icon from the list]"}`;
+
+    try {
+      const apiKey = getAnthropicKey();
+      if (!apiKey) {
+        alert('API key required for AI generation.');
+        throw new Error('No API key');
+      }
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 300,
+          messages: [{ role: 'user', content: prompt }]
+        })
+      });
+
+      if (!response.ok) throw new Error('API request failed');
+
+      const data = await response.json();
+      const text = data.content[0].text;
+      const idea = JSON.parse(text);
+
+      // Populate form fields
+      document.getElementById('idea-title').value = idea.title;
+      document.getElementById('idea-desc').value = idea.description;
+      document.getElementById('idea-category').value = idea.category;
+
+      // Update category display
+      const categoryIcons = {'Finale Option':'flag','Interactive Option':'gamepad-2','Sensory':'sparkles','Water Feature':'droplets','Kinetic / Always-On':'cog','Feature':'star'};
+      const catIcon = categoryIcons[idea.category] || 'star';
+      document.getElementById('category-selected').querySelector('.cat-icon').innerHTML = `<i data-lucide="${catIcon}"></i>`;
+      document.getElementById('category-selected').querySelector('.cat-label').textContent = idea.category;
+
+      // Update icon picker
+      const ideaIcon = idea.icon || 'diamond';
+      document.getElementById('idea-icon').value = ideaIcon;
+      document.getElementById('emoji-selected').innerHTML = `<i data-lucide="${ideaIcon}"></i>`;
+
+      try { if (typeof lucide !== 'undefined') lucide.createIcons(); } catch(e) {}
+
+    } catch (e) {
+      console.error('AI generation error:', e);
+      alert('Failed to generate idea. Please try again.');
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.innerHTML = originalText;
+    }
+  }
+
+  generateAiBtn.addEventListener('click', generateWithAI);
+
   // Event listeners
   addIdeaBtn.addEventListener('click', openIdeaModal);
   ideaModalClose.addEventListener('click', closeIdeaModal);
@@ -2694,7 +2993,7 @@
   const categorySelected = document.getElementById('category-selected');
   const categoryOptions = document.getElementById('category-options');
   const categoryInput = document.getElementById('idea-category');
-  const categoryIcons = {'Finale Option':'🏁','Interactive Option':'🕹️','Sensory':'✨','Water Feature':'💦','Kinetic / Always-On':'⚙️','Feature':'⭐'};
+  const categoryIcons = {'Finale Option':'flag','Interactive Option':'gamepad-2','Sensory':'sparkles','Water Feature':'droplets','Kinetic / Always-On':'cog','Feature':'star'};
 
   categorySelected.addEventListener('click', () => {
     categoryOptions.classList.toggle('open');
@@ -2702,38 +3001,52 @@
   categoryOptions.querySelectorAll('.category-option').forEach(opt => {
     opt.addEventListener('click', () => {
       const val = opt.dataset.value;
+      const iconName = opt.dataset.icon || categoryIcons[val] || 'star';
       categoryInput.value = val;
-      categorySelected.querySelector('.cat-icon').textContent = categoryIcons[val] || '⭐';
+      categorySelected.querySelector('.cat-icon').innerHTML = `<i data-lucide="${iconName}"></i>`;
       categorySelected.querySelector('.cat-label').textContent = val;
       categoryOptions.classList.remove('open');
+      // Re-render Lucide icons
+      try { if (typeof lucide !== 'undefined') lucide.createIcons(); } catch(e) {}
     });
   });
 
-  // Emoji picker
-  const emojiPicker = document.getElementById('emoji-picker');
-  const emojiSelected = document.getElementById('emoji-selected');
-  const emojiGrid = document.getElementById('emoji-grid');
-  const emojiInput = document.getElementById('idea-emoji');
+  // Icon picker
+  const iconPicker = document.getElementById('emoji-picker');
+  const iconSelected = document.getElementById('emoji-selected');
+  const iconGrid = document.getElementById('emoji-grid');
+  const iconInput = document.getElementById('idea-icon');
 
-  emojiSelected.addEventListener('click', () => {
-    emojiGrid.classList.toggle('open');
+  iconSelected.addEventListener('click', () => {
+    iconGrid.classList.toggle('open');
   });
-  emojiGrid.querySelectorAll('span').forEach(span => {
+  iconGrid.querySelectorAll('span').forEach(span => {
     span.addEventListener('click', () => {
-      const emoji = span.dataset.emoji;
-      emojiInput.value = emoji;
-      emojiSelected.textContent = emoji;
-      emojiGrid.classList.remove('open');
+      const iconName = span.dataset.icon;
+      iconInput.value = iconName;
+      // Update selected icon display
+      iconSelected.innerHTML = `<i data-lucide="${iconName}"></i>`;
+      try {
+        if (typeof lucide !== 'undefined') {
+          lucide.createIcons({ nodes: iconSelected.querySelectorAll('[data-lucide]') });
+        }
+      } catch (e) { console.warn('Lucide error:', e); }
+      iconGrid.classList.remove('open');
     });
   });
 
   // Close dropdowns on outside click
   document.addEventListener('click', (e) => {
     if (!categorySelect.contains(e.target)) categoryOptions.classList.remove('open');
-    if (!emojiPicker.contains(e.target)) emojiGrid.classList.remove('open');
+    if (!iconPicker.contains(e.target)) iconGrid.classList.remove('open');
   });
 
-  // Initialize
+  // Initialize Lucide icons and render ideas
+  try {
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  } catch (e) { console.warn('Lucide init error:', e); }
   renderAllUserIdeas();
 </script>
 

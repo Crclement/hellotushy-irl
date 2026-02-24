@@ -175,6 +175,12 @@
     justify-content: center;
     border-bottom: 1px solid var(--line);
     font-size: 4rem;
+    color: #111;
+  }
+  .card-preview svg {
+    width: 64px;
+    height: 64px;
+    stroke-width: 1.5;
   }
   .card-preview.rube { background: linear-gradient(135deg, #f8fcff 0%, #fafafa 100%); }
   .card-preview.carnival { background: linear-gradient(135deg, #fff8f0 0%, #fafafa 100%); }
@@ -293,6 +299,7 @@
     border: none;
   }
 </style>
+<script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 
@@ -317,7 +324,7 @@
 
       <div class="grid">
         <div class="card" data-project="rube">
-          <div class="card-preview rube">◉</div>
+          <div class="card-preview rube"><i data-lucide="workflow"></i></div>
           <div class="card-body">
             <span class="card-tag">Installation</span>
             <h3>TUSHY &times; Rube Goldberg</h3>
@@ -332,7 +339,7 @@
         </div>
 
         <div class="card" data-project="carnival">
-          <div class="card-preview carnival">◎</div>
+          <div class="card-preview carnival"><i data-lucide="ferris-wheel"></i></div>
           <div class="card-body">
             <span class="card-tag">Carnival Game</span>
             <h3>TUSHY Carnival Game</h3>
@@ -428,7 +435,20 @@
   function navigateFromHash(addToHistory = false) {
     const hash = window.location.hash.slice(1);
 
-    // Check auth
+    // Direct project URLs bypass auth
+    if (hash === 'rube' || hash === 'carnival') {
+      sessionStorage.setItem('tushy_auth', '1');
+      document.body.classList.add('authenticated');
+      if (currentProject !== hash) {
+        document.querySelectorAll('.project-view').forEach(v => v.classList.remove('active'));
+        document.getElementById('project-' + hash).classList.add('active');
+        currentProject = hash;
+      }
+      frameStack.setAttribute('data-frame', 3);
+      return;
+    }
+
+    // Check auth for dashboard
     if (sessionStorage.getItem('tushy_auth') !== '1') {
       document.body.classList.remove('authenticated');
       frameStack.setAttribute('data-frame', 1);
@@ -441,13 +461,6 @@
       if (addToHistory) {
         history.replaceState({ frame: 2, project: null }, '', '#dashboard');
       }
-    } else if (hash === 'rube' || hash === 'carnival') {
-      if (currentProject !== hash) {
-        document.querySelectorAll('.project-view').forEach(v => v.classList.remove('active'));
-        document.getElementById('project-' + hash).classList.add('active');
-        currentProject = hash;
-      }
-      frameStack.setAttribute('data-frame', 3);
     } else {
       frameStack.setAttribute('data-frame', 2);
     }
@@ -490,6 +503,8 @@
     if (testMode) {
       sessionStorage.setItem('tushy_auth', '1');
     }
+    // Initialize Lucide icons
+    lucide.createIcons();
     navigateFromHash();
     codeInput.focus();
   })();

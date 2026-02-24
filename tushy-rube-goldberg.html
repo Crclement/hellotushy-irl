@@ -19,12 +19,69 @@
   }
 
   .content-wrapper {
-    padding: 3rem;
+    padding: 2rem;
   }
 
   @media (max-width: 768px) {
     .content-wrapper {
       padding: 1rem;
+    }
+  }
+
+  /* Split layout - map sticky with cards */
+  .split-layout {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+
+  .map-panel {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .map-panel svg {
+    width: 100%;
+    height: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+  }
+
+  .cards-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .cards-panel .section-label {
+    padding: 16px 0 10px;
+    margin: 0;
+    font-size: 0.75rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .cards-panel .feature-card {
+    padding: 14px 16px;
+  }
+
+  .cards-panel .feature-card h3 {
+    font-size: 0.95rem;
+  }
+
+  .cards-panel .feature-card p {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 1000px) {
+    .split-layout {
+      grid-template-columns: 1fr;
+    }
+    .map-panel {
+      position: relative;
+      top: 0;
     }
   }
 
@@ -46,8 +103,7 @@
   .header { text-align: center; padding: 10px 20px 10px; }
   .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; color: #000; margin-bottom: 6px; }
   .header .subtitle { font-size: 0.95rem; color: #999; font-weight: 300; letter-spacing: 0.15em; text-transform: uppercase; }
-  .render-container { display: flex; justify-content: center; padding: 20px; }
-  svg.loft-render { max-width: 1100px; width: 100%; height: auto; }
+    svg.loft-render { max-width: 1100px; width: 100%; height: auto; }
   .features { max-width: 1100px; margin: 0 auto; padding: 0 40px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
   .feature-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 18px 22px; transition: border-color 0.3s; }
   .feature-card:hover { border-color: #999; }
@@ -348,9 +404,8 @@
   <h1>TUSHY &times; Rube Goldberg Machine</h1>
   <div class="subtitle">SoHo Loft Installation &mdash; Overhead Render v5</div>
 </div>
-<div class="dims-bar">30 ft wide &times; 60 ft long &times; 20 ft ceilings&ensp;&middot;&ensp;hover stations for details&ensp;&middot;&ensp;auto-reset</div>
-
-<div class="render-container">
+<div class="split-layout">
+<div class="map-panel">
 <svg class="loft-render" viewBox="0 0 1060 600" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="ss"><feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.06)"/></filter>
@@ -732,13 +787,12 @@
   <text x="610" y="472" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5">&larr; WATER RETURN</text>
 
 </svg>
-</div>
+</div><!-- .map-panel -->
 
-
-
+<div class="cards-panel">
 <!-- Station Cards -->
 <div class="section-label">STATIONS</div>
-<div class="features" id="station-cards">
+<div id="station-cards">
 
   <div class="feature-card" data-sid="1">
     <div class="station-num">&#9312; Start &middot; Top Wall</div>
@@ -881,7 +935,7 @@
 
 <!-- IDEA CATALOG -->
 <div class="section-label">IDEAS</div>
-<div class="features" id="idea-cards">
+<div id="idea-cards">
 
   <div class="feature-card idea-card">
     <div class="station-num">Finale Option</div>
@@ -1061,7 +1115,9 @@
     <p>Submit a new concept</p>
   </div>
 
-</div>
+</div><!-- #idea-cards -->
+</div><!-- .cards-panel -->
+</div><!-- .split-layout -->
 
 <!-- Add Idea Modal -->
 <div class="idea-modal-overlay" id="idea-modal">

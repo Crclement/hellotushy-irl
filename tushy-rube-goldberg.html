@@ -109,14 +109,42 @@
   .idea-card:hover::after { color: #111; }
   .idea-card.swapped { border-color: #111; background: #f9f9f9; }
   .idea-card.swapped::after { content: attr(data-assigned); color: #999; }
-  .swap-popup { position: fixed; z-index: 200; background: #fff; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); padding: 8px 0; min-width: 260px; display: none; }
-  .swap-popup.visible { display: block; }
-  .swap-popup-title { padding: 8px 16px 6px; font-family: 'Space Grotesk', sans-serif; font-size: 0.7rem; font-weight: 600; color: #bbb; letter-spacing: 0.12em; text-transform: uppercase; }
-  .swap-popup-item { padding: 9px 16px; font-size: 0.84rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif; color: #333; transition: background 0.15s; }
-  .swap-popup-item:hover { background: #f5f5f5; }
-  .swap-popup-item .stn-num { font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 0.78rem; color: #999; min-width: 28px; }
-  .swap-popup-item .stn-name { flex: 1; }
-  .swap-popup-item .stn-current { font-size: 0.7rem; color: #bbb; margin-left: 8px; }
+  /* Edit mode banner */
+  .edit-mode-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 300;
+    background: #111;
+    color: #fff;
+    padding: 14px 20px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .edit-mode-banner.visible { display: flex; }
+  .edit-mode-banner .cancel-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.4);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .edit-mode-banner .cancel-btn:hover { background: rgba(255,255,255,0.1); }
+  /* Edit mode station highlighting */
+  body.edit-mode .station { cursor: crosshair !important; }
+  body.edit-mode .station:hover rect,
+  body.edit-mode .station:hover path { stroke: #007AFF !important; stroke-width: 3 !important; }
+  body.edit-mode .station:hover text { fill: #007AFF !important; }
   .swap-flash { animation: flashGreen 0.6s ease-out; }
   @keyframes flashGreen { 0% { background: #e8f5e9; } 100% { background: #fff; } }
 </style>
@@ -965,9 +993,10 @@
 
 <div class="tooltip-overlay" id="tooltip"><div class="tt-title"></div><div class="tt-desc"></div></div>
 
-<!-- Swap popup -->
-<div class="swap-popup" id="swap-popup">
-  <div class="swap-popup-title">Assign to station</div>
+<!-- Edit mode banner -->
+<div class="edit-mode-banner" id="edit-banner">
+  <span>Click a station on the map to assign idea</span>
+  <button class="cancel-btn" id="cancel-edit">Cancel (Esc)</button>
 </div>
 
 <script>
@@ -978,113 +1007,91 @@
     el.addEventListener('mousemove',e=>{t.style.left=(e.clientX+16)+'px';t.style.top=(e.clientY-10)+'px'});
     el.addEventListener('mouseleave',()=>t.classList.remove('visible'))});
 
-  // === IDEA SWAP SYSTEM ===
-  const popup = document.getElementById('swap-popup');
+  // === IDEA SWAP SYSTEM (Edit Mode) ===
+  const editBanner = document.getElementById('edit-banner');
+  const cancelBtn = document.getElementById('cancel-edit');
   const stationContainer = document.getElementById('station-cards');
   const ideaContainer = document.getElementById('idea-cards');
+  const renderContainer = document.querySelector('.render-container');
+  const svgStations = document.querySelectorAll('.station[data-station]');
 
   // Add idea-card class to all cards in the idea catalog
   ideaContainer.querySelectorAll('.feature-card').forEach(c => c.classList.add('idea-card'));
 
-  // Station position labels
-  const posLabels = {
-    1: '\u2460 Start \u00B7 Top Wall',
-    2: '\u2461 Top Wall',
-    3: '\u2462 \u270B Interactive \u00B7 Top Wall',
-    4: '\u2463 Top Wall',
-    5: '\u2464 Corner',
-    6: '\u2465 \u270B Interactive \u00B7 Right Wall',
-    7: '\u2466 Right Wall',
-    8: '\u2467 \u270B Interactive \u00B7 Bottom Wall',
-    9: '\u2468 \u270B + Machine \u00B7 Bottom Wall',
-    10: '\u2469 Finale \u00B7 Bottom Left'
-  };
-
   let activeIdea = null;
 
-  // Close popup on outside click
-  document.addEventListener('click', e => {
-    if (!popup.contains(e.target) && !e.target.closest('.idea-card')) {
-      popup.classList.remove('visible');
-      activeIdea = null;
+  function enterEditMode(ideaCard) {
+    activeIdea = ideaCard;
+    document.body.classList.add('edit-mode');
+    editBanner.classList.add('visible');
+    // Scroll to the map
+    renderContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function exitEditMode() {
+    document.body.classList.remove('edit-mode');
+    editBanner.classList.remove('visible');
+    activeIdea = null;
+  }
+
+  // Cancel button
+  cancelBtn.addEventListener('click', exitEditMode);
+
+  // Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && activeIdea) {
+      exitEditMode();
     }
   });
 
-  // Idea card click handler
+  // Idea card click handler — enter edit mode
   ideaContainer.addEventListener('click', e => {
     const card = e.target.closest('.idea-card');
     if (!card) return;
-    activeIdea = card;
-
-    // Build popup menu with current station names
-    const items = popup.querySelectorAll('.swap-popup-item');
-    items.forEach(i => i.remove());
-
-    for (let i = 1; i <= 10; i++) {
-      const sCard = stationContainer.querySelector(`[data-sid="${i}"]`);
-      const currentName = sCard ? sCard.querySelector('h3').textContent : '—';
-      const row = document.createElement('div');
-      row.className = 'swap-popup-item';
-      row.dataset.target = i;
-      row.innerHTML = `<span class="stn-num">${i}.</span><span class="stn-name">${currentName}</span><span class="stn-current">${posLabels[i].split(' ')[0]}</span>`;
-      popup.appendChild(row);
-    }
-
-    // Position popup near the click
-    const r = card.getBoundingClientRect();
-    let left = r.right + 8;
-    let top = r.top;
-    // Keep on screen
-    if (left + 280 > window.innerWidth) left = r.left - 280;
-    if (top + 400 > window.innerHeight) top = window.innerHeight - 410;
-    if (top < 10) top = 10;
-    popup.style.left = left + 'px';
-    popup.style.top = top + 'px';
-    popup.classList.add('visible');
+    enterEditMode(card);
   });
 
-  // Popup item click — perform the swap
-  popup.addEventListener('click', e => {
-    const row = e.target.closest('.swap-popup-item');
-    if (!row || !activeIdea) return;
+  // SVG station click handler — perform the swap
+  svgStations.forEach(station => {
+    station.addEventListener('click', e => {
+      if (!activeIdea) return;
 
-    const targetId = row.dataset.target;
-    const sCard = stationContainer.querySelector(`[data-sid="${targetId}"]`);
-    if (!sCard) return;
+      const targetId = station.dataset.station;
+      if (!targetId || isNaN(targetId)) return; // Skip non-numbered stations like 'ba'
 
-    // Get idea content
-    const ideaTitle = activeIdea.querySelector('h3').textContent;
-    const ideaDesc = activeIdea.querySelector('p').textContent;
-    const ideaTags = activeIdea.querySelector('.products-used');
-    const ideaType = activeIdea.querySelector('.station-num').textContent;
+      const sCard = stationContainer.querySelector(`[data-sid="${targetId}"]`);
+      if (!sCard) return;
 
-    // Save old station content before overwriting
-    const oldTitle = sCard.querySelector('h3').textContent;
-    const oldDesc = sCard.querySelector('p').textContent;
-    const oldTags = sCard.querySelector('.products-used');
+      // Get idea content
+      const ideaTitle = activeIdea.querySelector('h3').textContent;
+      const ideaDesc = activeIdea.querySelector('p').textContent;
+      const ideaTags = activeIdea.querySelector('.products-used');
 
-    // Update station card with idea
-    sCard.querySelector('h3').textContent = ideaTitle;
-    sCard.querySelector('p').textContent = ideaDesc;
-    if (ideaTags && oldTags) {
-      oldTags.innerHTML = ideaTags.innerHTML;
-    }
+      // Update station card with idea
+      sCard.querySelector('h3').textContent = ideaTitle;
+      sCard.querySelector('p').textContent = ideaDesc;
+      const oldTags = sCard.querySelector('.products-used');
+      if (ideaTags && oldTags) {
+        oldTags.innerHTML = ideaTags.innerHTML;
+      }
 
-    // Flash the station card
-    sCard.classList.remove('swap-flash');
-    void sCard.offsetWidth;
-    sCard.classList.add('swap-flash');
+      // Flash the station card
+      sCard.classList.remove('swap-flash');
+      void sCard.offsetWidth;
+      sCard.classList.add('swap-flash');
 
-    // Mark the idea card as assigned
-    activeIdea.classList.add('swapped');
-    activeIdea.dataset.assigned = '\u2192 Station ' + targetId;
+      // Mark the idea card as assigned
+      activeIdea.classList.add('swapped');
+      activeIdea.dataset.assigned = '\u2192 Station ' + targetId;
 
-    // Close popup
-    popup.classList.remove('visible');
-    activeIdea = null;
+      // Exit edit mode
+      exitEditMode();
 
-    // Scroll station card into view
-    sCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Scroll station card into view
+      setTimeout(() => {
+        sCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    });
   });
 </script>
 

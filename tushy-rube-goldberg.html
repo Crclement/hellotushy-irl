@@ -125,7 +125,7 @@
 
 <div class="main-ui">
 <div class="content-wrapper">
-<a href="index.html" class="back-link">Back to Projects</a>
+<a href="index.html" class="back-link" id="backLink">Back to Projects</a>
 
 <div class="header">
   <h1>TUSHY &times; Rube Goldberg Machine</h1>
@@ -1091,6 +1091,12 @@
 </div><!-- .content-wrapper -->
 </div><!-- .main-ui -->
 
-<script src="auth.js"></script>
+<script>
+  // Hide back link when embedded
+  if (new URLSearchParams(window.location.search).get('embed') === '1') {
+    var bl = document.getElementById('backLink');
+    if (bl) bl.style.display = 'none';
+  }
+</script>
 </body>
 </html>

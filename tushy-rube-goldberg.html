@@ -1826,21 +1826,13 @@
           // Restore hidden illustration elements
           svgStation.querySelectorAll('.hidden-illustration').forEach(el => {
             el.classList.remove('hidden-illustration');
-            el.style.display = '';
           });
 
-          // Remove the emoji
+          // Remove the swapped title and emoji
+          const swappedTitle = svgStation.querySelector('.swapped-title');
+          if (swappedTitle) swappedTitle.remove();
           const emojiEl = svgStation.querySelector('.idea-emoji');
           if (emojiEl) emojiEl.remove();
-
-          // Update SVG text
-          const textElements = svgStation.querySelectorAll('text');
-          textElements.forEach(textEl => {
-            const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
-            if (fontSize >= 6.5 && textEl.getAttribute('font-weight') === '700') {
-              textEl.textContent = action.data.previousTitle.toUpperCase().substring(0, 18);
-            }
-          });
         }
       }
     }
@@ -1867,14 +1859,35 @@
           svgStation.dataset.desc = action.data.redoDesc;
           svgStation.classList.add('has-idea');
 
-          // Hide illustration elements
+          // Hide ALL children except rect
           Array.from(svgStation.children).forEach(child => {
             const tagName = child.tagName.toLowerCase();
-            if (tagName !== 'rect' && tagName !== 'text') {
+            if (tagName !== 'rect' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji') && !child.classList.contains('swapped-title')) {
               child.classList.add('hidden-illustration');
-              child.style.display = 'none';
             }
           });
+
+          // Remove any existing swapped title
+          const existingTitle = svgStation.querySelector('.swapped-title');
+          if (existingTitle) existingTitle.remove();
+
+          // Create new title text element
+          const rect = svgStation.querySelector('rect');
+          if (rect) {
+            const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            titleEl.classList.add('swapped-title');
+            const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+            const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) - 8;
+            titleEl.setAttribute('x', x);
+            titleEl.setAttribute('y', y);
+            titleEl.setAttribute('fill', '#000');
+            titleEl.setAttribute('font-size', '7');
+            titleEl.setAttribute('text-anchor', 'middle');
+            titleEl.setAttribute('font-family', 'Space Grotesk, sans-serif');
+            titleEl.setAttribute('font-weight', '700');
+            titleEl.textContent = action.data.redoTitle.toUpperCase().substring(0, 18);
+            svgStation.appendChild(titleEl);
+          }
 
           // Add emoji
           const ideaEmoji = action.data.idea?.emoji || getIdeaEmoji(action.data.redoTitle);
@@ -1885,7 +1898,6 @@
               emojiEl.classList.add('idea-emoji');
               emojiEl.setAttribute('font-size', '20');
               emojiEl.setAttribute('text-anchor', 'middle');
-              const rect = svgStation.querySelector('rect');
               if (rect) {
                 const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
                 const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2 + 6;
@@ -1896,15 +1908,6 @@
             }
             emojiEl.textContent = ideaEmoji;
           }
-
-          // Update SVG text
-          const textElements = svgStation.querySelectorAll('text');
-          textElements.forEach(textEl => {
-            const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
-            if (fontSize >= 6.5 && textEl.getAttribute('font-weight') === '700') {
-              textEl.textContent = action.data.redoTitle.toUpperCase().substring(0, 18);
-            }
-          });
         }
       }
     }
@@ -2263,40 +2266,34 @@
       svgStation.dataset.cat = idea.category || '';
       svgStation.classList.add('has-idea');
 
-      // Hide original illustration elements (keep rect, texts, and mobile-info-icon)
+      // Hide ALL children except rect (keep rect for background)
       Array.from(svgStation.children).forEach(child => {
         const tagName = child.tagName.toLowerCase();
-        if (tagName !== 'rect' && tagName !== 'text' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji')) {
+        if (tagName !== 'rect' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji') && !child.classList.contains('swapped-title')) {
           child.classList.add('hidden-illustration');
         }
       });
 
-      // Update the visible text inside the SVG station (find the main title text)
-      const textElements = svgStation.querySelectorAll('text:not(.idea-emoji):not(.mobile-info-icon text)');
-      let titleUpdated = false;
-      textElements.forEach(textEl => {
-        const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
-        // Update main title (largest bold text, usually font-size 7 with font-weight 700)
-        if (fontSize >= 6.5 && textEl.getAttribute('font-weight') === '700' && !titleUpdated) {
-          const shortTitle = idea.title.toUpperCase().substring(0, 18);
-          textEl.textContent = shortTitle;
-          titleUpdated = true;
-        }
-      });
-      // Fallback: if no bold text found, update the largest text
-      if (!titleUpdated) {
-        let largestText = null;
-        let largestSize = 0;
-        textElements.forEach(textEl => {
-          const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
-          if (fontSize > largestSize) {
-            largestSize = fontSize;
-            largestText = textEl;
-          }
-        });
-        if (largestText) {
-          largestText.textContent = idea.title.toUpperCase().substring(0, 18);
-        }
+      // Remove any existing swapped title
+      const existingTitle = svgStation.querySelector('.swapped-title');
+      if (existingTitle) existingTitle.remove();
+
+      // Create new title text element
+      const rect = svgStation.querySelector('rect');
+      if (rect) {
+        const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        titleEl.classList.add('swapped-title');
+        const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+        const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) - 8;
+        titleEl.setAttribute('x', x);
+        titleEl.setAttribute('y', y);
+        titleEl.setAttribute('fill', '#000');
+        titleEl.setAttribute('font-size', '7');
+        titleEl.setAttribute('text-anchor', 'middle');
+        titleEl.setAttribute('font-family', 'Space Grotesk, sans-serif');
+        titleEl.setAttribute('font-weight', '700');
+        titleEl.textContent = idea.title.toUpperCase().substring(0, 18);
+        svgStation.appendChild(titleEl);
       }
 
       // Add/update emoji icon on the station (for ideas from Ideas panel)

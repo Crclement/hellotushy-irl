@@ -676,6 +676,29 @@
   .idea-form-group input:focus,
   .idea-form-group textarea:focus { border-color: #111; }
   .idea-form-group textarea { min-height: 100px; resize: vertical; }
+  .idea-form-row { display: flex; gap: 16px; margin-bottom: 18px; }
+  .idea-form-row .idea-form-group { margin-bottom: 0; flex: 1; }
+  .idea-form-row .idea-form-group.emoji-group { flex: 0 0 100px; }
+  /* Category Select */
+  .category-select { position: relative; }
+  .category-selected { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; background: #fff; transition: border-color 0.2s; }
+  .category-selected:hover { border-color: #999; }
+  .category-selected .cat-icon { font-size: 1.1rem; }
+  .category-selected .cat-label { flex: 1; font-size: 0.95rem; }
+  .category-selected svg { color: #999; }
+  .category-options { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #ddd; border-radius: 6px; margin-top: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: none; z-index: 10; overflow: hidden; }
+  .category-options.open { display: block; }
+  .category-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; transition: background 0.15s; }
+  .category-option:hover { background: #f5f5f5; }
+  .category-option .cat-icon { font-size: 1.1rem; }
+  /* Emoji Picker */
+  .emoji-picker { position: relative; }
+  .emoji-selected { width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; background: #fff; transition: border-color 0.2s; }
+  .emoji-selected:hover { border-color: #999; }
+  .emoji-grid { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #fff; border: 1px solid #ddd; border-radius: 8px; margin-top: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); display: none; z-index: 10; padding: 8px; width: 200px; }
+  .emoji-grid.open { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .emoji-grid span { font-size: 1.4rem; padding: 8px; text-align: center; cursor: pointer; border-radius: 6px; transition: background 0.15s; }
+  .emoji-grid span:hover { background: #f0f0f0; }
   .idea-modal-footer {
     padding: 16px 24px;
     border-top: 1px solid #eee;
@@ -1551,10 +1574,6 @@
     </div>
     <div class="idea-modal-body">
       <div class="idea-form-group">
-        <label>Your Name</label>
-        <input type="text" id="idea-author" placeholder="e.g., Chris" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
-      </div>
-      <div class="idea-form-group">
         <label>Title</label>
         <input type="text" id="idea-title" placeholder="e.g., The Water Curtain" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
       </div>
@@ -1562,24 +1581,47 @@
         <label>Description</label>
         <textarea id="idea-desc" placeholder="Describe the idea, how it works, what makes it special..." autocomplete="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other"></textarea>
       </div>
-      <div class="idea-form-group">
-        <label>Category</label>
-        <select id="idea-category" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;background:#fff;">
-          <option value="Finale Option">Finale Option</option>
-          <option value="Interactive Option">Interactive Option</option>
-          <option value="Sensory">Sensory</option>
-          <option value="Water Feature">Water Feature</option>
-          <option value="Kinetic / Always-On">Kinetic / Always-On</option>
-          <option value="Feature">Feature</option>
-        </select>
+      <div class="idea-form-row">
+        <div class="idea-form-group">
+          <label>Category</label>
+          <div class="category-select" id="category-select">
+            <div class="category-selected" id="category-selected">
+              <span class="cat-icon">🏁</span>
+              <span class="cat-label">Finale Option</span>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+            <div class="category-options" id="category-options">
+              <div class="category-option" data-value="Finale Option"><span class="cat-icon">🏁</span>Finale Option</div>
+              <div class="category-option" data-value="Interactive Option"><span class="cat-icon">🕹️</span>Interactive Option</div>
+              <div class="category-option" data-value="Sensory"><span class="cat-icon">✨</span>Sensory</div>
+              <div class="category-option" data-value="Water Feature"><span class="cat-icon">💦</span>Water Feature</div>
+              <div class="category-option" data-value="Kinetic / Always-On"><span class="cat-icon">⚙️</span>Kinetic / Always-On</div>
+              <div class="category-option" data-value="Feature"><span class="cat-icon">⭐</span>Feature</div>
+            </div>
+            <input type="hidden" id="idea-category" value="Finale Option">
+          </div>
+        </div>
+        <div class="idea-form-group emoji-group">
+          <label>Emoji</label>
+          <div class="emoji-picker" id="emoji-picker">
+            <div class="emoji-selected" id="emoji-selected">💧</div>
+            <div class="emoji-grid" id="emoji-grid">
+              <span data-emoji="💧">💧</span><span data-emoji="🚿">🚿</span><span data-emoji="💦">💦</span><span data-emoji="🌊">🌊</span>
+              <span data-emoji="🧻">🧻</span><span data-emoji="🚽">🚽</span><span data-emoji="🪠">🪠</span><span data-emoji="🧼">🧼</span>
+              <span data-emoji="🕯️">🕯️</span><span data-emoji="🔥">🔥</span><span data-emoji="💨">💨</span><span data-emoji="✨">✨</span>
+              <span data-emoji="🎯">🎯</span><span data-emoji="🏁">🏁</span><span data-emoji="🎪">🎪</span><span data-emoji="🎭">🎭</span>
+              <span data-emoji="🔔">🔔</span><span data-emoji="🎵">🎵</span><span data-emoji="🥁">🥁</span><span data-emoji="🎹">🎹</span>
+              <span data-emoji="⚙️">⚙️</span><span data-emoji="🔄">🔄</span><span data-emoji="⚡">⚡</span><span data-emoji="💡">💡</span>
+              <span data-emoji="🌈">🌈</span><span data-emoji="🌀">🌀</span><span data-emoji="⬇️">⬇️</span><span data-emoji="🪂">🪂</span>
+              <span data-emoji="👃">👃</span><span data-emoji="👁️">👁️</span><span data-emoji="✋">✋</span><span data-emoji="🤝">🤝</span>
+            </div>
+          </div>
+          <input type="hidden" id="idea-emoji" value="💧">
+        </div>
       </div>
       <div class="idea-form-group">
-        <label>Emoji Icon (for map display)</label>
-        <input type="text" id="idea-emoji" placeholder="e.g., 💦 🎯 🔔 ⚡" maxlength="4" style="width:80px;text-align:center;font-size:1.5rem;" autocomplete="off" data-lpignore="true" data-1p-ignore data-form-type="other">
-      </div>
-      <div class="idea-form-group">
-        <label>Tags (comma separated)</label>
-        <input type="text" id="idea-tags" placeholder="e.g., Classic 3.0, fog machine, LEDs" autocomplete="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
+        <label>Your Name</label>
+        <input type="text" id="idea-author" placeholder="e.g., Chris" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
       </div>
     </div>
     <div class="idea-modal-footer">
@@ -2635,6 +2677,50 @@
   ideaSaveBtn.addEventListener('click', saveNewIdea);
   ideaModal.addEventListener('click', (e) => {
     if (e.target === ideaModal) closeIdeaModal();
+  });
+
+  // Category select
+  const categorySelect = document.getElementById('category-select');
+  const categorySelected = document.getElementById('category-selected');
+  const categoryOptions = document.getElementById('category-options');
+  const categoryInput = document.getElementById('idea-category');
+  const categoryIcons = {'Finale Option':'🏁','Interactive Option':'🕹️','Sensory':'✨','Water Feature':'💦','Kinetic / Always-On':'⚙️','Feature':'⭐'};
+
+  categorySelected.addEventListener('click', () => {
+    categoryOptions.classList.toggle('open');
+  });
+  categoryOptions.querySelectorAll('.category-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const val = opt.dataset.value;
+      categoryInput.value = val;
+      categorySelected.querySelector('.cat-icon').textContent = categoryIcons[val] || '⭐';
+      categorySelected.querySelector('.cat-label').textContent = val;
+      categoryOptions.classList.remove('open');
+    });
+  });
+
+  // Emoji picker
+  const emojiPicker = document.getElementById('emoji-picker');
+  const emojiSelected = document.getElementById('emoji-selected');
+  const emojiGrid = document.getElementById('emoji-grid');
+  const emojiInput = document.getElementById('idea-emoji');
+
+  emojiSelected.addEventListener('click', () => {
+    emojiGrid.classList.toggle('open');
+  });
+  emojiGrid.querySelectorAll('span').forEach(span => {
+    span.addEventListener('click', () => {
+      const emoji = span.dataset.emoji;
+      emojiInput.value = emoji;
+      emojiSelected.textContent = emoji;
+      emojiGrid.classList.remove('open');
+    });
+  });
+
+  // Close dropdowns on outside click
+  document.addEventListener('click', (e) => {
+    if (!categorySelect.contains(e.target)) categoryOptions.classList.remove('open');
+    if (!emojiPicker.contains(e.target)) emojiGrid.classList.remove('open');
   });
 
   // Initialize

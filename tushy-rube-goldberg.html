@@ -400,7 +400,7 @@
   .station:hover rect,
   .station:hover path { stroke: #007AFF !important; stroke-width: 2.5 !important; }
   .station.has-idea rect { fill: #e8f5e9 !important; }
-  .station .hidden-illustration { display: none !important; visibility: hidden !important; }
+  .station .hidden-illustration { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
 
   /* Mobile info icon on stations */
   @media (hover: none), (max-width: 768px) {
@@ -1826,6 +1826,8 @@
           // Restore hidden illustration elements
           svgStation.querySelectorAll('.hidden-illustration').forEach(el => {
             el.classList.remove('hidden-illustration');
+            el.style.display = '';
+            el.style.visibility = '';
           });
 
           // Remove the swapped title and emoji
@@ -1864,6 +1866,8 @@
             const tagName = child.tagName.toLowerCase();
             if (tagName !== 'rect' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji') && !child.classList.contains('swapped-title')) {
               child.classList.add('hidden-illustration');
+              child.style.display = 'none';
+              child.style.visibility = 'hidden';
             }
           });
 
@@ -2271,6 +2275,8 @@
         const tagName = child.tagName.toLowerCase();
         if (tagName !== 'rect' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji') && !child.classList.contains('swapped-title')) {
           child.classList.add('hidden-illustration');
+          child.style.display = 'none';
+          child.style.visibility = 'hidden';
         }
       });
 

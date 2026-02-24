@@ -7,103 +7,262 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #fff; color: #111; font-family: 'Inter', sans-serif; min-height: 100vh; overflow-x: hidden; }
+  body { background: #f5f5f5; color: #111; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
 
-  .main-ui {
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    overflow-y: auto;
-  }
-
-  .content-wrapper {
-    padding: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    .content-wrapper {
-      padding: 1rem;
-    }
-  }
-
-  /* Split layout - map sticky with cards */
-  .split-layout {
-    display: grid;
-    grid-template-columns: 1fr 400px;
-    gap: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    align-items: start;
-  }
-
-  .map-panel {
-    position: sticky;
-    top: 2rem;
-  }
-
-  .map-panel svg {
-    width: 100%;
-    height: auto;
-    border: 1px solid #e0e0e0;
-    border-radius: 12px;
-  }
-
-  .cards-panel {
+  /* Full viewport map layout */
+  .map-viewport {
+    position: fixed;
+    inset: 0;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #f5f5f5;
   }
 
-  .cards-panel .section-label {
-    padding: 16px 0 10px;
-    margin: 0;
-    font-size: 0.75rem;
-    border-bottom: 1px solid #ddd;
+  .map-viewport svg {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
   }
 
-  .cards-panel .feature-card {
-    padding: 14px 16px;
+  /* Top bar */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e0e0e0;
   }
 
-  .cards-panel .feature-card h3 {
-    font-size: 0.95rem;
-  }
-
-  .cards-panel .feature-card p {
-    font-size: 0.8rem;
-  }
-
-  @media (max-width: 1000px) {
-    .split-layout {
-      grid-template-columns: 1fr;
-    }
-    .map-panel {
-      position: relative;
-      top: 0;
-    }
-  }
-
-  .back-link {
+  .top-bar .back-link {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     font-weight: 500;
-    color: #999;
+    color: #666;
     text-decoration: none;
-    margin-bottom: 20px;
     transition: color 0.2s;
   }
-  .back-link:hover { color: #111; }
-  .back-link::before { content: '\2190'; }
+  .top-bar .back-link:hover { color: #111; }
 
-  .header { text-align: center; padding: 10px 20px 10px; }
-  .header h1 { font-family: 'Space Grotesk', sans-serif; font-size: 2.2rem; font-weight: 700; letter-spacing: -0.02em; color: #000; margin-bottom: 6px; }
-  .header .subtitle { font-size: 0.95rem; color: #999; font-weight: 300; letter-spacing: 0.15em; text-transform: uppercase; }
-    svg.loft-render { max-width: 1100px; width: 100%; height: auto; }
+  .top-bar .title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111;
+  }
+
+  .top-bar .actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .ideas-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .ideas-btn:hover { background: #333; }
+
+  /* Station info popup on map click */
+  .station-popup {
+    position: fixed;
+    z-index: 200;
+    background: #fff;
+    border: 2px solid #111;
+    border-radius: 12px;
+    padding: 20px;
+    width: 320px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    display: none;
+  }
+  .station-popup.visible { display: block; }
+  .station-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .station-popup-num {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #999;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .station-popup-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+  }
+  .station-popup-close:hover { color: #111; }
+  .station-popup h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .station-popup p {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #555;
+    margin-bottom: 16px;
+  }
+  .station-popup-actions {
+    display: flex;
+    gap: 10px;
+  }
+  .station-popup-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .station-popup-btn.secondary {
+    background: #fff;
+    border: 1px solid #ddd;
+    color: #555;
+  }
+  .station-popup-btn.secondary:hover { border-color: #111; color: #111; }
+  .station-popup-btn.primary {
+    background: #111;
+    border: 1px solid #111;
+    color: #fff;
+  }
+  .station-popup-btn.primary:hover { background: #333; }
+
+  /* Ideas panel (slide-in from right) */
+  .ideas-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 420px;
+    max-width: 100vw;
+    background: #fff;
+    z-index: 300;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 40px rgba(0,0,0,0.1);
+  }
+  .ideas-panel.open { transform: translateX(0); }
+
+  .ideas-panel-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .ideas-panel-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+  .ideas-panel-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #999;
+    cursor: pointer;
+  }
+  .ideas-panel-close:hover { color: #111; }
+
+  .ideas-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .ideas-panel-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e0e0e0;
+    flex-shrink: 0;
+  }
+
+  .ideas-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 250;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+  .ideas-overlay.visible { opacity: 1; pointer-events: auto; }
+
+  /* Idea cards in panel */
+  .idea-item {
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .idea-item:hover { border-color: #111; background: #fff; }
+  .idea-item.selected { border-color: #111; border-width: 2px; background: #fff; }
+  .idea-item-category {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #999;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .idea-item h4 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .idea-item p {
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: #666;
+  }
+
+  /* SVG station styling */
+  .station { cursor: pointer; }
+  .station:hover rect,
+  .station:hover path { stroke: #007AFF !important; stroke-width: 2.5 !important; }
+  .station.has-idea rect { fill: #e8f5e9 !important; }
+
+  /* Hidden elements */
+  .hidden { display: none !important; }
   .features { max-width: 1100px; margin: 0 auto; padding: 0 40px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
   .feature-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 18px 22px; transition: border-color 0.3s; }
   .feature-card:hover { border-color: #999; }
@@ -396,16 +555,17 @@
 </head>
 <body>
 
-<div class="main-ui">
-<div class="content-wrapper">
-<a href="index.html" class="back-link" id="backLink">Back to Projects</a>
-
-<div class="header">
-  <h1>TUSHY &times; Rube Goldberg Machine</h1>
-  <div class="subtitle">SoHo Loft Installation &mdash; Overhead Render v5</div>
+<!-- Top Bar -->
+<div class="top-bar">
+  <a href="index.html" class="back-link" id="backLink">← Projects</a>
+  <span class="title">TUSHY × Rube Goldberg</span>
+  <div class="actions">
+    <button class="ideas-btn" id="openIdeasBtn">Ideas</button>
+  </div>
 </div>
-<div class="split-layout">
-<div class="map-panel">
+
+<!-- Full Viewport Map -->
+<div class="map-viewport">
 <svg class="loft-render" viewBox="0 0 1060 600" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <filter id="ss"><feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.06)"/></filter>
@@ -787,11 +947,40 @@
   <text x="610" y="472" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5">&larr; WATER RETURN</text>
 
 </svg>
-</div><!-- .map-panel -->
+</div><!-- .map-viewport -->
 
-<div class="cards-panel">
-<!-- Station Cards -->
-<div class="section-label">STATIONS</div>
+<!-- Station Popup (appears on map click) -->
+<div class="station-popup" id="stationPopup">
+  <div class="station-popup-header">
+    <span class="station-popup-num" id="popupStationNum">Station 1</span>
+    <button class="station-popup-close" id="popupClose">×</button>
+  </div>
+  <h3 id="popupTitle">The Great Cascade</h3>
+  <p id="popupDesc">Description here...</p>
+  <div class="station-popup-actions">
+    <button class="station-popup-btn primary" id="popupSwapBtn">Swap Idea</button>
+  </div>
+</div>
+
+<!-- Ideas Panel Overlay -->
+<div class="ideas-overlay" id="ideasOverlay"></div>
+
+<!-- Ideas Panel (slides in from right) -->
+<div class="ideas-panel" id="ideasPanel">
+  <div class="ideas-panel-header">
+    <h2>Ideas Library</h2>
+    <button class="ideas-panel-close" id="closeIdeasBtn">×</button>
+  </div>
+  <div class="ideas-panel-body" id="ideasPanelBody">
+    <!-- Ideas will be rendered here -->
+  </div>
+  <div class="ideas-panel-footer">
+    <button class="ideas-btn" style="width:100%;" id="addIdeaBtnPanel">+ Add New Idea</button>
+  </div>
+</div>
+
+<!-- Hidden data containers -->
+<div class="hidden">
 <div id="station-cards">
 
   <div class="feature-card" data-sid="1">
@@ -1116,8 +1305,7 @@
   </div>
 
 </div><!-- #idea-cards -->
-</div><!-- .cards-panel -->
-</div><!-- .split-layout -->
+</div><!-- .hidden data containers -->
 
 <!-- Add Idea Modal -->
 <div class="idea-modal-overlay" id="idea-modal">
@@ -1281,101 +1469,165 @@
 
 
 <script>
-  // Tooltip for SVG stations
-  const t=document.getElementById('tooltip'),s=document.querySelectorAll('.station');
-  s.forEach(el=>{el.style.cursor='pointer';
-    el.addEventListener('mouseenter',e=>{const n=el.dataset.name,d=el.dataset.desc;if(!n)return;t.querySelector('.tt-title').textContent=n;t.querySelector('.tt-desc').textContent=d;t.classList.add('visible')});
-    el.addEventListener('mousemove',e=>{t.style.left=(e.clientX+16)+'px';t.style.top=(e.clientY-10)+'px'});
-    el.addEventListener('mouseleave',()=>t.classList.remove('visible'))});
+  // === UI ELEMENTS ===
+  const ideasPanel = document.getElementById('ideasPanel');
+  const ideasOverlay = document.getElementById('ideasOverlay');
+  const ideasPanelBody = document.getElementById('ideasPanelBody');
+  const openIdeasBtn = document.getElementById('openIdeasBtn');
+  const closeIdeasBtn = document.getElementById('closeIdeasBtn');
+  const addIdeaBtnPanel = document.getElementById('addIdeaBtnPanel');
 
-  // === IDEA SWAP SYSTEM (Inline Station Picker) ===
-  const stationContainer = document.getElementById('station-cards');
-  const ideaContainer = document.getElementById('idea-cards');
+  const stationPopup = document.getElementById('stationPopup');
+  const popupStationNum = document.getElementById('popupStationNum');
+  const popupTitle = document.getElementById('popupTitle');
+  const popupDesc = document.getElementById('popupDesc');
+  const popupSwapBtn = document.getElementById('popupSwapBtn');
+  const popupClose = document.getElementById('popupClose');
 
-  // Add idea-card class and station picker to all cards in the idea catalog
-  ideaContainer.querySelectorAll('.feature-card').forEach(card => {
-    card.classList.add('idea-card');
-    addStationPicker(card);
+  const stationDataContainer = document.getElementById('station-cards');
+  const ideaDataContainer = document.getElementById('idea-cards');
+
+  let currentStation = null;
+  let swapMode = false;
+
+  // === IDEAS PANEL ===
+  function openIdeasPanel(forSwap = false) {
+    swapMode = forSwap;
+    ideasPanel.classList.add('open');
+    ideasOverlay.classList.add('visible');
+    renderIdeasPanel();
+  }
+
+  function closeIdeasPanel() {
+    ideasPanel.classList.remove('open');
+    ideasOverlay.classList.remove('visible');
+    swapMode = false;
+  }
+
+  openIdeasBtn.addEventListener('click', () => openIdeasPanel(false));
+  closeIdeasBtn.addEventListener('click', closeIdeasPanel);
+  ideasOverlay.addEventListener('click', closeIdeasPanel);
+  addIdeaBtnPanel.addEventListener('click', () => {
+    closeIdeasPanel();
+    openIdeaModal();
   });
 
-  function addStationPicker(card) {
-    // Don't add if it's the add-idea card
-    if (card.classList.contains('add-idea-card')) return;
+  // === STATION POPUP ===
+  function showStationPopup(stationNum, x, y) {
+    const stationData = stationDataContainer.querySelector(`[data-sid="${stationNum}"]`);
+    if (!stationData) return;
 
-    const picker = document.createElement('div');
-    picker.className = 'station-picker';
-    picker.innerHTML = `
-      <span class="station-picker-label">Assign to:</span>
-      <div class="station-picker-btns">
-        ${[1,2,3,4,5,6,7,8,9,10].map(n => `<button class="station-pick-btn" data-station="${n}">${n}</button>`).join('')}
-      </div>
-    `;
-    card.appendChild(picker);
+    currentStation = stationNum;
+    popupStationNum.textContent = 'Station ' + stationNum;
+    popupTitle.textContent = stationData.querySelector('h3').textContent;
+    popupDesc.textContent = stationData.querySelector('p').textContent;
 
-    // Add assigned badge
-    const badge = document.createElement('div');
-    badge.className = 'assigned-badge';
-    badge.innerHTML = `<span class="badge-text">Station X</span><button class="clear-assign">×</button>`;
-    card.appendChild(badge);
+    // Position popup near click
+    const rect = stationPopup.getBoundingClientRect();
+    let left = x + 20;
+    let top = y - 50;
+    if (left + 320 > window.innerWidth) left = x - 340;
+    if (top < 70) top = 70;
+    if (top + 200 > window.innerHeight) top = window.innerHeight - 220;
 
-    // Station button clicks
-    picker.querySelectorAll('.station-pick-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const stationNum = btn.dataset.station;
-        assignToStation(card, stationNum);
+    stationPopup.style.left = left + 'px';
+    stationPopup.style.top = top + 'px';
+    stationPopup.classList.add('visible');
+  }
+
+  function hideStationPopup() {
+    stationPopup.classList.remove('visible');
+    currentStation = null;
+  }
+
+  popupClose.addEventListener('click', hideStationPopup);
+  popupSwapBtn.addEventListener('click', () => {
+    hideStationPopup();
+    openIdeasPanel(true);
+  });
+
+  // === SVG STATION CLICKS ===
+  const svgStations = document.querySelectorAll('.station[data-station]');
+  svgStations.forEach(station => {
+    station.addEventListener('click', (e) => {
+      const stationNum = station.dataset.station;
+      if (!stationNum || isNaN(stationNum)) return;
+      showStationPopup(stationNum, e.clientX, e.clientY);
+    });
+  });
+
+  // Close popup on outside click
+  document.addEventListener('click', (e) => {
+    if (!stationPopup.contains(e.target) && !e.target.closest('.station')) {
+      hideStationPopup();
+    }
+  });
+
+  // === RENDER IDEAS PANEL ===
+  function renderIdeasPanel() {
+    ideasPanelBody.innerHTML = '';
+
+    // Get all ideas from the hidden containers
+    const allIdeas = [];
+
+    // Core ideas from HTML
+    ideaDataContainer.querySelectorAll('.feature-card').forEach(card => {
+      if (card.classList.contains('add-idea-card')) return;
+      allIdeas.push({
+        title: card.querySelector('h3')?.textContent || '',
+        category: card.querySelector('.station-num')?.textContent || 'Idea',
+        desc: card.querySelector('p')?.textContent || '',
+        isCore: true,
+        element: card
       });
     });
 
-    // Clear assignment
-    badge.querySelector('.clear-assign').addEventListener('click', (e) => {
-      e.stopPropagation();
-      clearAssignment(card);
+    // Render each idea
+    allIdeas.forEach((idea, idx) => {
+      const item = document.createElement('div');
+      item.className = 'idea-item';
+      item.innerHTML = `
+        <div class="idea-item-category">${idea.category}</div>
+        <h4>${idea.title}</h4>
+        <p>${idea.desc.substring(0, 120)}${idea.desc.length > 120 ? '...' : ''}</p>
+      `;
+
+      if (swapMode && currentStation) {
+        item.addEventListener('click', () => {
+          swapIdeaToStation(idea, currentStation);
+          closeIdeasPanel();
+        });
+      }
+
+      ideasPanelBody.appendChild(item);
     });
   }
 
-  function assignToStation(card, stationNum) {
-    const sCard = stationContainer.querySelector(`[data-sid="${stationNum}"]`);
-    if (!sCard) return;
+  // === SWAP IDEA TO STATION ===
+  function swapIdeaToStation(idea, stationNum) {
+    const stationCard = stationDataContainer.querySelector(`[data-sid="${stationNum}"]`);
+    if (!stationCard) return;
 
-    // Get idea content
-    const ideaTitle = card.querySelector('h3').textContent;
-    const ideaDesc = card.querySelector('p').textContent;
-    const ideaTags = card.querySelector('.products-used');
+    stationCard.querySelector('h3').textContent = idea.title;
+    stationCard.querySelector('p').textContent = idea.desc;
 
-    // Update station card
-    sCard.querySelector('h3').textContent = ideaTitle;
-    sCard.querySelector('p').textContent = ideaDesc;
-    const oldTags = sCard.querySelector('.products-used');
-    if (ideaTags && oldTags) {
-      oldTags.innerHTML = ideaTags.innerHTML;
+    // Update SVG station data attributes
+    const svgStation = document.querySelector(`.station[data-station="${stationNum}"]`);
+    if (svgStation) {
+      svgStation.dataset.name = '⑩ ' + idea.title;
+      svgStation.dataset.desc = idea.desc;
+      svgStation.classList.add('has-idea');
     }
-
-    // Flash station card
-    sCard.classList.remove('swap-flash');
-    void sCard.offsetWidth;
-    sCard.classList.add('swap-flash');
-
-    // Update picker UI
-    card.querySelectorAll('.station-pick-btn').forEach(b => b.classList.remove('active'));
-    card.querySelector(`[data-station="${stationNum}"]`).classList.add('active');
-
-    // Show assigned badge
-    card.classList.add('assigned');
-    card.querySelector('.badge-text').textContent = 'Station ' + stationNum;
-    card.dataset.assignedStation = stationNum;
-
-    // Scroll station card into view
-    setTimeout(() => {
-      sCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 100);
   }
 
-  function clearAssignment(card) {
-    card.classList.remove('assigned');
-    card.querySelectorAll('.station-pick-btn').forEach(b => b.classList.remove('active'));
-    delete card.dataset.assignedStation;
-  }
+  // Tooltip for SVG stations (hover)
+  const t=document.getElementById('tooltip');
+  svgStations.forEach(el=>{
+    el.addEventListener('mouseenter',e=>{const n=el.dataset.name,d=el.dataset.desc;if(!n)return;t.querySelector('.tt-title').textContent=n;t.querySelector('.tt-desc').textContent=d;t.classList.add('visible')});
+    el.addEventListener('mousemove',e=>{t.style.left=(e.clientX+16)+'px';t.style.top=(e.clientY-10)+'px'});
+    el.addEventListener('mouseleave',()=>t.classList.remove('visible'))
+  });
+
 
   // === IDEA MANAGEMENT SYSTEM ===
   // JSONBlob - free cloud storage, no account needed
@@ -1603,14 +1855,10 @@
   renderAllUserIdeas();
 </script>
 
-</div><!-- .content-wrapper -->
-</div><!-- .main-ui -->
-
 <script>
   // Hide back link when embedded
   if (new URLSearchParams(window.location.search).get('embed') === '1') {
-    var bl = document.getElementById('backLink');
-    if (bl) bl.style.display = 'none';
+    document.querySelector('.top-bar').style.display = 'none';
   }
 </script>
 </body>

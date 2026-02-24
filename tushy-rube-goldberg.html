@@ -798,6 +798,7 @@
   .swap-flash { animation: flashGreen 0.6s ease-out; }
   @keyframes flashGreen { 0% { background: #e8f5e9; } 100% { background: #fff; } }
 </style>
+<script src="config.js"></script>
 <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -2858,9 +2859,13 @@
   // AI Generation
   const generateAiBtn = document.getElementById('generate-ai-btn');
   function getAnthropicKey() {
+    // Check for config file first, then localStorage, then prompt
+    if (typeof ANTHROPIC_API_KEY !== 'undefined' && ANTHROPIC_API_KEY) {
+      return ANTHROPIC_API_KEY;
+    }
     let key = localStorage.getItem('anthropic_api_key');
     if (!key) {
-      key = prompt('Enter your Anthropic API key to use AI generation:');
+      key = prompt('Enter your Anthropic API key (will be saved locally):');
       if (key) localStorage.setItem('anthropic_api_key', key);
     }
     return key;

@@ -120,6 +120,17 @@
     overflow-y: auto;
     padding: 3rem;
   }
+  /* Hide content until authenticated */
+  .frame-dashboard .container,
+  .frame-projects .project-view {
+    visibility: hidden;
+    opacity: 0;
+  }
+  body.authenticated .frame-dashboard .container,
+  body.authenticated .frame-projects .project-view {
+    visibility: visible;
+    opacity: 1;
+  }
   @media (max-width: 768px) { .frame-dashboard { padding: 1rem; } }
   .container { max-width: 900px; margin: 0 auto; }
   .frame-dashboard h1 {
@@ -418,9 +429,11 @@
 
     // Check auth
     if (sessionStorage.getItem('tushy_auth') !== '1') {
+      document.body.classList.remove('authenticated');
       goToFrame(1, updateHash);
       return;
     }
+    document.body.classList.add('authenticated');
 
     if (hash === 'dashboard' || hash === '') {
       goToFrame(2, updateHash);
@@ -441,6 +454,7 @@
     e.preventDefault();
     if (codeInput.value.toLowerCase() === PASS.toLowerCase()) {
       sessionStorage.setItem('tushy_auth', '1');
+      document.body.classList.add('authenticated');
       navigateFromHash();
     } else {
       error.style.display = 'block';

@@ -400,7 +400,8 @@
   .station:hover rect,
   .station:hover path { stroke: #007AFF !important; stroke-width: 2.5 !important; }
   .station.has-idea rect { fill: #e8f5e9 !important; }
-  .station .hidden-illustration { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; }
+  .station .hidden-illustration { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
+  .station .hidden-illustration.interactive-pulse { animation: none !important; opacity: 0 !important; }
 
   /* Mobile info icon on stations */
   @media (hover: none), (max-width: 768px) {

@@ -7,31 +7,108 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #f5f5f5; color: #111; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden; }
+  html { background: #fff; color: #111; font-family: 'Inter', sans-serif; }
+  body { background: #fff; overflow-x: hidden; overflow-y: auto; }
+  body.embed-mode { padding-top: 0; }
 
-  /* Full viewport map layout */
-  .map-viewport {
-    position: fixed;
-    inset: 0;
+  /* Main presentation container */
+  .presentation {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 40px 60px;
+  }
+  @media (max-width: 768px) {
+    .presentation { padding: 32px 20px 40px; }
+  }
+
+  /* Project header */
+  .project-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .project-header h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: #111;
+  }
+  .project-header .subtitle {
+    font-size: 0.9rem;
+    color: #999;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0 0 24px;
+  }
+  .project-header .concept-brief {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #444;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  @media (max-width: 768px) {
+    .project-header h1 { font-size: 1.8rem; }
+    .project-header .concept-brief { font-size: 0.9rem; }
+  }
+
+  /* Inline toolbar */
+  .toolbar {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 80px 20px 20px 20px;
-    background: #f5f5f5;
+    gap: 10px;
+  }
+  .toolbar button {
+    padding: 10px 18px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .toolbar button:hover { border-color: #111; }
+  .toolbar button:disabled { opacity: 0.4; cursor: default; }
+  .toolbar button.primary {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+  .toolbar button.primary:hover { background: #333; }
+
+  /* Map section - natural aspect ratio */
+  .map-viewport {
+    position: relative;
+    width: 100%;
+    background: #f8f8f8;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
   }
 
   .map-viewport svg {
-    max-width: 100%;
-    max-height: calc(100vh - 100px);
-    width: auto;
+    display: block;
+    width: 100%;
     height: auto;
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
   }
 
-  /* Top bar */
-  .top-bar {
+  /* Map editing/selecting state */
+  .map-viewport.selecting-mode {
+    background: #f0fdf4;
+    border-color: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2), inset 0 0 20px rgba(34, 197, 94, 0.05);
+  }
+  .map-viewport.selecting-mode svg {
+    box-shadow: 0 0 0 2px #22c55e;
+  }
+
+  /* Hide non-embed elements in embed mode */
+  .top-bar { display: none; }
+
+  /* Top bar (for non-embed standalone view) */
+  body:not(.embed-mode) .top-bar {
     position: fixed;
     top: 0;
     left: 0;
@@ -40,11 +117,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 24px;
+    padding: 14px 24px;
     background: rgba(255,255,255,0.95);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid #e0e0e0;
   }
+  body:not(.embed-mode) { padding-top: 56px; }
 
   .top-bar .back-link {
     display: inline-flex;
@@ -226,36 +304,70 @@
   }
   .ideas-overlay.visible { opacity: 1; pointer-events: auto; }
 
-  /* Idea cards in panel */
+  /* Idea cards in panel - click to expand */
   .idea-item {
     background: #fafafa;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .idea-item:hover { border-color: #111; background: #fff; }
+  .idea-item:hover { border-color: #999; }
+  .idea-item.expanded { border-color: #111; background: #fff; }
   .idea-item.selected { border-color: #111; border-width: 2px; background: #fff; }
   .idea-item-category {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 600;
     color: #999;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
   .idea-item h4 {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 0;
   }
   .idea-item p {
-    font-size: 0.78rem;
-    line-height: 1.5;
+    font-size: 0.76rem;
+    line-height: 1.45;
     color: #666;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, margin 0.3s ease;
+    margin: 0;
+  }
+  .idea-item.expanded p {
+    max-height: 500px;
+    margin-top: 6px;
+  }
+  .idea-item-author {
+    font-size: 0.68rem;
+    font-style: italic;
+    color: #aaa;
+    margin-top: 0;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s, max-height 0.3s, margin 0.3s;
+  }
+  .idea-item.expanded .idea-item-author {
+    opacity: 1;
+    max-height: 2em;
+    margin-top: 4px;
+  }
+  .idea-item-actions {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s, opacity 0.3s;
+  }
+  .idea-item.expanded .idea-item-actions {
+    max-height: 60px;
+    opacity: 1;
   }
 
   /* SVG station styling */
@@ -263,9 +375,17 @@
   .station:hover rect,
   .station:hover path { stroke: #007AFF !important; stroke-width: 2.5 !important; }
   .station.has-idea rect { fill: #e8f5e9 !important; }
+  .station.selecting { cursor: pointer; }
+  .station.selecting:hover { cursor: pointer; }
+  .station.selecting:hover rect,
+  .station.selecting:hover path { stroke: #22c55e !important; stroke-width: 3 !important; fill: #dcfce7 !important; }
 
   /* Hidden elements */
   .hidden { display: none !important; }
+
+  /* Walkthrough content below map */
+  .walkthrough-content { padding-bottom: 60px; }
+  body.embed-mode .walkthrough-content { display: none; }
   .features { max-width: 1100px; margin: 0 auto; padding: 0 40px 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; }
   .feature-card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 18px 22px; transition: border-color 0.3s; }
   .feature-card:hover { border-color: #999; }
@@ -558,16 +678,32 @@
 </head>
 <body>
 
-<!-- Top Bar -->
+<!-- Top Bar (standalone view only) -->
 <div class="top-bar">
   <a href="index.html" class="back-link" id="backLink">← Projects</a>
   <span class="title">TUSHY × Rube Goldberg</span>
-  <div class="actions">
-    <button class="ideas-btn" id="openIdeasBtn">Ideas</button>
-  </div>
+  <div class="actions"></div>
 </div>
 
-<!-- Full Viewport Map -->
+<!-- Presentation Container -->
+<div class="presentation">
+
+<!-- Project Header -->
+<div class="project-header">
+  <h1>TUSHY × Rube Goldberg Machine</h1>
+  <p class="subtitle">SoHo Loft Activation</p>
+  <p class="concept-brief">A 10-station chain-reaction machine winding through a 30×60 ft SoHo loft, showcasing the full TUSHY product line. A continuous water channel runs along the perimeter, feeding real bidets throughout the installation. Everything recirculates — water, balls, energy. A jumbo 💩 ball rolls the course, triggering bidets, unfurling TP, lighting candles, and releasing smaller 💩 balls along the way. Interactive stations let visitors help keep it moving.</p>
+</div>
+
+<!-- Map Section Header -->
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+  <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#999;letter-spacing:0.12em;text-transform:uppercase;margin:0;">Installation Layout</h2>
+  <div class="toolbar" style="margin:0;">
+    <button id="undoBtn" disabled title="Undo (Cmd+Z)">↩ Undo</button>
+    <button id="redoBtn" disabled title="Redo (Cmd+Shift+Z)">↪ Redo</button>
+    <button id="openIdeasBtn" class="primary">Ideas</button>
+  </div>
+</div>
 <div class="map-viewport">
 <svg class="loft-render" viewBox="0 0 1060 600" xmlns="http://www.w3.org/2000/svg">
   <defs>
@@ -717,7 +853,7 @@
   <!-- ========== TOP WALL STATIONS ========== -->
 
   <!-- STATION 1: GREAT CASCADE -->
-  <g class="station" data-station="1" data-name="&#9312; The Great Cascade" data-desc="A TUSHY Classic 3.0 mounted on a real toilet fires a jet of water that launches the &#x1F4A9; jumbo ball down the first ramp. Water feeds into the recirculating channel. AUTO-RESET: Pneumatic tube returns the jumbo ball from the Finale.">
+  <g class="station" data-station="1" data-name="&#9312; The Great Cascade" data-desc="A TUSHY Classic 3.0 mounted on a real toilet fires a jet of water that launches the 💩 jumbo ball down the first ramp. Water feeds into the recirculating channel. AUTO-RESET: Return track from Finale drops ball into starting position.">
     <rect x="225" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
     <!-- Bidet/water icon -->
     <circle cx="290" cy="85" r="16" fill="none" stroke="#555" stroke-width="1.2"/>
@@ -730,7 +866,7 @@
   </g>
 
   <!-- STATION 2: BAMBOO GROVE -->
-  <g class="station" data-station="2" data-name="&#9313; The Bamboo Grove" data-desc="A dense grove of real green bamboo poles with TUSHY Bamboo TP rolls, Tissue Squares, and fabric (cut to look like giant TP rolls) mounted on them. Jumbo ball weaves through, triggering TP to unroll like scrolls. Bum Towels drape between poles. AUTO-RESET: Motorized rewind spools.">
+  <g class="station" data-station="2" data-name="&#9313; The Bamboo Grove" data-desc="Dense grove of real bamboo poles with TUSHY Bamboo TP rolls and fabric. Jumbo ball weaves through, triggering TP to unroll like scrolls — counterweights that lower bridges and release gates. AUTO-RESET: Motorized rewind spools.">
     <rect x="375" y="55" width="150" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
     <!-- Bamboo poles (black vertical lines) -->
     <line x1="400" y1="62" x2="400" y2="128" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
@@ -749,7 +885,7 @@
   </g>
 
   <!-- STATION 3: SPRAY GATE -->
-  <g class="station interactive" data-station="3" data-name="&#9314; The Spray Gate &#x270B;" data-desc="INTERACTIVE: Jumbo ball jams behind a translucent gate. Visitors smash a lit arcade button that triggers real wall-mounted bidets to spray the gate clean. Counterweighted gate swings open. AUTO-RESET: Gate springs back.">
+  <g class="station interactive" data-station="3" data-name="&#9314; The Spray Gate &#x270B;" data-desc="INTERACTIVE: Jumbo ball jams behind a translucent gate. Visitors press a lit arcade button that triggers real wall-mounted bidets to spray the gate clean. Counterweighted gate swings open. AUTO-RESET: Gate springs back.">
     <rect x="545" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
     <circle class="interactive-pulse" cx="610" cy="85" r="6" fill="rgba(0,0,0,0.1)"/>
     <circle cx="610" cy="85" r="14" fill="none" stroke="#444" stroke-width="1.2"/>
@@ -777,7 +913,7 @@
   </g>
 
   <!-- STATION 5: CANDLE LANE -->
-  <g class="station" data-station="5" data-name="&#9316; Candle Lane" data-desc="A corridor of TUSHY candles. LED bulbs simulate warm flickering flame (no real fire). Jumbo ball rolls over pressure plates triggering LEDs in sequence. Room Spray misters release scent zones. AUTO-RESET: LEDs fade on 30s timer.">
+  <g class="station" data-station="5" data-name="&#9316; Candle Lane" data-desc="Corridor of TUSHY candles with LED flickering flames. Pressure plates trigger LEDs in sequence. Room Spray misters release scent. OPTION: Real flames with torch igniters — mini balls trigger vacuum tubes to extinguish and pull smoke. AUTO-RESET: 30s timer.">
     <rect x="855" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
     <!-- Candle shapes (monochrome) -->
     <rect x="878" y="72" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
@@ -807,7 +943,7 @@
   </g>
 
   <!-- STATION 7: SCRUB ZONE -->
-  <g class="station" data-station="7" data-name="&#9318; The Scrub Zone" data-desc="TUSHY Toilet Brushes with coconut husk scrubbing pads as spinning paddle wheels. Jumbo ball enters a cleaning gauntlet. Brushes run continuously. AUTO-RESET: Always running.">
+  <g class="station" data-station="7" data-name="&#9318; The Ball Wash" data-desc="TUSHY Toilet Brushes with scrubbing pads as spinning paddle wheels. Jumbo ball enters a cleaning gauntlet lined with Bum Towels that dry it off. Lemon + tea tree scent. AUTO-RESET: Always running.">
     <rect x="920" y="295" width="65" height="120" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
     <g transform="translate(948,330)">
       <circle r="12" fill="none" stroke="#555" stroke-width="1"/>
@@ -877,7 +1013,7 @@
   </g>
 
   <!-- STATION 10: GRAND FLUSH FINALE -->
-  <g class="station" data-station="10" data-name="&#9321; The Grand Flush Finale" data-desc="Every bidet model fires in choreographed sequence. Bamboo TP unfurls like confetti. Sound system plays flush fanfare. TUSHY logo blazes. AUTO-RESET: Ball caught in net, pneumatic tube returns it to Station 1.">
+  <g class="station" data-station="10" data-name="&#9321; The Grand Flush Finale" data-desc="Jumbo ball drops into giant illuminated toilet bowl. Flush triggers LED light show. Bowl fills with mini 💩 balls that swirl and drain. TUSHY logo blazes. AUTO-RESET: Gravity track returns jumbo ball to Station 1.">
     <rect x="225" y="460" width="285" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="2" filter="url(#ss)"/>
     <circle cx="368" cy="492" r="20" fill="none" stroke="#ccc" stroke-width="0.8"/>
     <circle cx="368" cy="492" r="12" fill="none" stroke="#555" stroke-width="1"/>
@@ -952,6 +1088,45 @@
 </svg>
 </div><!-- .map-viewport -->
 
+<!-- Key Highlights -->
+<div style="margin-top:48px;">
+  <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#999;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 20px;text-align:center;">Key Highlights</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
+    <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">💦</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Closed-Loop Water System</h3>
+      <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">A continuous water channel runs the perimeter, feeding every bidet. Everything recirculates — water flows, drains, filters, and flows again.</p>
+    </div>
+    <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🕹️</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Interactive Stations</h3>
+      <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Visitors actively participate — pressing buttons, pulling levers, and triggering mechanisms to keep the chain reaction going.</p>
+    </div>
+    <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🔄</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Continuous Loop</h3>
+      <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">The machine runs on a loop. Gravity return track brings the jumbo ball back to Station 1. Each run takes ~3 minutes.</p>
+    </div>
+    <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">🛍️</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Full Product Showcase</h3>
+      <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Every TUSHY product featured: bidets, ottomans, TP, candles, brushes, towels, sprays. Brand activation zone at exit for demos and sales.</p>
+    </div>
+    <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">📸</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Photo-Worthy Moments</h3>
+      <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Every station designed for social sharing. Dramatic reveals, colorful splashes, and satisfying chain reactions that beg to be filmed.</p>
+    </div>
+    <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
+      <div style="font-size:1.5rem;margin-bottom:8px;">✨</div>
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Multi-Sensory Experience</h3>
+      <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Sight, sound, touch, scent, and water. Candles release fragrance, water splashes, balls roll and clunk — a full sensory journey.</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- .presentation -->
+
 <!-- Station Popup (appears on map click) -->
 <div class="station-popup" id="stationPopup">
   <div class="station-popup-header">
@@ -989,24 +1164,23 @@
   <div class="feature-card" data-sid="1">
     <div class="station-num">&#9312; Start &middot; Top Wall</div>
     <h3>The Great Cascade</h3>
-    <p>A TUSHY Classic 3.0 mounted on a real toilet fires a jet of water that launches the &#x1F4A9; jumbo ball down the first ramp. Water feeds into the recirculating acrylic channel along the top wall.</p>
+    <p>A TUSHY Classic 3.0 mounted on a real toilet fires a jet of water that launches the 💩 jumbo ball down the first ramp. Water feeds into the recirculating acrylic channel along the top wall. Return track from Finale drops ball back into starting position.</p>
     <div class="products-used">
       <span class="product-tag">Classic 3.0</span>
       <span class="product-tag">Spa 3.0</span>
       <span class="product-tag">Fresh</span>
-      <span class="product-tag mechanic">pneumatic return</span>
+      <span class="product-tag mechanic">gravity return track</span>
     </div>
   </div>
 
   <div class="feature-card" data-sid="2">
     <div class="station-num">&#9313; Top Wall</div>
     <h3>The Bamboo Grove</h3>
-    <p>Dense grove of real green bamboo poles with TUSHY Bamboo TP rolls and fabric (cut to look like giant TP rolls). Jumbo ball weaves through, triggering TP to unroll from poles like scrolls &mdash; counterweights that lower bridges and release gates. Bum Towels drape between poles.</p>
+    <p>Dense grove of real green bamboo poles with TUSHY Bamboo TP rolls and fabric (cut to look like giant TP rolls). Jumbo ball weaves through, triggering TP to unroll from poles like scrolls &mdash; counterweights that lower bridges and release gates.</p>
     <div class="products-used">
       <span class="product-tag">Bamboo TP</span>
       <span class="product-tag">TUSHY Stand</span>
       <span class="product-tag">Tissues / Squares</span>
-      <span class="product-tag">Bum Towels</span>
       <span class="product-tag mechanic">motorized rewind</span>
     </div>
   </div>
@@ -1014,7 +1188,7 @@
   <div class="feature-card" data-sid="3">
     <div class="station-num">&#9314; &#x270B; Interactive &middot; Top Wall</div>
     <h3>The Spray Gate</h3>
-    <p>Jumbo ball jams behind a translucent gate. Visitors smash a lit arcade button that triggers real wall-mounted bidets (Classic 3.0 + Spa 3.0) to spray the gate clean. Counterweighted gate swings open.</p>
+    <p>Jumbo ball jams behind a translucent gate. Visitors press a lit arcade button that triggers real wall-mounted bidets (Classic 3.0 + Spa 3.0) to spray the gate clean. Counterweighted gate swings open.</p>
     <div class="products-used">
       <span class="product-tag interactive">Arcade Button &rarr; Bidet</span>
       <span class="product-tag">Classic 3.0</span>
@@ -1037,6 +1211,7 @@
     <div class="station-num">&#9316; Corner</div>
     <h3>Candle Lane</h3>
     <p>A corridor of TUSHY candles &mdash; Morning Zest, Late Bloomer, Evening Wood, Midnight Ash. LED bulbs simulate warm flickering flame. Jumbo ball rolls over pressure plates, triggering LEDs in sequence. Room Spray misters release scent zones.</p>
+    <p style="margin-top:10px;padding:10px 12px;background:#fefce8;border:1px solid #fef08a;border-radius:6px;font-size:0.82rem;color:#854d0e;"><strong>Option:</strong> Real flames using torch igniters or electric ignition. Mini 💩 balls trigger vacuum tubes that extinguish flames and pull smoke away. More dramatic but requires fire safety measures.</p>
     <div class="products-used">
       <span class="product-tag">Candles (all 4)</span>
       <span class="product-tag">Room Spray</span>
@@ -1058,11 +1233,12 @@
 
   <div class="feature-card" data-sid="7">
     <div class="station-num">&#9318; Right Wall</div>
-    <h3>The Scrub Zone</h3>
-    <p>TUSHY Toilet Brushes with coconut husk scrubbing pads become spinning paddle wheels and conveyors. Jumbo ball enters a cleaning gauntlet. Lemon + tea tree scent. Runs continuously.</p>
+    <h3>The Ball Wash</h3>
+    <p>TUSHY Toilet Brushes with coconut husk scrubbing pads become spinning paddle wheels. Jumbo ball enters a cleaning gauntlet lined with Bum Towels that dry it off. Lemon + tea tree scent. Runs continuously.</p>
     <div class="products-used">
       <span class="product-tag">Toilet Brush</span>
       <span class="product-tag">Scrubbing Pads</span>
+      <span class="product-tag">Bum Towels</span>
       <span class="product-tag mechanic">always running</span>
     </div>
   </div>
@@ -1094,13 +1270,12 @@
   <div class="feature-card" data-sid="10">
     <div class="station-num">&#9321; Finale &middot; Bottom Left</div>
     <h3>The Grand Flush Finale</h3>
-    <p>Every bidet model (Classic, Spa, Wave, Oasis, Cloud, Cloud+, Aura) fires in choreographed sequence. Bamboo TP unfurls like confetti. Flush fanfare. TUSHY logo blazes.</p>
+    <p>Jumbo ball drops into a giant illuminated toilet bowl. Flush handle triggers synchronized LED light show and flush sound effect. Bowl fills with dozens of mini 💩 balls that swirl and drain. TUSHY logo blazes. Return track guides jumbo ball back to Station 1.</p>
     <div class="products-used">
-      <span class="product-tag">All bidet models</span>
-      <span class="product-tag">Oasis</span>
-      <span class="product-tag">Cloud / Cloud+</span>
-      <span class="product-tag">Bamboo TP confetti</span>
-      <span class="product-tag mechanic">pneumatic &rarr; Station 1</span>
+      <span class="product-tag">Display toilet</span>
+      <span class="product-tag">LED strip lighting</span>
+      <span class="product-tag">Mini 💩 balls</span>
+      <span class="product-tag mechanic">gravity return track</span>
     </div>
   </div>
 
@@ -1297,6 +1472,27 @@
     <div class="products-used"><span class="product-tag mechanic">dichroic glass panels</span><span class="product-tag mechanic">motorized spot lights</span></div>
   </div>
 
+  <div class="feature-card" data-core="true">
+    <div class="station-num">Kinetic / Always-On</div>
+    <h3>The Ball Multiplier</h3>
+    <p>Jumbo ball hits a trigger that releases a cascade of 20+ mini 💩 balls from an overhead hopper. They scatter down multiple parallel tracks, creating a visual spectacle. Mini balls collect in a basin below and are manually returned to the hopper between runs.</p>
+    <div class="products-used"><span class="product-tag">Mini 💩 balls &times;50</span><span class="product-tag mechanic">release hopper</span><span class="product-tag mechanic">parallel tracks</span></div>
+  </div>
+
+  <div class="feature-card" data-core="true">
+    <div class="station-num">Kinetic / Always-On</div>
+    <h3>The Pinball Pop</h3>
+    <p>Enclosed pinball-style chamber with pegs. Jumbo ball enters and bounces between pegs while releasing mini 💩 balls from spring-loaded chambers. The mini balls rain down and collect at the bottom. Chaotic, playful energy. Visible through clear acrylic.</p>
+    <div class="products-used"><span class="product-tag">Mini 💩 balls &times;30</span><span class="product-tag mechanic">acrylic chamber</span><span class="product-tag mechanic">spring releases</span></div>
+  </div>
+
+  <div class="feature-card" data-core="true">
+    <div class="station-num">Finale Option</div>
+    <h3>The Hindsight Station</h3>
+    <p>Mini 💩 balls from the finale roll past a camera that "analyzes" them using the TUSHY Hindsight app interface on a big screen. Each ball gets a fake health reading — hydration level, fiber score, emoji rating. Visitors watch the absurd analysis in real-time. QR code prompts them to download the real app.</p>
+    <div class="products-used"><span class="product-tag">Hindsight App</span><span class="product-tag">Mini 💩 balls</span><span class="product-tag mechanic">camera + display</span><span class="product-tag mechanic">custom software</span></div>
+  </div>
+
   <!-- User ideas will be inserted here -->
   <div id="user-ideas-container"></div>
 
@@ -1320,23 +1516,30 @@
     <div class="idea-modal-body">
       <div class="idea-form-group">
         <label>Your Name</label>
-        <input type="text" id="idea-author" placeholder="e.g., Chris">
+        <input type="text" id="idea-author" placeholder="e.g., Chris" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
       </div>
       <div class="idea-form-group">
         <label>Title</label>
-        <input type="text" id="idea-title" placeholder="e.g., The Water Curtain">
+        <input type="text" id="idea-title" placeholder="e.g., The Water Curtain" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
       </div>
       <div class="idea-form-group">
         <label>Description</label>
-        <textarea id="idea-desc" placeholder="Describe the idea, how it works, what makes it special..."></textarea>
+        <textarea id="idea-desc" placeholder="Describe the idea, how it works, what makes it special..." autocomplete="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other"></textarea>
+      </div>
+      <div class="idea-form-group">
+        <label>Category</label>
+        <select id="idea-category" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:6px;font-size:0.9rem;background:#fff;">
+          <option value="Finale Option">Finale Option</option>
+          <option value="Interactive Option">Interactive Option</option>
+          <option value="Sensory">Sensory</option>
+          <option value="Water Feature">Water Feature</option>
+          <option value="Kinetic / Always-On">Kinetic / Always-On</option>
+          <option value="Alternative">Alternative</option>
+        </select>
       </div>
       <div class="idea-form-group">
         <label>Tags (comma separated)</label>
-        <input type="text" id="idea-tags" placeholder="e.g., Classic 3.0, fog machine, LEDs">
-      </div>
-      <div class="idea-form-group" style="display:none;">
-        <label>Category (auto-generated)</label>
-        <input type="text" id="idea-category" readonly>
+        <input type="text" id="idea-tags" placeholder="e.g., Classic 3.0, fog machine, LEDs" autocomplete="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
       </div>
     </div>
     <div class="idea-modal-footer">
@@ -1346,8 +1549,8 @@
   </div>
 </div>
 
-<!-- COST ESTIMATES (hidden for now) -->
-<div style="display:none">
+<!-- COST ESTIMATES -->
+<div class="walkthrough-content">
 <div class="section-label">CONCEPTUAL COST ESTIMATE</div>
 <div class="cost-section">
   <div class="cost-disclaimer">
@@ -1407,8 +1610,8 @@
     <summary><span>Structural &amp; Fabrication</span><span class="cost-subtotal">~$3,600</span></summary>
     <div class="cost-items">
       <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=bamboo+poles+8ft+natural" target="_blank">Bamboo Poles 8ft (25-pack)</a></span><span class="cost-item-qty">&times;1</span><span class="cost-item-price">$150</span></div>
-      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/s/4%20inch%20pvc%20pipe%20schedule%2040" target="_blank">PVC 4" Schedule 40 (pneumatic, ~40ft)</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$180</span></div>
-      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=4+inch+inline+duct+fan" target="_blank">4" Inline Duct Fan (pneumatic)</a></span><span class="cost-item-qty">&times;2 @ $35</span><span class="cost-item-price">$70</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.homedepot.com/s/pvc%20pipe%20rails%20track" target="_blank">PVC Rails (gravity return track, ~50ft)</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$150</span></div>
+      <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=poop+emoji+stress+ball" target="_blank">Mini 💩 Balls (stress balls)</a></span><span class="cost-item-qty">&times;100 @ $2</span><span class="cost-item-price">$200</span></div>
       <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=80+20+t-slot+aluminum+extrusion" target="_blank">80/20 T-Slot Aluminum Extrusion</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$1,500</span></div>
       <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=clear+acrylic+plexiglass+sheet" target="_blank">Acrylic / Plexiglass Sheets</a></span><span class="cost-item-qty">&times;10 @ $30</span><span class="cost-item-price">$300</span></div>
       <div class="cost-item"><span class="cost-item-name"><a href="https://www.amazon.com/s?k=spring+loaded+hinges+self+closing" target="_blank">Spring Hinges &amp; Return Springs</a></span><span class="cost-item-qty">lot</span><span class="cost-item-price">$200</span></div>
@@ -1488,10 +1691,146 @@
   const popupClose = document.getElementById('popupClose');
 
   const stationDataContainer = document.getElementById('station-cards');
+
+  // Emoji icons for idea categories
+  const categoryIcons = {
+    'Finale Option': '🎆',
+    'Interactive Option': '🕹️',
+    'Sensory': '✨',
+    'Water Feature': '💦',
+    'Kinetic / Always-On': '⚙️',
+    'Station Swap': '🔄',
+    'Concept': '💡',
+    'default': '💡'
+  };
+
+  function getIdeaIcon(category) {
+    return categoryIcons[category] || categoryIcons['default'];
+  }
   const ideaDataContainer = document.getElementById('idea-cards');
 
   let currentStation = null;
   let swapMode = false;
+
+  // === UNDO/REDO SYSTEM ===
+  const undoStack = [];
+  const redoStack = [];
+  const MAX_UNDO = 50;
+
+  function recordAction(type, data) {
+    // Save current state for the affected station
+    if (type === 'assign') {
+      const stationCard = stationDataContainer.querySelector(`[data-sid="${data.stationNum}"]`);
+      if (stationCard) {
+        data.previousTitle = stationCard.querySelector('h3').textContent;
+        data.previousDesc = stationCard.querySelector('p').textContent;
+      }
+    }
+    undoStack.push({ type, data, timestamp: Date.now() });
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
+    redoStack.length = 0; // Clear redo on new action
+    updateUndoRedoButtons();
+  }
+
+  function undo() {
+    if (undoStack.length === 0) return;
+    const action = undoStack.pop();
+
+    if (action.type === 'assign') {
+      // Restore previous station content
+      const stationCard = stationDataContainer.querySelector(`[data-sid="${action.data.stationNum}"]`);
+      if (stationCard && action.data.previousTitle) {
+        const currentTitle = stationCard.querySelector('h3').textContent;
+        const currentDesc = stationCard.querySelector('p').textContent;
+        stationCard.querySelector('h3').textContent = action.data.previousTitle;
+        stationCard.querySelector('p').textContent = action.data.previousDesc;
+        // Store current for redo
+        action.data.redoTitle = currentTitle;
+        action.data.redoDesc = currentDesc;
+
+        // Also restore SVG map station
+        const svgStation = document.querySelector(`.station[data-station="${action.data.stationNum}"]`);
+        if (svgStation) {
+          const icon = stationIcons[action.data.stationNum] || '⑩';
+          svgStation.dataset.name = icon + ' ' + action.data.previousTitle;
+          svgStation.dataset.desc = action.data.previousDesc;
+
+          // Update SVG text
+          const textElements = svgStation.querySelectorAll('text');
+          textElements.forEach(textEl => {
+            const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
+            if (fontSize >= 6.5 && textEl.getAttribute('font-weight') === '700') {
+              textEl.textContent = action.data.previousTitle.toUpperCase().substring(0, 18);
+            }
+          });
+        }
+      }
+    }
+
+    redoStack.push(action);
+    updateUndoRedoButtons();
+  }
+
+  function redo() {
+    if (redoStack.length === 0) return;
+    const action = redoStack.pop();
+
+    if (action.type === 'assign') {
+      const stationCard = stationDataContainer.querySelector(`[data-sid="${action.data.stationNum}"]`);
+      if (stationCard && action.data.redoTitle) {
+        stationCard.querySelector('h3').textContent = action.data.redoTitle;
+        stationCard.querySelector('p').textContent = action.data.redoDesc;
+
+        // Also update SVG map station
+        const svgStation = document.querySelector(`.station[data-station="${action.data.stationNum}"]`);
+        if (svgStation) {
+          const icon = stationIcons[action.data.stationNum] || '⑩';
+          svgStation.dataset.name = icon + ' ' + action.data.redoTitle;
+          svgStation.dataset.desc = action.data.redoDesc;
+
+          // Update SVG text
+          const textElements = svgStation.querySelectorAll('text');
+          textElements.forEach(textEl => {
+            const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
+            if (fontSize >= 6.5 && textEl.getAttribute('font-weight') === '700') {
+              textEl.textContent = action.data.redoTitle.toUpperCase().substring(0, 18);
+            }
+          });
+        }
+      }
+    }
+
+    undoStack.push(action);
+    updateUndoRedoButtons();
+  }
+
+  function updateUndoRedoButtons() {
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+    if (undoBtn) undoBtn.disabled = undoStack.length === 0;
+    if (redoBtn) redoBtn.disabled = redoStack.length === 0;
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'z') {
+      if (e.shiftKey) {
+        redo();
+      } else {
+        undo();
+      }
+      e.preventDefault();
+    }
+    // Escape closes panels
+    if (e.key === 'Escape') {
+      closeIdeasPanel();
+      cancelStationSelection();
+    }
+  });
+
+  // Undo/Redo button clicks
+  document.getElementById('undoBtn')?.addEventListener('click', undo);
+  document.getElementById('redoBtn')?.addEventListener('click', redo);
 
   // === IDEAS PANEL ===
   function openIdeasPanel(forSwap = false) {
@@ -1551,13 +1890,7 @@
 
   // === SVG STATION CLICKS ===
   const svgStations = document.querySelectorAll('.station[data-station]');
-  svgStations.forEach(station => {
-    station.addEventListener('click', (e) => {
-      const stationNum = station.dataset.station;
-      if (!stationNum || isNaN(stationNum)) return;
-      showStationPopup(stationNum, e.clientX, e.clientY);
-    });
-  });
+  // Station clicks are handled after renderIdeasPanel with pendingIdea check
 
   // Close popup on outside click
   document.addEventListener('click', (e) => {
@@ -1567,34 +1900,101 @@
   });
 
   // === RENDER IDEAS PANEL ===
-  function renderIdeasPanel() {
+  async function renderIdeasPanel() {
     ideasPanelBody.innerHTML = '';
 
     // Get all ideas from the hidden containers
     const allIdeas = [];
 
-    // Core ideas from HTML
+    // Core ideas from HTML (all by Christopher)
     ideaDataContainer.querySelectorAll('.feature-card').forEach(card => {
       if (card.classList.contains('add-idea-card')) return;
+      const isCore = card.dataset.core === 'true';
       allIdeas.push({
         title: card.querySelector('h3')?.textContent || '',
         category: card.querySelector('.station-num')?.textContent || 'Idea',
         desc: card.querySelector('p')?.textContent || '',
-        isCore: true,
+        author: 'Christopher',
+        isCore: isCore,
         element: card
       });
     });
+
+    // Load user-submitted ideas from database
+    try {
+      const userIdeas = await loadIdeasForPanel();
+      userIdeas.forEach(idea => {
+        allIdeas.push({
+          title: idea.title,
+          category: idea.category || 'Concept',
+          desc: idea.description || '',
+          author: idea.author || 'Anonymous',
+          isCore: idea.is_core || false,
+          isUserIdea: true,
+          id: idea.id
+        });
+      });
+    } catch (e) {
+      console.error('Failed to load user ideas for panel:', e);
+    }
 
     // Render each idea
     allIdeas.forEach((idea, idx) => {
       const item = document.createElement('div');
       item.className = 'idea-item';
+      const authorHtml = idea.author ? `<div class="idea-item-author">by ${idea.author}</div>` : '';
+      const coreLabel = idea.isCore ? '<span style="color:#f59e0b;margin-left:6px;">★</span>' : '';
+      const ideaIcon = getIdeaIcon(idea.category);
       item.innerHTML = `
-        <div class="idea-item-category">${idea.category}</div>
-        <h4>${idea.title}</h4>
-        <p>${idea.desc.substring(0, 120)}${idea.desc.length > 120 ? '...' : ''}</p>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <span style="font-size:1.5rem;line-height:1;">${ideaIcon}</span>
+          <div style="flex:1;min-width:0;">
+            <div class="idea-item-category">${idea.category}${coreLabel}</div>
+            <h4>${idea.title}</h4>
+            <p>${idea.desc}</p>
+            ${authorHtml}
+          </div>
+        </div>
+        <div class="idea-item-actions" style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;display:flex;gap:8px;">
+          <button class="use-idea-btn" style="flex:1;padding:8px 12px;background:#111;color:#fff;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">Use on Station</button>
+          ${!idea.isCore && idea.isUserIdea ? '<button class="delete-idea-btn" style="padding:8px 12px;background:#fff;color:#e53935;border:1px solid #e53935;border-radius:6px;font-size:0.8rem;cursor:pointer;">Delete</button>' : ''}
+        </div>
       `;
 
+      // Click to expand/collapse
+      item.addEventListener('click', (e) => {
+        // Don't toggle if clicking on a button
+        if (e.target.closest('button')) return;
+        // Collapse all other items
+        ideasPanelBody.querySelectorAll('.idea-item.expanded').forEach(other => {
+          if (other !== item) other.classList.remove('expanded');
+        });
+        item.classList.toggle('expanded');
+      });
+
+      // Use button - start station selection mode
+      const useBtn = item.querySelector('.use-idea-btn');
+      useBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        startStationSelection(idea);
+      });
+
+      // Delete button for user ideas
+      const delBtn = item.querySelector('.delete-idea-btn');
+      if (delBtn) {
+        delBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (confirm('Delete this idea?')) {
+            await modifyIdeas(ideas => ideas.filter(i => i.id !== idea.id));
+            item.remove();
+            // Also remove from walkthrough content if exists
+            const walkthroughCard = userIdeasContainer.querySelector(`[data-idea-id="${idea.id}"]`);
+            if (walkthroughCard) walkthroughCard.remove();
+          }
+        });
+      }
+
+      // Legacy swap mode support
       if (swapMode && currentStation) {
         item.addEventListener('click', () => {
           swapIdeaToStation(idea, currentStation);
@@ -1606,21 +2006,177 @@
     });
   }
 
+  // Station selection mode
+  let pendingIdea = null;
+
+  function startStationSelection(idea) {
+    pendingIdea = idea;
+    closeIdeasPanel();
+    // Scroll map into view
+    const mapViewport = document.querySelector('.map-viewport');
+    if (mapViewport) {
+      mapViewport.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    showStationSelectionOverlay();
+  }
+
+  function showStationSelectionOverlay() {
+    // Add editing state to map
+    const mapViewport = document.querySelector('.map-viewport');
+    if (mapViewport) {
+      mapViewport.classList.add('selecting-mode');
+    }
+
+    // Create prompt centered over the map
+    let overlay = document.getElementById('stationSelectOverlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'stationSelectOverlay';
+      overlay.innerHTML = `
+        <div style="background:#22c55e;color:#fff;padding:14px 24px;border-radius:10px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3);display:flex;align-items:center;gap:16px;">
+          <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">👆 Click a station to place your idea</span>
+          <button id="cancelStationSelect" style="padding:6px 14px;background:rgba(0,0,0,0.2);border:none;border-radius:4px;cursor:pointer;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:500;">Cancel</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+      document.getElementById('cancelStationSelect').addEventListener('click', cancelStationSelection);
+    }
+
+    // Position centered over the map viewport
+    if (mapViewport) {
+      const rect = mapViewport.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      overlay.style.cssText = `position:fixed;top:${centerY}px;left:${centerX}px;transform:translate(-50%,-50%);z-index:150;pointer-events:auto;`;
+    } else {
+      overlay.style.cssText = 'position:fixed;top:50vh;left:50vw;transform:translate(-50%,-50%);z-index:150;pointer-events:auto;';
+    }
+    overlay.style.display = 'block';
+
+    // Highlight stations for selection
+    svgStations.forEach(station => {
+      station.classList.add('selecting');
+    });
+  }
+
+  function hideStationSelectionOverlay() {
+    const overlay = document.getElementById('stationSelectOverlay');
+    if (overlay) overlay.style.display = 'none';
+    // Remove editing state from map
+    const mapViewport = document.querySelector('.map-viewport');
+    if (mapViewport) mapViewport.classList.remove('selecting-mode');
+    svgStations.forEach(station => {
+      station.classList.remove('selecting');
+    });
+  }
+
+  function cancelStationSelection() {
+    pendingIdea = null;
+    hideStationSelectionOverlay();
+  }
+
+  // Handle station click during selection mode
+  svgStations.forEach(station => {
+    station.addEventListener('click', (e) => {
+      if (pendingIdea) {
+        const stationNum = station.dataset.station;
+        if (stationNum && !isNaN(stationNum)) {
+          // Record for undo
+          recordAction('assign', { stationNum, idea: pendingIdea });
+          swapIdeaToStation(pendingIdea, stationNum);
+          pendingIdea = null;
+          hideStationSelectionOverlay();
+        }
+        e.stopPropagation();
+        return;
+      }
+      // Normal station popup
+      const stationNum = station.dataset.station;
+      if (!stationNum || isNaN(stationNum)) return;
+      showStationPopup(stationNum, e.clientX, e.clientY);
+    });
+  });
+
+  // Load ideas for panel (used by renderIdeasPanel)
+  async function loadIdeasForPanel() {
+    const blobId = localStorage.getItem('tushy_rube_blob_id');
+    if (blobId) {
+      try {
+        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`);
+        const data = await res.json();
+        return data.ideas || [];
+      } catch (e) { console.error('JSONBlob load failed:', e); }
+    }
+    try {
+      return JSON.parse(localStorage.getItem('tushy_rube_ideas')) || [];
+    } catch { return []; }
+  }
+
   // === SWAP IDEA TO STATION ===
+  // Circled numbers for stations 1-10
+  const stationIcons = { '1': '①', '2': '②', '3': '③', '4': '④', '5': '⑤', '6': '⑥', '7': '⑦', '8': '⑧', '9': '⑨', '10': '⑩' };
+
   function swapIdeaToStation(idea, stationNum) {
     const stationCard = stationDataContainer.querySelector(`[data-sid="${stationNum}"]`);
-    if (!stationCard) return;
+    if (!stationCard) {
+      console.warn('Station card not found for station:', stationNum);
+      return;
+    }
 
+    // Update the station card in the walkthrough section
     stationCard.querySelector('h3').textContent = idea.title;
     stationCard.querySelector('p').textContent = idea.desc;
 
-    // Update SVG station data attributes
+    // Update SVG station data attributes for tooltip
     const svgStation = document.querySelector(`.station[data-station="${stationNum}"]`);
     if (svgStation) {
-      svgStation.dataset.name = '⑩ ' + idea.title;
+      const icon = stationIcons[stationNum] || '⑩';
+      const ideaIcon = getIdeaIcon(idea.category);
+      svgStation.dataset.name = icon + ' ' + idea.title;
       svgStation.dataset.desc = idea.desc;
       svgStation.classList.add('has-idea');
+
+      // Update the visible text inside the SVG station
+      const textElements = svgStation.querySelectorAll('text');
+      let titleUpdated = false;
+      textElements.forEach(textEl => {
+        const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
+        // Update main title (bold text with font-size >= 6.5)
+        if (fontSize >= 6.5 && textEl.getAttribute('font-weight') === '700' && !titleUpdated) {
+          const shortTitle = idea.title.toUpperCase().substring(0, 18);
+          textEl.textContent = shortTitle;
+          titleUpdated = true;
+        }
+      });
+
+      // Add/update idea icon on the station
+      let iconEl = svgStation.querySelector('.idea-icon');
+      if (!iconEl) {
+        iconEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        iconEl.classList.add('idea-icon');
+        iconEl.setAttribute('font-size', '14');
+        iconEl.setAttribute('text-anchor', 'middle');
+        // Position based on station's bounding box
+        const rect = svgStation.querySelector('rect');
+        if (rect) {
+          const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+          const y = parseFloat(rect.getAttribute('y')) + 20;
+          iconEl.setAttribute('x', x);
+          iconEl.setAttribute('y', y);
+        }
+        svgStation.appendChild(iconEl);
+      }
+      iconEl.textContent = ideaIcon;
+
+      // Visual feedback - briefly flash the station green
+      svgStation.querySelectorAll('rect').forEach(el => {
+        const orig = el.getAttribute('fill');
+        el.setAttribute('fill', '#dcfce7');
+        setTimeout(() => el.setAttribute('fill', orig || '#fff'), 600);
+      });
     }
+
+    console.log('Swapped idea to station', stationNum, ':', idea.title);
   }
 
   // Tooltip for SVG stations (hover)
@@ -1645,8 +2201,10 @@
   const ideaSaveBtn = document.getElementById('idea-save');
 
   // Mark all existing HTML idea cards as core (non-deletable)
-  ideaContainer.querySelectorAll('.feature-card').forEach(card => {
-    card.dataset.core = 'true';
+  ideaDataContainer.querySelectorAll('.feature-card').forEach(card => {
+    if (!card.classList.contains('add-idea-card')) {
+      card.dataset.core = 'true';
+    }
   });
 
   // Auto-categorize based on keywords
@@ -1730,6 +2288,12 @@
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
   }
 
+  // Add station picker to idea card (for assigning idea to station)
+  function addStationPicker(card) {
+    // Station picker is now replaced by "Use" button approach
+    // This function is kept for compatibility but does nothing
+  }
+
   // Render a single idea card
   function renderIdeaCard(idea) {
     const card = document.createElement('div');
@@ -1783,6 +2347,10 @@
         if (confirm('Delete this idea?')) {
           await modifyIdeas(ideas => ideas.filter(i => i.id !== idea.id));
           card.remove();
+          // Refresh ideas panel if open
+          if (ideasPanel.classList.contains('open')) {
+            renderIdeasPanel();
+          }
         }
       });
     }
@@ -1825,6 +2393,12 @@
       return;
     }
 
+    // Show saving state
+    const saveBtn = document.getElementById('idea-save');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = 'Saving...';
+    saveBtn.disabled = true;
+
     const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
     const category = categorizeIdea(title, desc);
 
@@ -1839,10 +2413,40 @@
       created_at: new Date().toISOString()
     };
 
-    await modifyIdeas(ideas => { ideas.push(idea); return ideas; });
-    const card = renderIdeaCard(idea);
-    userIdeasContainer.appendChild(card);
-    closeIdeaModal();
+    try {
+      await modifyIdeas(ideas => { ideas.push(idea); return ideas; });
+      const card = renderIdeaCard(idea);
+      userIdeasContainer.appendChild(card);
+
+      // Close modal but keep ideas panel open
+      closeIdeaModal();
+
+      // Clear form
+      document.getElementById('idea-author').value = '';
+      document.getElementById('idea-title').value = '';
+      document.getElementById('idea-desc').value = '';
+      document.getElementById('idea-tags').value = '';
+
+      // Re-render ideas panel with new idea
+      await renderIdeasPanel();
+
+      // Scroll to bottom and flash the new idea
+      setTimeout(() => {
+        const items = ideasPanelBody.querySelectorAll('.idea-item');
+        const lastItem = items[items.length - 1];
+        if (lastItem) {
+          lastItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          lastItem.style.transition = 'background 0.3s';
+          lastItem.style.background = '#dcfce7';
+          setTimeout(() => {
+            lastItem.style.background = '';
+          }, 1500);
+        }
+      }, 100);
+    } finally {
+      saveBtn.textContent = originalText;
+      saveBtn.disabled = false;
+    }
   }
 
   // Event listeners
@@ -1861,13 +2465,7 @@
 <script>
   // Adjust for embed mode
   if (new URLSearchParams(window.location.search).get('embed') === '1') {
-    document.querySelector('.top-bar').style.display = 'none';
-    const mv = document.querySelector('.map-viewport');
-    mv.style.padding = '20px';
-    mv.style.position = 'absolute';
-    mv.style.inset = '0';
-    const svg = mv.querySelector('svg');
-    if (svg) svg.style.maxHeight = 'calc(100% - 40px)';
+    document.body.classList.add('embed-mode');
   }
 </script>
 </body>

@@ -396,18 +396,19 @@
 
   let currentProject = null;
 
-  function goToFrame(n, updateHash = true) {
+  function goToFrame(n, addToHistory = true) {
     frameStack.setAttribute('data-frame', n);
-    if (updateHash) {
+    if (addToHistory && n !== 1) {
       let newHash = '';
-      if (n === 1) {
-        newHash = window.location.pathname;
-      } else if (n === 2) {
+      if (n === 2) {
         newHash = '#dashboard';
       } else if (n === 3 && currentProject) {
         newHash = '#' + currentProject;
       }
-      history.replaceState(null, '', newHash || window.location.pathname);
+      // Push to history so back/forward works
+      if (window.location.hash !== newHash) {
+        history.pushState({ frame: n, project: currentProject }, '', newHash || window.location.pathname);
+      }
     }
   }
 
@@ -424,30 +425,38 @@
     goToFrame(3);
   }
 
-  function navigateFromHash(updateHash = true) {
+  function navigateFromHash(addToHistory = false) {
     const hash = window.location.hash.slice(1);
 
     // Check auth
     if (sessionStorage.getItem('tushy_auth') !== '1') {
       document.body.classList.remove('authenticated');
-      goToFrame(1, updateHash);
+      frameStack.setAttribute('data-frame', 1);
       return;
     }
     document.body.classList.add('authenticated');
 
     if (hash === 'dashboard' || hash === '') {
-      goToFrame(2, updateHash);
+      frameStack.setAttribute('data-frame', 2);
+      if (addToHistory) {
+        history.replaceState({ frame: 2, project: null }, '', '#dashboard');
+      }
     } else if (hash === 'rube' || hash === 'carnival') {
       if (currentProject !== hash) {
         document.querySelectorAll('.project-view').forEach(v => v.classList.remove('active'));
         document.getElementById('project-' + hash).classList.add('active');
         currentProject = hash;
       }
-      goToFrame(3, updateHash);
+      frameStack.setAttribute('data-frame', 3);
     } else {
-      goToFrame(2, updateHash);
+      frameStack.setAttribute('data-frame', 2);
     }
   }
+
+  // Handle back/forward buttons
+  window.addEventListener('popstate', (e) => {
+    navigateFromHash(false);
+  });
 
   // Login form
   loginForm.onsubmit = (e) => {
@@ -455,7 +464,9 @@
     if (codeInput.value.toLowerCase() === PASS.toLowerCase()) {
       sessionStorage.setItem('tushy_auth', '1');
       document.body.classList.add('authenticated');
-      navigateFromHash();
+      // Replace current state so back doesn't go to login
+      history.replaceState({ frame: 2, project: null }, '', '#dashboard');
+      frameStack.setAttribute('data-frame', 2);
     } else {
       error.style.display = 'block';
       loginForm.querySelector('.gate-box') ? loginForm.classList.add('shake') : loginForm.parentElement.classList.add('shake');
@@ -471,9 +482,6 @@
   document.querySelectorAll('.card[data-project]').forEach(card => {
     card.onclick = () => goToProject(card.dataset.project);
   });
-
-  // Hash change
-  window.addEventListener('hashchange', () => navigateFromHash(false));
 
   // Initialize
   (function init() {

@@ -401,6 +401,12 @@
   .station:hover path { stroke: #007AFF !important; stroke-width: 2.5 !important; }
   .station.has-idea rect { fill: #e8f5e9 !important; }
   .station .hidden-illustration { display: none !important; visibility: hidden !important; }
+
+  /* Mobile info icon on stations */
+  @media (hover: none), (max-width: 768px) {
+    .station .mobile-info-icon { display: block !important; }
+  }
+  .station .mobile-info-icon { display: none; }
   .station.selecting { cursor: pointer; }
   .station.selecting:hover { cursor: pointer; }
   .station.selecting:hover rect,
@@ -727,8 +733,8 @@
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
   <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#111;letter-spacing:0.12em;text-transform:uppercase;margin:0;">Installation Layout</h2>
   <div class="toolbar" style="margin:0;">
-    <button id="undoBtn" disabled title="Undo (Cmd+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1 0 3-7.7L3 7"/></svg>Undo</button>
-    <button id="redoBtn" disabled title="Redo (Cmd+Shift+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M21 7v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 7"/></svg>Redo</button>
+    <button id="undoBtn" disabled title="Undo (Cmd+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Undo</button>
+    <button id="redoBtn" disabled title="Redo (Cmd+Shift+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>Redo</button>
     <button id="openIdeasBtn" class="primary">Ideas</button>
   </div>
 </div>
@@ -1153,6 +1159,44 @@
   </div>
 </div>
 
+<!-- Race Mode -->
+<div style="margin-top:48px;">
+  <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#999;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 20px;text-align:center;">Race Mode</h2>
+  <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:24px;max-width:600px;margin:0 auto;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:12px;">🏁</div>
+    <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;margin:0 0 10px;">Classic Race — First to Finish Wins</h3>
+    <p style="font-size:0.9rem;color:#555;line-height:1.6;margin:0;">Stepper motors move poop emojis proportionally to water flow. Two players, two bidets, one winner. The harder you spray, the faster your poop races to the finish line.</p>
+  </div>
+</div>
+
+<!-- How It Works - Technical -->
+<div style="margin-top:48px;">
+  <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#999;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 24px;text-align:center;">How It Works</h2>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;max-width:900px;margin:0 auto;">
+    <!-- Bidet Mount -->
+    <div style="background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:24px;">
+      <img src="IMG_0955.jpg" alt="Bidet mount diagram" style="width:100%;max-width:280px;display:block;margin:0 auto 16px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 8px;">Bidet Mount Assembly</h3>
+      <p style="font-size:0.85rem;color:#555;line-height:1.6;margin:0;">Each player station features a TUSHY bidet mounted on an adjustable rig. The <strong>tilt head</strong> allows aim adjustment while the <strong>swivel plate</strong> at the base lets players rotate and point their spray. Standard bidet pressure controls the water flow intensity.</p>
+    </div>
+
+    <!-- Flow Sensor System -->
+    <div style="background:#fff;border:1px solid #e5e5e5;border-radius:10px;padding:24px;">
+      <img src="IMG_0956.jpg" alt="Flow sensor diagram" style="width:100%;max-width:280px;display:block;margin:0 auto 16px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 8px;">Flow-to-Motion Control</h3>
+      <p style="font-size:0.85rem;color:#555;line-height:1.6;margin:0;">A <strong>flow rate sensor</strong> on each bidet's water line measures spray intensity in real-time. Data feeds to a <strong>Raspberry Pi</strong> controller that converts flow rate into stepper motor pulses — more water pressure = faster motor speed = poop emoji races ahead on the track. Track can be mounted horizontally or vertically depending on space and visual impact.</p>
+    </div>
+  </div>
+
+  <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;max-width:700px;margin:24px auto 0;text-align:center;">
+    <h4 style="font-family:'Space Grotesk',sans-serif;font-size:0.9rem;font-weight:600;margin:0 0 10px;color:#111;">Signal Chain</h4>
+    <p style="font-size:0.85rem;color:#555;line-height:1.6;margin:0;font-family:'Space Grotesk',monospace;letter-spacing:0.02em;">
+      Bidet Spray → Flow Sensor → Raspberry Pi → Stepper Motor Driver → Track Position
+    </p>
+  </div>
+</div>
+
 </div><!-- .presentation -->
 
 <!-- Station Popup (appears on map click) -->
@@ -1161,6 +1205,7 @@
     <span class="station-popup-num" id="popupStationNum">Station 1</span>
     <button class="station-popup-close" id="popupClose">×</button>
   </div>
+  <div id="popupCategory" style="font-size:0.7rem;color:#007AFF;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;"></div>
   <h3 id="popupTitle">The Great Cascade</h3>
   <p id="popupDesc">Description here...</p>
   <div class="station-popup-actions">
@@ -1703,7 +1748,7 @@
 </div>
 </div><!-- end hidden cost section -->
 
-<div class="tooltip-overlay" id="tooltip"><div class="tt-title"></div><div class="tt-desc"></div></div>
+<div class="tooltip-overlay" id="tooltip"><div class="tt-title"></div><div class="tt-cat" style="font-size:0.7rem;color:#007AFF;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;"></div><div class="tt-desc"></div><div class="tt-hint" style="font-size:0.7rem;color:#999;margin-top:8px;font-style:italic;">Click for more info</div></div>
 
 
 <script>
@@ -1965,6 +2010,8 @@
     popupStationNum.textContent = 'Station ' + stationNum;
     popupTitle.textContent = stationData.querySelector('h3').textContent;
     popupDesc.textContent = stationData.querySelector('p').textContent;
+    const popupCat = document.getElementById('popupCategory');
+    popupCat.textContent = stationData.dataset.cat || '';
 
     // Position popup near click
     const rect = stationPopup.getBoundingClientRect();
@@ -1992,6 +2039,20 @@
 
   // === SVG STATION CLICKS ===
   const svgStations = document.querySelectorAll('.station[data-station]');
+
+  // Add mobile info icons to stations
+  svgStations.forEach(station => {
+    const rect = station.querySelector('rect');
+    if (rect) {
+      const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) - 12;
+      const y = parseFloat(rect.getAttribute('y')) + 12;
+      const infoIcon = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      infoIcon.classList.add('mobile-info-icon');
+      infoIcon.innerHTML = `<circle cx="${x}" cy="${y}" r="7" fill="#007AFF" opacity="0.9"/><text x="${x}" y="${y + 3.5}" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">i</text>`;
+      station.appendChild(infoIcon);
+    }
+  });
+
   // Station clicks are handled after renderIdeasPanel with pendingIdea check
 
   // Close popup on outside click
@@ -2053,7 +2114,7 @@
           ${authorHtml}
         </div>
         <div class="idea-item-actions" style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;display:flex;gap:8px;">
-          <button class="use-idea-btn" style="flex:1;padding:8px 12px;background:#111;color:#fff;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">Use on Station</button>
+          <button class="use-idea-btn" style="flex:1;padding:8px 12px;background:#111;color:#fff;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">${swapMode && currentStation ? `Use on Station ${currentStation}` : 'Use on Station'}</button>
           ${!idea.isCore && idea.isUserIdea ? '<button class="delete-idea-btn" style="padding:8px 12px;background:#fff;color:#e53935;border:1px solid #e53935;border-radius:6px;font-size:0.8rem;cursor:pointer;">Delete</button>' : ''}
         </div>
       `;
@@ -2069,11 +2130,19 @@
         item.classList.toggle('expanded');
       });
 
-      // Use button - start station selection mode
+      // Use button - swap to station directly if in swap mode, otherwise start selection
       const useBtn = item.querySelector('.use-idea-btn');
       useBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        startStationSelection(idea);
+        if (swapMode && currentStation) {
+          // Direct swap to the pre-selected station
+          swapIdeaToStation(idea, currentStation);
+          closeIdeasPanel();
+          unhighlightStation();
+        } else {
+          // Start station selection mode
+          startStationSelection(idea);
+        }
       });
 
       // Delete button for user ideas
@@ -2088,14 +2157,6 @@
             const walkthroughCard = userIdeasContainer.querySelector(`[data-idea-id="${idea.id}"]`);
             if (walkthroughCard) walkthroughCard.remove();
           }
-        });
-      }
-
-      // Legacy swap mode support
-      if (swapMode && currentStation) {
-        item.addEventListener('click', () => {
-          swapIdeaToStation(idea, currentStation);
-          closeIdeasPanel();
         });
       }
 
@@ -2229,6 +2290,7 @@
     // Update the station card in the walkthrough section
     stationCard.querySelector('h3').textContent = idea.title;
     stationCard.querySelector('p').textContent = idea.desc;
+    stationCard.dataset.cat = idea.category || '';
 
     // Update SVG station data attributes for tooltip
     const svgStation = document.querySelector(`.station[data-station="${stationNum}"]`);
@@ -2236,29 +2298,44 @@
       const icon = stationIcons[stationNum] || '⑩';
       svgStation.dataset.name = icon + ' ' + idea.title;
       svgStation.dataset.desc = idea.desc;
+      svgStation.dataset.cat = idea.category || '';
       svgStation.classList.add('has-idea');
 
-      // Hide original illustration elements (keep rect and texts)
+      // Hide original illustration elements (keep rect, texts, and mobile-info-icon)
       Array.from(svgStation.children).forEach(child => {
         const tagName = child.tagName.toLowerCase();
-        if (tagName !== 'rect' && tagName !== 'text') {
+        if (tagName !== 'rect' && tagName !== 'text' && !child.classList.contains('mobile-info-icon') && !child.classList.contains('idea-emoji')) {
           child.classList.add('hidden-illustration');
-          child.style.display = 'none';
         }
       });
 
-      // Update the visible text inside the SVG station
-      const textElements = svgStation.querySelectorAll('text');
+      // Update the visible text inside the SVG station (find the main title text)
+      const textElements = svgStation.querySelectorAll('text:not(.idea-emoji):not(.mobile-info-icon text)');
       let titleUpdated = false;
       textElements.forEach(textEl => {
         const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
-        // Update main title (bold text with font-size >= 6.5)
+        // Update main title (largest bold text, usually font-size 7 with font-weight 700)
         if (fontSize >= 6.5 && textEl.getAttribute('font-weight') === '700' && !titleUpdated) {
           const shortTitle = idea.title.toUpperCase().substring(0, 18);
           textEl.textContent = shortTitle;
           titleUpdated = true;
         }
       });
+      // Fallback: if no bold text found, update the largest text
+      if (!titleUpdated) {
+        let largestText = null;
+        let largestSize = 0;
+        textElements.forEach(textEl => {
+          const fontSize = parseFloat(textEl.getAttribute('font-size') || '7');
+          if (fontSize > largestSize) {
+            largestSize = fontSize;
+            largestText = textEl;
+          }
+        });
+        if (largestText) {
+          largestText.textContent = idea.title.toUpperCase().substring(0, 18);
+        }
+      }
 
       // Add/update emoji icon on the station (for ideas from Ideas panel)
       const ideaEmoji = idea.emoji || getIdeaEmoji(idea.title);
@@ -2293,11 +2370,18 @@
     console.log('Swapped idea to station', stationNum, ':', idea.title);
   }
 
-  // Tooltip for SVG stations (hover)
+  // Tooltip for SVG stations (hover) - desktop only
   const t=document.getElementById('tooltip');
+  const isTouchDevice = () => window.matchMedia('(hover: none)').matches || 'ontouchstart' in window;
   svgStations.forEach(el=>{
-    el.addEventListener('mouseenter',e=>{const n=el.dataset.name,d=el.dataset.desc;if(!n)return;t.querySelector('.tt-title').textContent=n;t.querySelector('.tt-desc').textContent=d;t.classList.add('visible')});
-    el.addEventListener('mousemove',e=>{t.style.left=(e.clientX+16)+'px';t.style.top=(e.clientY-10)+'px'});
+    el.addEventListener('mouseenter',e=>{
+      if (isTouchDevice()) return; // No hover tooltip on mobile
+      const n=el.dataset.name,d=el.dataset.desc,c=el.dataset.cat||'';if(!n)return;t.querySelector('.tt-title').textContent=n;t.querySelector('.tt-cat').textContent=c;t.querySelector('.tt-desc').textContent=d;t.classList.add('visible');
+    });
+    el.addEventListener('mousemove',e=>{
+      if (isTouchDevice()) return;
+      t.style.left=(e.clientX+16)+'px';t.style.top=(e.clientY-10)+'px';
+    });
     el.addEventListener('mouseleave',()=>t.classList.remove('visible'))
   });
 

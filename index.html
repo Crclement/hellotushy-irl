@@ -300,10 +300,10 @@
 
   <!-- Frame 1: Login -->
   <div class="frame frame-login">
-    <form class="gate-box" id="loginForm">
+    <form class="gate-box" id="loginForm" autocomplete="off" data-form-type="other">
       <h2>TUSHY</h2>
       <p>Experiential</p>
-      <input type="text" id="codeInput" placeholder="Password" autocomplete="off">
+      <input type="text" id="codeInput" name="gate_code" placeholder="Password" autocomplete="off" autocomplete="new-password" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other">
       <button type="submit">Enter</button>
       <p class="error" id="error">Incorrect password</p>
     </form>

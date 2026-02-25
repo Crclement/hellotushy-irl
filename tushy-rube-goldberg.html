@@ -297,14 +297,34 @@
     font-size: 1.2rem;
     font-weight: 700;
   }
-  .ideas-panel-close {
+  .ideas-panel-btn {
     background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #999;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
     cursor: pointer;
+    transition: all 0.15s;
   }
-  .ideas-panel-close:hover { color: #111; }
+  .ideas-panel-btn:hover { border-color: #111; color: #111; }
+  .ideas-panel-btn svg { width: 16px; height: 16px; }
+  .ideas-panel-header-btns { display: flex; gap: 8px; }
+
+  /* Expanded state */
+  .ideas-panel.expanded { width: 66vw; }
+  .ideas-panel.expanded .idea-item { flex-direction: row; gap: 16px; }
+  .ideas-grid { display: flex; flex-direction: column; gap: 8px; }
+  .ideas-panel.expanded .ideas-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .ideas-panel.expanded .idea-item-content { flex: 1; }
+  .ideas-panel.expanded .idea-item-desc { display: block; }
+  @media (max-width: 1024px) {
+    .ideas-panel.expanded { width: 100vw; }
+    .ideas-panel.expanded .ideas-grid { grid-template-columns: 1fr; }
+  }
 
   .ideas-panel-body {
     flex: 1;
@@ -828,7 +848,7 @@
   <div class="toolbar" style="margin:0;">
     <button id="undoBtn" disabled title="Undo (Cmd+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Undo</button>
     <button id="redoBtn" disabled title="Redo (Cmd+Shift+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>Redo</button>
-    <button id="openIdeasBtn" class="primary">Ideas</button>
+    <button id="openIdeasBtn" class="primary">Idea Library</button>
   </div>
 </div>
 <div class="map-viewport">
@@ -1274,8 +1294,15 @@
 <!-- Ideas Panel (slides in from right) -->
 <div class="ideas-panel" id="ideasPanel">
   <div class="ideas-panel-header">
-    <h2>Ideas Library</h2>
-    <button class="ideas-panel-close" id="closeIdeasBtn">×</button>
+    <h2>Idea Library</h2>
+    <div class="ideas-panel-header-btns">
+      <button class="ideas-panel-btn" id="expandIdeasBtn" title="Expand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+      </button>
+      <button class="ideas-panel-btn" id="closeIdeasBtn" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
   </div>
   <div class="ideas-panel-body" id="ideasPanelBody">
     <!-- Ideas will be rendered here -->
@@ -1933,29 +1960,51 @@
     'default': 'diamond'
   };
 
-  // Create Lucide icon SVG elements for embedding in SVG
-  function createLucideIconElements(iconName, targetSvg) {
+  // STANDARDIZED ICON SYSTEM
+  // Cache rendered Lucide icon SVG content for reuse
+  const iconCache = {};
+  const svgNS = 'http://www.w3.org/2000/svg';
+
+  // Pre-render and cache a Lucide icon's path data
+  function getLucideIconSvg(iconName) {
+    if (iconCache[iconName]) return iconCache[iconName];
     try {
-      if (typeof lucide === 'undefined') return false;
-      // Create temp element and extract the rendered SVG content
+      if (typeof lucide === 'undefined') return null;
       const temp = document.createElement('div');
       temp.innerHTML = `<i data-lucide="${iconName}"></i>`;
       lucide.createIcons({ nodes: temp.querySelectorAll('[data-lucide]') });
       const svg = temp.querySelector('svg');
       if (svg) {
-        // Clone all child elements with proper SVG namespace
-        Array.from(svg.children).forEach(child => {
-          const clone = child.cloneNode(true);
-          targetSvg.appendChild(clone);
+        iconCache[iconName] = svg.innerHTML;
+        return iconCache[iconName];
+      }
+    } catch (e) {
+      console.warn('Icon cache error:', e);
+    }
+    return null;
+  }
+
+  // Create icon SVG elements for embedding in SVG map (uses DOMParser for reliable namespace handling)
+  function createLucideIconElements(iconName, targetSvg) {
+    const pathsHtml = getLucideIconSvg(iconName);
+    if (pathsHtml) {
+      // Parse as SVG to get properly namespaced elements
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(
+        `<svg xmlns="${svgNS}">${pathsHtml}</svg>`,
+        'image/svg+xml'
+      );
+      const parsedSvg = doc.documentElement;
+      if (parsedSvg && !doc.querySelector('parsererror')) {
+        Array.from(parsedSvg.childNodes).forEach(node => {
+          targetSvg.appendChild(document.importNode(node, true));
         });
         return true;
       }
-      // Fallback to diamond
-      if (iconName !== 'diamond') {
-        return createLucideIconElements('diamond', targetSvg);
-      }
-    } catch (e) {
-      console.warn('Lucide icon error:', e);
+    }
+    // Fallback to diamond
+    if (iconName !== 'diamond') {
+      return createLucideIconElements('diamond', targetSvg);
     }
     return false;
   }
@@ -2162,6 +2211,18 @@
   openIdeasBtn.addEventListener('click', () => openIdeasPanel(false));
   closeIdeasBtn.addEventListener('click', closeIdeasPanel);
   ideasOverlay.addEventListener('click', closeIdeasPanel);
+
+  // Expand/collapse panel
+  const expandIdeasBtn = document.getElementById('expandIdeasBtn');
+  expandIdeasBtn.addEventListener('click', () => {
+    ideasPanel.classList.toggle('expanded');
+    // Update icon based on state
+    const isExpanded = ideasPanel.classList.contains('expanded');
+    expandIdeasBtn.innerHTML = isExpanded
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="14" y1="10" x2="21" y2="3"/><line x1="3" y1="21" x2="10" y2="14"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>';
+    expandIdeasBtn.title = isExpanded ? 'Collapse' : 'Expand';
+  });
   addIdeaBtnPanel.addEventListener('click', () => {
     closeIdeasPanel();
     openIdeaModal();
@@ -2243,6 +2304,8 @@
   // === RENDER IDEAS PANEL ===
   async function renderIdeasPanel() {
     ideasPanelBody.innerHTML = '';
+    const ideasGrid = document.createElement('div');
+    ideasGrid.className = 'ideas-grid';
 
     // Get all ideas from the hidden containers
     const allIdeas = [];
@@ -2348,8 +2411,9 @@
         });
       }
 
-      ideasPanelBody.appendChild(item);
+      ideasGrid.appendChild(item);
     });
+    ideasPanelBody.appendChild(ideasGrid);
   }
 
   // Station selection mode
@@ -3046,10 +3110,12 @@ Respond with ONLY valid JSON (no markdown, no explanation):
     if (!iconPicker.contains(e.target)) iconGrid.classList.remove('open');
   });
 
-  // Initialize Lucide icons and render ideas
+  // Initialize Lucide icons and pre-cache all used icons
   try {
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
+      // Pre-cache all icons used in ideaIcons mapping
+      Object.values(ideaIcons).forEach(iconName => getLucideIconSvg(iconName));
     }
   } catch (e) { console.warn('Lucide init error:', e); }
   renderAllUserIdeas();

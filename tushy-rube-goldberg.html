@@ -3063,21 +3063,18 @@ Respond with ONLY valid JSON (no markdown, no explanation):
 
   // Initialize Lucide icons and pre-cache all used icons
   try {
-    console.log('Lucide available:', typeof lucide !== 'undefined');
+    console.error('DEBUG: Lucide available:', typeof lucide !== 'undefined');
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
-      console.log('Lucide icons created');
+      console.error('DEBUG: Lucide icons created, pre-caching...');
       // Pre-cache all icons used in ideaIcons mapping
-      const iconNames = Object.values(ideaIcons);
-      console.log('Pre-caching icons:', iconNames);
-      iconNames.forEach(iconName => {
-        const result = getLucideIconSvg(iconName);
-        console.log('Cached', iconName, ':', result ? 'OK' : 'FAILED');
-      });
+      Object.values(ideaIcons).forEach(iconName => getLucideIconSvg(iconName));
+      console.error('DEBUG: Calling initializeDefaultStationIcons');
       // Initialize icons on default station cards
       initializeDefaultStationIcons();
+      console.error('DEBUG: Done initializing station icons');
     }
-  } catch (e) { console.warn('Lucide init error:', e); }
+  } catch (e) { console.error('Lucide init error:', e); }
   renderAllUserIdeas();
 </script>
 

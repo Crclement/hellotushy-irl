@@ -142,6 +142,13 @@
       transform-box: fill-box;
       transform-origin: center center;
     }
+    /* Make station titles more visible on mobile */
+    .map-viewport .station text[font-size="7"],
+    .map-viewport .station text[font-size="6"],
+    .map-viewport .station .station-title {
+      font-size: 9px !important;
+      font-weight: 700 !important;
+    }
     /* Text that's already rotated needs different handling */
     .map-viewport svg text[transform*="rotate(-90"] {
       transform: rotate(0deg) !important;

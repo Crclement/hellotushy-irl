@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>TUSHY Rube Goldberg Machine — SoHo Loft Render v5</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
@@ -111,6 +114,39 @@
     box-shadow: 0 0 0 2px #16a34a;
   }
 
+  /* Mobile: Rotate map to portrait orientation */
+  @media (max-width: 768px) {
+    .map-viewport {
+      /* Container needs extra height for rotated SVG */
+      overflow: visible;
+    }
+    .map-viewport svg {
+      transform: rotate(-90deg);
+      transform-origin: center center;
+      /* After rotation: width becomes height, height becomes width */
+      width: 177%; /* 1060/600 ratio */
+      max-width: none;
+      margin-left: -38.5%;
+      margin-top: 38.5%;
+      margin-bottom: 38.5%;
+    }
+    /* Counter-rotate text inside stations to keep it readable */
+    .map-viewport .station text,
+    .map-viewport .station .swapped-title,
+    .map-viewport svg > text {
+      transform: rotate(90deg);
+      transform-box: fill-box;
+      transform-origin: center center;
+    }
+    /* Text that's already rotated needs different handling */
+    .map-viewport svg text[transform*="rotate(-90"] {
+      transform: rotate(0deg) !important;
+    }
+    .map-viewport svg text[transform*="rotate(90"] {
+      transform: rotate(180deg) !important;
+    }
+  }
+
   /* Hide non-embed elements in embed mode */
   .top-bar { display: none; }
 
@@ -172,6 +208,62 @@
     transition: background 0.2s;
   }
   .ideas-btn:hover { background: #333; }
+
+  /* Normal mode - constrained width */
+  .fullscreen-container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Fullscreen map mode */
+  body.map-fullscreen {
+    overflow: hidden;
+  }
+  body.map-fullscreen .fullscreen-container {
+    max-width: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+  }
+  body.map-fullscreen .fullscreen-container .header-title {
+    flex-shrink: 0;
+    padding-bottom: 1rem;
+  }
+  body.map-fullscreen .fullscreen-container .toolbar {
+    flex-shrink: 0;
+    margin-bottom: 1rem;
+  }
+  body.map-fullscreen .fullscreen-container .map-viewport {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+  }
+  body.map-fullscreen .fullscreen-container .map-viewport svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  body.map-fullscreen #fullscreenBtn svg {
+    transform: rotate(180deg);
+  }
+  /* Ensure panels and popups are above fullscreen */
+  body.map-fullscreen .ideas-panel,
+  body.map-fullscreen .ideas-overlay {
+    z-index: 1100;
+  }
+  body.map-fullscreen .station-popup {
+    z-index: 1050;
+  }
+  body.map-fullscreen .tooltip-overlay {
+    z-index: 1050;
+  }
 
   /* Station info popup on map click */
   .station-popup {
@@ -314,13 +406,30 @@
   .ideas-panel-btn svg { width: 16px; height: 16px; }
   .ideas-panel-header-btns { display: flex; gap: 8px; }
 
+  /* Swap mode styling */
+  .ideas-panel.swap-mode .ideas-panel-header { background: #e8f5e9; border-bottom-color: #a5d6a7; }
+  .ideas-panel.swap-mode .use-idea-btn { background: #2e7d32 !important; }
+  .ideas-panel.swap-mode .use-idea-btn:hover { background: #1b5e20 !important; }
+  .swap-mode-banner {
+    display: none;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border-bottom: 1px solid #a5d6a7;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+  .ideas-panel.swap-mode .swap-mode-banner { display: block; }
+
   /* Expanded state */
   .ideas-panel.expanded { width: 66vw; }
-  .ideas-panel.expanded .idea-item { flex-direction: row; gap: 16px; }
   .ideas-grid { display: flex; flex-direction: column; gap: 8px; }
-  .ideas-panel.expanded .ideas-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-  .ideas-panel.expanded .idea-item-content { flex: 1; }
-  .ideas-panel.expanded .idea-item-desc { display: block; }
+  .ideas-panel.expanded .ideas-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; align-items: stretch; }
+  .ideas-panel.expanded .idea-item { display: flex; flex-direction: column; height: 100%; }
+  .ideas-panel.expanded .idea-item p { max-height: 500px; margin-top: 6px; }
+  .ideas-panel.expanded .idea-item-author { opacity: 1; max-height: 2em; margin-top: 4px; }
+  .ideas-panel.expanded .idea-item-actions { max-height: 60px; opacity: 1; margin-top: auto; }
   @media (max-width: 1024px) {
     .ideas-panel.expanded { width: 100vw; }
     .ideas-panel.expanded .ideas-grid { grid-template-columns: 1fr; }
@@ -378,7 +487,8 @@
     font-weight: 600;
     margin-bottom: 0;
   }
-  .idea-item-icon svg { width: 16px; height: 16px; stroke-width: 2; }
+  .idea-item-icon i { display: flex; align-items: center; justify-content: center; }
+  .idea-item-icon svg { width: 18px; height: 18px; stroke-width: 2; color: #333; }
   .use-idea-btn { transition: background 0.2s; }
   .use-idea-btn:hover { background: #333 !important; }
   .idea-item p {
@@ -841,12 +951,16 @@
 
 <hr style="border:none;border-top:1px solid #ddd;margin:48px 0 32px;width:100vw;position:relative;left:50%;transform:translateX(-50%);">
 
+<!-- Fullscreen Container -->
+<div class="fullscreen-container" id="fullscreenContainer">
+
 <!-- Map Section Header -->
-<div class="map-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:nowrap;gap:10px;">
+<div class="map-header header-title" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:nowrap;gap:10px;">
   <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#111;letter-spacing:0.12em;text-transform:uppercase;margin:0;white-space:nowrap;">Installation Layout</h2>
   <div class="toolbar" style="margin:0;">
     <button id="undoBtn" disabled title="Undo (Cmd+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Undo</button>
     <button id="redoBtn" disabled title="Redo (Cmd+Shift+Z)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>Redo</button>
+    <button id="fullscreenBtn" title="Fullscreen"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></button>
     <button id="openIdeasBtn" class="primary">Idea Library</button>
   </div>
 </div>
@@ -914,14 +1028,10 @@
   <line x1="1028" y1="40" x2="1028" y2="560" stroke="#ddd" stroke-width="0.5" stroke-dasharray="2,4"/>
   <text x="1043" y="303" fill="#bbb" font-size="7.5" text-anchor="middle" font-family="Inter, sans-serif" transform="rotate(90,1043,303)">30 FT</text>
 
-  <!-- DIVIDER -->
-  <line x1="210" y1="130" x2="210" y2="440" stroke="#ccc" stroke-width="1" stroke-dasharray="6,4"/>
-  <text x="216" y="84" fill="#999" font-size="4.5" font-family="Inter, sans-serif">&rarr; IN</text>
-  <text x="195" y="460" fill="#999" font-size="4.5" font-family="Inter, sans-serif" text-anchor="end">BA &larr;</text>
 
-  <!-- OPEN CENTER -->
-  <text x="610" y="292" fill="#ddd" font-size="9" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="300" letter-spacing="0.25em">OPEN VIEWING AREA</text>
-  <text x="610" y="308" fill="#e0e0e0" font-size="6" text-anchor="middle" font-family="Inter, sans-serif">spectators watch from center</text>
+  <!-- OPEN CENTER - centered in machine area (x=225 to x=985) -->
+  <text x="605" y="292" fill="#ddd" font-size="9" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="300" letter-spacing="0.25em">OPEN VIEWING AREA</text>
+  <text x="605" y="308" fill="#e0e0e0" font-size="6" text-anchor="middle" font-family="Inter, sans-serif">spectators watch from center</text>
 
   <!-- ========== MACHINE PATH ========== -->
   <path class="machine-path" d="
@@ -946,55 +1056,23 @@
 
   <!-- ========== BRAND ACTIVATION (left zone) ========== -->
   <g class="station" data-station="ba" data-name="Brand Activation Zone" data-desc="After completing the machine, visitors enter the BA zone. Walking upward: Accessories Wall, Scent Bar, Retail + Merch, Bidet Demos, Golden Throne photo op. Then exit.">
-    <rect x="58" y="50" width="144" height="440" rx="4" fill="#fafafa" stroke="#ccc" stroke-width="1"/>
+    <rect x="58" y="55" width="144" height="485" rx="4" fill="#fafafa" stroke="#ccc" stroke-width="1"/>
 
-    <!-- GREETER (same height as station boxes) -->
-    <rect x="68" y="58" width="55" height="80" rx="3" fill="#fff" stroke="#999" stroke-width="0.8"/>
-    <text x="95" y="85" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GREETER</text>
-    <text x="95" y="98" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">welcome desk</text>
-    <text x="95" y="111" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">door person</text>
-    <text x="95" y="124" fill="#bbb" font-size="3.5" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" letter-spacing="0.08em">FIRST STOP</text>
+    <!-- GREETING AREA (combined Greeter + Golden Throne) - aligns with top row stations -->
+    <rect x="68" y="65" width="124" height="165" rx="3" fill="#fff" stroke="#999" stroke-width="0.8"/>
+    <text x="130" y="130" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GREETING AREA</text>
+    <text x="130" y="145" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">welcome desk &middot; greeter</text>
+    <text x="130" y="158" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">Golden Throne photo moment</text>
+    <text x="130" y="175" fill="#bbb" font-size="3.5" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" letter-spacing="0.08em">FIRST STOP</text>
 
-    <!-- GOLDEN THRONE -->
-    <rect x="68" y="150" width="124" height="80" rx="4" fill="#fff" stroke="#999" stroke-width="1"/>
-    <text x="130" y="175" fill="#000" font-size="12" text-anchor="middle">&#x1F451;</text>
-    <text x="130" y="195" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GOLDEN THRONE</text>
-    <text x="130" y="207" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">photo op &middot; ring light</text>
-    <text x="130" y="218" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">branded backdrop</text>
-    <text x="130" y="228" fill="#bbb" font-size="3.2" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" letter-spacing="0.08em">LAST STOP</text>
+    <!-- BRAND ACTIVATION AREA - fills remaining height to align with bottom row stations -->
+    <rect x="68" y="240" width="124" height="290" rx="4" fill="#fff" stroke="#999" stroke-width="1"/>
+    <text x="130" y="375" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">BRAND RETAIL ACTIVATION</text>
+    <text x="130" y="390" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">retail &middot; demos &middot; accessories</text>
+    <text x="130" y="403" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">scent bar &middot; merch</text>
 
-    <!-- BIDET DEMOS -->
-    <rect x="68" y="240" width="124" height="42" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
-    <text x="130" y="258" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">BIDET DEMOS</text>
-    <text x="130" y="270" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">all models &middot; try before buy</text>
-
-    <!-- RETAIL + MERCH -->
-    <rect x="68" y="292" width="124" height="40" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
-    <text x="130" y="310" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">RETAIL + MERCH</text>
-    <text x="130" y="322" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">full product lineup</text>
-
-    <!-- SCENT BAR -->
-    <rect x="68" y="342" width="124" height="40" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
-    <text x="130" y="360" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">SCENT BAR</text>
-    <text x="130" y="372" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">candles &middot; sprays &middot; sampling</text>
-
-    <!-- ACCESSORIES -->
-    <rect x="68" y="392" width="124" height="45" rx="3" fill="#fff" stroke="#bbb" stroke-width="0.8"/>
-    <text x="130" y="411" fill="#000" font-size="5.5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="600">ACCESSORIES</text>
-    <text x="130" y="423" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">TP &middot; towels &middot; brushes</text>
-    <text x="130" y="433" fill="#999" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif">ottomans &middot; stands</text>
-
-    <!-- BA flow arrow -->
-    <line x1="185" y1="435" x2="185" y2="155" stroke="#999" stroke-width="0.8" stroke-dasharray="4,3" opacity="0.4" marker-end="url(#arr)"/>
-    <text x="196" y="295" fill="#bbb" font-size="3.8" font-family="Inter, sans-serif" transform="rotate(-90,196,295)">VISITOR FLOW &uarr;</text>
-
-    <!-- Label -->
-    <text x="130" y="462" fill="#000" font-size="5" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" letter-spacing="0.06em">BRAND ACTIVATION</text>
-    <text x="130" y="474" fill="#999" font-size="4" text-anchor="middle" font-family="Inter, sans-serif">enter from Stn &#9321; &middot; exit top</text>
   </g>
 
-  <!-- Guest flow annotation -->
-  <text x="130" y="540" fill="#bbb" font-size="4.2" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="0.05em">IN &rarr; GREETER &rarr; MACHINE &rarr; BA &rarr; OUT</text>
 
   <!-- ========== TOP WALL STATIONS ========== -->
 
@@ -1016,7 +1094,7 @@
   <g class="station interactive" data-station="3" data-name="&#9314; The Spray Gate &#x270B;" data-desc="INTERACTIVE: Jumbo ball jams behind a translucent gate. Visitors press a lit arcade button that triggers real wall-mounted bidets to spray the gate clean. Counterweighted gate swings open. AUTO-RESET: Gate springs back.">
     <rect x="545" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
     <text x="610" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">SPRAY GATE</text>
-    <text x="610" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9314; &#x270B; INTERACTIVE</text>
+    <text x="610" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9314; &#x270B;</text>
   </g>
 
   <!-- STATION 4: OTTOMAN STAIRCASE -->
@@ -1064,7 +1142,7 @@
   <g class="station" data-station="9" data-name="&#9320; The Bidet Symphony &#x1F3B5;" data-desc="10 real bidets with Arduino-controlled solenoids play water choreography to classical music. Jumbo ball triggers each bidet in sequence. Visitors freestyle with arcade buttons between runs. Screen plays original TUSHY commercial. AUTO-RESET: Solenoids auto-off.">
     <rect x="530" y="460" width="215" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
     <text x="637" y="527" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">BIDET SYMPHONY</text>
-    <text x="637" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9320; &#x270B; + MACHINE</text>
+    <text x="637" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9320; &#x270B;</text>
   </g>
 
   <!-- STATION 10: GRAND FLUSH FINALE -->
@@ -1074,95 +1152,66 @@
     <text x="368" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9321; FINALE</text>
   </g>
 
-  <!-- GUEST WALKPATH — U-shape: Greeter → right along top → down right wall → left along bottom → into BA zone -->
-  <!-- Clear of all stations: top at y=195, right at x=880, bottom at y=420 -->
-  <path d="
-    M 130,140
-    L 130,165
-    C 130,190 150,195 270,195
-    L 860,195
-    C 878,195 885,210 885,225
-    L 885,395
-    C 885,415 872,420 855,420
-    L 270,420
-    C 240,420 220,425 220,445
-    L 220,460
-  " fill="none" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6,4" opacity="0.5"/>
-  <!-- U-shape labels -->
-  <text x="530" y="188" fill="#bbb" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="0.08em">GUEST WALKPATH &rarr;</text>
-  <text x="896" y="310" fill="#bbb" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" transform="rotate(90,896,310)" letter-spacing="0.08em">WALKPATH &darr;</text>
-  <text x="560" y="432" fill="#bbb" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" letter-spacing="0.08em">&larr; WALKPATH TO BA</text>
-  <!-- Direction arrows along path -->
-  <path d="M380,195 L395,195" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
-  <path d="M720,195 L735,195" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
-  <path d="M885,275 L885,290" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
-  <path d="M700,420 L685,420" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
-  <path d="M400,420 L385,420" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
-  <!-- Arrow into BA zone -->
-  <path d="M220,445 L220,455" fill="none" stroke="#bbb" stroke-width="1" marker-end="url(#arr)" opacity="0.4"/>
 
-  <!-- PNEUMATIC RETURN -->
-  <line x1="230" y1="460" x2="230" y2="140" stroke="#999" stroke-width="1.5" stroke-dasharray="5,4" opacity="0.3"/>
-  <text x="222" y="300" fill="#bbb" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" transform="rotate(-90,222,300)">PNEUMATIC RETURN &uarr;</text>
-
-  <!-- WATER CHANNEL — full perimeter (THE ONE COLOR ELEMENT) -->
+  <!-- WATER CHANNEL — runs along top, turns down BEFORE right-side stations, then along bottom -->
   <!-- Channel background (subtle fill tracing the perimeter) -->
   <path d="
     M 225,142
-    L 985,142
-    C 998,142 1000,155 1000,160
-    L 1000,448
-    C 1000,458 992,460 985,460
-    L 225,460
+    L 900,142
+    C 910,142 912,152 912,160
+    L 912,428
+    C 912,438 905,440 895,440
+    L 225,440
   " fill="none" stroke="rgba(79,195,247,0.25)" stroke-width="5" stroke-linecap="round"/>
   <!-- Animated water flow line -->
   <path d="
     M 225,142
-    L 985,142
-    C 998,142 1000,155 1000,160
-    L 1000,448
-    C 1000,458 992,460 985,460
-    L 225,460
+    L 900,142
+    C 910,142 912,152 912,160
+    L 912,428
+    C 912,438 905,440 895,440
+    L 225,440
   " fill="none" class="water-flow" stroke="#0288D1" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
   <!-- Labels -->
-  <text x="610" y="155" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.6">WATER CHANNEL &rarr;</text>
-  <text x="1007" y="300" fill="#0277BD" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5" transform="rotate(90,1007,300)">&darr; WATER</text>
-  <text x="610" y="472" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5">&larr; WATER RETURN</text>
+  <text x="560" y="155" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.6">WATER CHANNEL &rarr;</text>
+  <text x="900" y="300" fill="#0277BD" font-size="4" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5" transform="rotate(90,900,300)">&darr; WATER</text>
+  <text x="560" y="435" fill="#0277BD" font-size="4.5" text-anchor="middle" font-family="Inter, sans-serif" opacity="0.5">&larr; WATER RETURN</text>
 
 </svg>
 </div><!-- .map-viewport -->
+</div><!-- .fullscreen-container -->
 
 <!-- Key Highlights -->
-<div style="margin-top:48px;">
+<div style="margin-top:48px;max-width:1100px;margin-left:auto;margin-right:auto;">
   <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;font-weight:600;color:#999;letter-spacing:0.12em;text-transform:uppercase;margin:0 0 20px;text-align:center;">Key Highlights</h2>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
     <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
-      <div style="font-size:1.5rem;margin-bottom:8px;">💦</div>
+      <div style="margin-bottom:8px;"><i data-lucide="droplets" style="width:24px;height:24px;stroke:#333;"></i></div>
       <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Closed-Loop Water System</h3>
       <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">A continuous water channel runs the perimeter, feeding every bidet. Everything recirculates — water flows, drains, filters, and flows again.</p>
     </div>
     <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
-      <div style="font-size:1.5rem;margin-bottom:8px;">🕹️</div>
+      <div style="margin-bottom:8px;"><i data-lucide="gamepad-2" style="width:24px;height:24px;stroke:#333;"></i></div>
       <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Interactive Stations</h3>
       <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Visitors actively participate — pressing buttons, pulling levers, and triggering mechanisms to keep the chain reaction going.</p>
     </div>
     <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
-      <div style="font-size:1.5rem;margin-bottom:8px;">🔄</div>
+      <div style="margin-bottom:8px;"><i data-lucide="refresh-cw" style="width:24px;height:24px;stroke:#333;"></i></div>
       <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Continuous Loop</h3>
       <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">The machine runs on a loop. Gravity return track brings the jumbo ball back to Station 1. Each run takes ~3 minutes.</p>
     </div>
     <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
-      <div style="font-size:1.5rem;margin-bottom:8px;">🛍️</div>
+      <div style="margin-bottom:8px;"><i data-lucide="shopping-bag" style="width:24px;height:24px;stroke:#333;"></i></div>
       <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Full Product Showcase</h3>
       <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Every TUSHY product featured: bidets, ottomans, TP, candles, brushes, towels, sprays. Brand activation zone at exit for demos and sales.</p>
     </div>
     <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
-      <div style="font-size:1.5rem;margin-bottom:8px;">📸</div>
+      <div style="margin-bottom:8px;"><i data-lucide="camera" style="width:24px;height:24px;stroke:#333;"></i></div>
       <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Photo-Worthy Moments</h3>
       <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Every station designed for social sharing. Dramatic reveals, colorful splashes, and satisfying chain reactions that beg to be filmed.</p>
     </div>
     <div style="background:#f8f8f8;border:1px solid #e5e5e5;border-radius:10px;padding:20px;">
-      <div style="font-size:1.5rem;margin-bottom:8px;">✨</div>
+      <div style="margin-bottom:8px;"><i data-lucide="sparkles" style="width:24px;height:24px;stroke:#333;"></i></div>
       <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;margin:0 0 6px;">Multi-Sensory Experience</h3>
       <p style="font-size:0.85rem;color:#666;line-height:1.5;margin:0;">Sight, sound, touch, scent, and water. Candles release fragrance, water splashes, balls roll and clunk — a full sensory journey.</p>
     </div>
@@ -1201,11 +1250,12 @@
       </button>
     </div>
   </div>
+  <div class="swap-mode-banner" id="swapModeBanner">Choose an idea to swap for <strong>Station <span id="swapStationNum"></span></strong></div>
   <div class="ideas-panel-body" id="ideasPanelBody">
     <!-- Ideas will be rendered here -->
   </div>
   <div class="ideas-panel-footer">
-    <button class="ideas-btn" style="width:100%;" id="addIdeaBtnPanel" onclick="document.getElementById('idea-modal').classList.add('visible')">+ Add New Idea</button>
+    <button class="ideas-btn" style="width:100%;" id="addIdeaBtnPanel">+ Add New Idea</button>
   </div>
 </div>
 
@@ -1333,7 +1383,7 @@
 
 </div>
 
-<div class="section-label">BRAND ACTIVATION &mdash; EXIT EXPERIENCE</div>
+<div class="section-label">BRAND RETAIL ACTIVATION</div>
 <div class="features">
   <div class="feature-card">
     <div class="station-num">Welcome</div>
@@ -1862,29 +1912,32 @@
   const iconCache = {};
   const svgNS = 'http://www.w3.org/2000/svg';
 
-  // Pre-render and cache a Lucide icon's path data
+  // Get Lucide icon SVG innerHTML by briefly attaching to DOM
   function getLucideIconSvg(iconName) {
     if (iconCache[iconName]) return iconCache[iconName];
     try {
       if (typeof lucide === 'undefined') return null;
+      // Create temp element and attach to DOM (required for createIcons)
       const temp = document.createElement('div');
+      temp.style.cssText = 'position:absolute;left:-9999px;visibility:hidden';
       temp.innerHTML = `<i data-lucide="${iconName}"></i>`;
+      document.body.appendChild(temp);
       lucide.createIcons({ nodes: temp.querySelectorAll('[data-lucide]') });
       const svg = temp.querySelector('svg');
       if (svg) {
         iconCache[iconName] = svg.innerHTML;
-        return iconCache[iconName];
       }
+      document.body.removeChild(temp);
+      return iconCache[iconName] || null;
     } catch (e) {
-      console.warn('Icon cache error:', e);
+      console.warn('Icon cache error for', iconName, ':', e);
     }
     return null;
   }
 
-  // Create icon SVG elements for embedding in SVG map (uses DOMParser for reliable namespace handling)
+  // Create icon SVG elements for embedding in SVG map
   function createLucideIconElements(iconName, targetSvg) {
     const pathsHtml = getLucideIconSvg(iconName);
-    console.error('getLucideIconSvg for', iconName, ':', pathsHtml ? 'GOT HTML' : 'NULL');
     if (pathsHtml) {
       // Parse as SVG to get properly namespaced elements
       const parser = new DOMParser();
@@ -2098,14 +2151,47 @@
     swapMode = forSwap;
     ideasPanel.classList.add('open');
     ideasOverlay.classList.add('visible');
+    if (forSwap && currentStation) {
+      ideasPanel.classList.add('swap-mode');
+      document.getElementById('swapStationNum').textContent = currentStation;
+      // Change footer button to Cancel
+      addIdeaBtnPanel.textContent = 'Cancel';
+      addIdeaBtnPanel.style.background = '#fff';
+      addIdeaBtnPanel.style.color = '#666';
+      addIdeaBtnPanel.style.border = '1px solid #ddd';
+    } else {
+      ideasPanel.classList.remove('swap-mode');
+      // Restore footer button to Add New Idea
+      addIdeaBtnPanel.textContent = '+ Add New Idea';
+      addIdeaBtnPanel.style.background = '';
+      addIdeaBtnPanel.style.color = '';
+      addIdeaBtnPanel.style.border = '';
+    }
     renderIdeasPanel();
   }
 
   function closeIdeasPanel() {
-    ideasPanel.classList.remove('open');
+    ideasPanel.classList.remove('open', 'swap-mode');
     ideasOverlay.classList.remove('visible');
     swapMode = false;
+    // Restore footer button
+    addIdeaBtnPanel.textContent = '+ Add New Idea';
+    addIdeaBtnPanel.style.background = '';
+    addIdeaBtnPanel.style.color = '';
+    addIdeaBtnPanel.style.border = '';
   }
+
+  // Fullscreen toggle
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  fullscreenBtn.addEventListener('click', () => {
+    document.body.classList.toggle('map-fullscreen');
+  });
+  // ESC key exits fullscreen
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('map-fullscreen')) {
+      document.body.classList.remove('map-fullscreen');
+    }
+  });
 
   openIdeasBtn.addEventListener('click', () => openIdeasPanel(false));
   closeIdeasBtn.addEventListener('click', closeIdeasPanel);
@@ -2123,8 +2209,13 @@
     expandIdeasBtn.title = isExpanded ? 'Collapse' : 'Expand';
   });
   addIdeaBtnPanel.addEventListener('click', () => {
-    closeIdeasPanel();
-    openIdeaModal();
+    if (swapMode) {
+      // In swap mode, this is the Cancel button
+      closeIdeasPanel();
+    } else {
+      closeIdeasPanel();
+      openIdeaModal();
+    }
   });
 
   // === STATION POPUP ===
@@ -2171,7 +2262,9 @@
 
   popupClose.addEventListener('click', hideStationPopup);
   popupSwapBtn.addEventListener('click', () => {
-    hideStationPopup();
+    const stationToSwap = currentStation; // Save before hiding clears it
+    stationPopup.classList.remove('visible'); // Hide popup but keep currentStation
+    currentStation = stationToSwap; // Restore
     openIdeasPanel(true);
   });
 
@@ -2213,12 +2306,14 @@
     ideaDataContainer.querySelectorAll('.feature-card').forEach(card => {
       if (card.classList.contains('add-idea-card')) return;
       const isCore = card.dataset.core === 'true';
+      const title = card.querySelector('h3')?.textContent || '';
       allIdeas.push({
-        title: card.querySelector('h3')?.textContent || '',
+        title: title,
         category: card.querySelector('.station-num')?.textContent || 'Idea',
         desc: card.querySelector('p')?.textContent || '',
         author: 'Christopher',
         isCore: isCore,
+        icon: getIdeaIcon(title),
         element: card
       });
     });
@@ -2234,6 +2329,7 @@
           author: idea.author || 'Anonymous',
           isCore: idea.is_core || false,
           isUserIdea: true,
+          icon: idea.icon || getIdeaIcon(idea.title),
           id: idea.id
         });
       });
@@ -2258,16 +2354,10 @@
           </div>
         </div>
         <div class="idea-item-actions" style="margin-top:10px;padding-top:10px;border-top:1px solid #eee;display:flex;gap:8px;">
-          <button class="use-idea-btn" style="flex:1;padding:8px 12px;background:#111;color:#fff;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">${swapMode && currentStation ? `Use on Station ${currentStation}` : 'Use on Station'}</button>
+          <button class="use-idea-btn" style="flex:1;padding:8px 12px;background:#111;color:#fff;border:none;border-radius:6px;font-family:'Space Grotesk',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">${swapMode && currentStation ? `Use for Station ${currentStation}` : 'Use on Station'}</button>
           ${!idea.isCore && idea.isUserIdea ? '<button class="delete-idea-btn" style="padding:8px 12px;background:#fff;color:#e53935;border:1px solid #e53935;border-radius:6px;font-size:0.8rem;cursor:pointer;">Delete</button>' : ''}
         </div>
       `;
-      // Initialize Lucide icons in this item
-      try {
-        if (typeof lucide !== 'undefined') {
-          lucide.createIcons({ nodes: item.querySelectorAll('[data-lucide]') });
-        }
-      } catch (e) { console.warn('Lucide error:', e); }
 
       // Click to expand/collapse
       item.addEventListener('click', (e) => {
@@ -2282,13 +2372,14 @@
 
       // Use button - swap to station directly if in swap mode, otherwise start selection
       const useBtn = item.querySelector('.use-idea-btn');
+      // Store swap target at render time to avoid stale global variable issues
+      const swapTargetStation = swapMode ? currentStation : null;
       useBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (swapMode && currentStation) {
+        if (swapTargetStation) {
           // Direct swap to the pre-selected station
-          swapIdeaToStation(idea, currentStation);
+          swapIdeaToStation(idea, swapTargetStation);
           closeIdeasPanel();
-          unhighlightStation();
         } else {
           // Start station selection mode
           startStationSelection(idea);
@@ -2313,6 +2404,13 @@
       ideasGrid.appendChild(item);
     });
     ideasPanelBody.appendChild(ideasGrid);
+
+    // Initialize Lucide icons after items are in DOM
+    try {
+      if (typeof lucide !== 'undefined') {
+        lucide.createIcons({ nodes: ideasPanelBody.querySelectorAll('[data-lucide]') });
+      }
+    } catch (e) { console.warn('Lucide panel icons error:', e); }
   }
 
   // Station selection mode
@@ -2427,9 +2525,64 @@
     } catch { return []; }
   }
 
-  // === SWAP IDEA TO STATION ===
-  // Circled numbers for stations 1-10
-  const stationIcons = { '1': '①', '2': '②', '3': '③', '4': '④', '5': '⑤', '6': '⑥', '7': '⑦', '8': '⑧', '9': '⑨', '10': '⑩' };
+  // === UNIFIED STATION RENDERING ===
+  const stationNumbers = { '1': '①', '2': '②', '3': '③', '4': '④', '5': '⑤', '6': '⑥', '7': '⑦', '8': '⑧', '9': '⑨', '10': '⑩' };
+
+  // Render icon and title on SVG station card (used by both init and swap)
+  function renderStationContent(svgStation, title, iconName) {
+    const rect = svgStation.querySelector('rect');
+    if (!rect) return;
+
+    const rectX = parseFloat(rect.getAttribute('x'));
+    const rectY = parseFloat(rect.getAttribute('y'));
+    const rectW = parseFloat(rect.getAttribute('width'));
+    const rectH = parseFloat(rect.getAttribute('height'));
+    const cx = rectX + rectW / 2;
+    const cy = rectY + rectH / 2;
+
+    // Remove existing dynamic content
+    svgStation.querySelector('.station-title')?.remove();
+    svgStation.querySelector('.idea-icon-container')?.remove();
+
+    // Create title (positioned 11px from bottom to match default stations)
+    const titleEl = document.createElementNS(svgNS, 'text');
+    titleEl.classList.add('station-title');
+    titleEl.setAttribute('x', cx);
+    titleEl.setAttribute('y', rectY + rectH - 11);
+    titleEl.setAttribute('fill', '#000');
+    titleEl.setAttribute('font-size', '7');
+    titleEl.setAttribute('text-anchor', 'middle');
+    titleEl.setAttribute('font-family', 'Space Grotesk, sans-serif');
+    titleEl.setAttribute('font-weight', '700');
+    titleEl.textContent = title.toUpperCase().substring(0, 24);
+    svgStation.appendChild(titleEl);
+
+    // Create icon container and icon
+    if (iconName) {
+      const iconContainer = document.createElementNS(svgNS, 'g');
+      iconContainer.classList.add('idea-icon-container');
+
+      const iconSize = 20;
+      const iconSvg = document.createElementNS(svgNS, 'svg');
+      iconSvg.setAttribute('x', cx - iconSize / 2);
+      iconSvg.setAttribute('y', cy - iconSize / 2 - 8); // Slightly above center
+      iconSvg.setAttribute('width', iconSize);
+      iconSvg.setAttribute('height', iconSize);
+      iconSvg.setAttribute('viewBox', '0 0 24 24');
+      iconSvg.setAttribute('fill', 'none');
+      iconSvg.setAttribute('stroke', '#111');
+      iconSvg.setAttribute('stroke-width', '2');
+      iconSvg.setAttribute('stroke-linecap', 'round');
+      iconSvg.setAttribute('stroke-linejoin', 'round');
+
+      const success = createLucideIconElements(iconName, iconSvg);
+      if (success) {
+        iconContainer.appendChild(iconSvg);
+        svgStation.appendChild(iconContainer);
+        svgStation.classList.add('has-icon');
+      }
+    }
+  }
 
   function swapIdeaToStation(idea, stationNum) {
     const stationCard = stationDataContainer.querySelector(`[data-sid="${stationNum}"]`);
@@ -2443,89 +2596,34 @@
     stationCard.querySelector('p').textContent = idea.desc;
     stationCard.dataset.cat = idea.category || '';
 
-    // Update SVG station data attributes for tooltip
+    // Update SVG station
     const svgStation = document.querySelector(`.station[data-station="${stationNum}"]`);
     if (svgStation) {
-      const icon = stationIcons[stationNum] || '⑩';
-      svgStation.dataset.name = icon + ' ' + idea.title;
+      const num = stationNumbers[stationNum] || '⑩';
+      svgStation.dataset.name = num + ' ' + idea.title;
       svgStation.dataset.desc = idea.desc;
       svgStation.dataset.cat = idea.category || '';
       svgStation.classList.add('has-idea');
 
-      // Hide ALL children except main background rect
+      // Hide original SVG content (text, etc) but keep rect and mobile icon
       const mainRect = svgStation.querySelector('rect');
       Array.from(svgStation.children).forEach(child => {
-        if (child === mainRect || child.classList.contains('mobile-info-icon') || child.classList.contains('idea-emoji') || child.classList.contains('swapped-title')) {
-          return; // Keep these visible
+        if (child === mainRect ||
+            child.classList.contains('mobile-info-icon') ||
+            child.classList.contains('idea-icon-container') ||
+            child.classList.contains('station-title')) {
+          return;
         }
-        child.classList.add('hidden-illustration');
         child.setAttribute('opacity', '0');
       });
 
-      // Remove any existing swapped title
-      const existingTitle = svgStation.querySelector('.swapped-title');
-      if (existingTitle) existingTitle.remove();
-
-      // Create new title text element
-      const rect = svgStation.querySelector('rect');
-      if (rect) {
-        const titleEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        titleEl.classList.add('swapped-title');
-        const x = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
-        const y = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) - 8;
-        titleEl.setAttribute('x', x);
-        titleEl.setAttribute('y', y);
-        titleEl.setAttribute('fill', '#000');
-        titleEl.setAttribute('font-size', '7');
-        titleEl.setAttribute('text-anchor', 'middle');
-        titleEl.setAttribute('font-family', 'Space Grotesk, sans-serif');
-        titleEl.setAttribute('font-weight', '700');
-        titleEl.textContent = idea.title.toUpperCase().substring(0, 24);
-        svgStation.appendChild(titleEl);
-      }
-
-      // Add/update Lucide icon on the station (for ideas from Ideas panel)
-      // Support both new 'icon' and legacy 'emoji' fields
-      const ideaIconName = idea.icon || idea.emoji || getIdeaIcon(idea.title);
-      if (ideaIconName) {
-        let iconContainer = svgStation.querySelector('.idea-icon-container');
-        if (!iconContainer) {
-          iconContainer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-          iconContainer.classList.add('idea-icon-container');
-          iconContainer.classList.add('idea-emoji'); // Keep class for compatibility
-          svgStation.appendChild(iconContainer);
-        }
-        // Clear and recreate icon
-        iconContainer.innerHTML = '';
-        const rect = svgStation.querySelector('rect');
-        if (rect) {
-          const cx = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
-          const cy = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2;
-          const iconSize = 20;
-          // Create nested SVG for the Lucide icon
-          const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-          iconSvg.setAttribute('x', cx - iconSize / 2);
-          iconSvg.setAttribute('y', cy - iconSize / 2);
-          iconSvg.setAttribute('width', iconSize);
-          iconSvg.setAttribute('height', iconSize);
-          iconSvg.setAttribute('viewBox', '0 0 24 24');
-          iconSvg.setAttribute('fill', 'none');
-          iconSvg.setAttribute('stroke', '#111');
-          iconSvg.setAttribute('stroke-width', '2');
-          iconSvg.setAttribute('stroke-linecap', 'round');
-          iconSvg.setAttribute('stroke-linejoin', 'round');
-          createLucideIconElements(ideaIconName, iconSvg);
-          iconContainer.appendChild(iconSvg);
-          svgStation.classList.add('has-icon');
-        }
-      }
+      // Render unified content
+      const iconName = idea.icon || getIdeaIcon(idea.title);
+      renderStationContent(svgStation, idea.title, iconName);
 
       // Visual feedback - briefly flash the station green
-      svgStation.querySelectorAll('rect').forEach(el => {
-        const orig = el.getAttribute('fill');
-        el.setAttribute('fill', '#dcfce7');
-        setTimeout(() => el.setAttribute('fill', orig || '#fff'), 600);
-      });
+      mainRect.setAttribute('fill', '#dcfce7');
+      setTimeout(() => mainRect.setAttribute('fill', '#fff'), 600);
     }
 
     console.log('Swapped idea to station', stationNum, ':', idea.title);
@@ -3010,10 +3108,13 @@ Respond with ONLY valid JSON (no markdown, no explanation):
     if (!iconPicker.contains(e.target)) iconGrid.classList.remove('open');
   });
 
-  // Initialize icons on all default station cards
+  // Initialize icons on all default station cards (numbered stations only)
   function initializeDefaultStationIcons() {
-    console.error('=== INIT STATION ICONS ===');
     document.querySelectorAll('.station').forEach(station => {
+      const stationNum = station.dataset.station;
+      // Skip non-numbered stations (like BA zone)
+      if (!stationNum || isNaN(parseInt(stationNum))) return;
+
       const stationName = station.dataset.name || '';
       // Extract title - remove circled numbers and trailing emoji/text
       let title = stationName
@@ -3021,8 +3122,6 @@ Respond with ONLY valid JSON (no markdown, no explanation):
         .replace(/\s+[\u270B\u{1F3B5}].*/u, '') // Remove emoji suffixes
         .trim();
       const iconName = getIdeaIcon(title);
-      console.error('Station:', title, '-> Icon:', iconName);
-
       const rect = station.querySelector('rect');
       if (rect && iconName) {
         // Create icon container if it doesn't exist
@@ -3049,12 +3148,9 @@ Respond with ONLY valid JSON (no markdown, no explanation):
         iconSvg.setAttribute('stroke-width', '2');
         iconSvg.setAttribute('stroke-linecap', 'round');
         iconSvg.setAttribute('stroke-linejoin', 'round');
-        const result = createLucideIconElements(iconName, iconSvg);
-        console.error('Icon created:', iconName, '-> Result:', result, '-> SVG children:', iconSvg.childNodes.length);
+        createLucideIconElements(iconName, iconSvg);
         iconContainer.appendChild(iconSvg);
         station.classList.add('has-icon');
-      } else {
-        console.error('No rect or iconName for station:', stationName);
       }
     });
   }

@@ -84,7 +84,11 @@
     .map-header h2 { font-size: 0.85rem !important; letter-spacing: 0.08em !important; }
     .toolbar { gap: 4px; }
     .toolbar button { padding: 6px 10px; font-size: 0.75rem; }
-    .toolbar button svg { display: none; }
+    /* Hide fullscreen button on mobile */
+    .toolbar #fullscreenBtn { display: none; }
+    /* Undo/Redo: show icons only, hide text */
+    .toolbar #undoBtn, .toolbar #redoBtn { font-size: 0; padding: 8px; }
+    .toolbar #undoBtn svg, .toolbar #redoBtn svg { display: inline; margin: 0; }
   }
 
   /* Map section - natural aspect ratio */
@@ -132,7 +136,7 @@
     }
     /* Counter-rotate text inside stations to keep it readable */
     .map-viewport .station text,
-    .map-viewport .station .swapped-title,
+    .map-viewport .station .station-title,
     .map-viewport svg > text {
       transform: rotate(90deg);
       transform-box: fill-box;
@@ -144,6 +148,12 @@
     }
     .map-viewport svg text[transform*="rotate(90"] {
       transform: rotate(180deg) !important;
+    }
+    /* Ensure icon containers also rotate properly */
+    .map-viewport .station .idea-icon-container {
+      transform: rotate(90deg);
+      transform-box: fill-box;
+      transform-origin: center center;
     }
   }
 
@@ -2436,34 +2446,35 @@
       mapViewport.classList.add('selecting-mode');
     }
 
-    // Create prompt centered over the map
+    // Create or get the overlay element
     let overlay = document.getElementById('stationSelectOverlay');
     if (!overlay) {
       overlay = document.createElement('div');
       overlay.id = 'stationSelectOverlay';
-      overlay.innerHTML = `
-        <div style="background:#16a34a;color:#fff;padding:14px 24px;border-radius:10px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3);display:flex;align-items:center;gap:16px;">
-          <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">👆 Click a station to place your idea</span>
-          <button id="cancelStationSelect" style="padding:6px 14px;background:rgba(0,0,0,0.2);border:none;border-radius:4px;cursor:pointer;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:500;">Cancel</button>
-        </div>
-      `;
       document.body.appendChild(overlay);
-      document.getElementById('cancelStationSelect').addEventListener('click', cancelStationSelection);
     }
+
+    // Always update content and styling (in case it was hidden)
+    overlay.innerHTML = `
+      <div style="background:#16a34a;color:#fff;padding:14px 24px;border-radius:10px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.3);display:flex;align-items:center;gap:16px;">
+        <span style="font-family:'Space Grotesk',sans-serif;font-weight:600;">👆 Click a station to place your idea</span>
+        <button id="cancelStationSelect" style="padding:6px 14px;background:rgba(0,0,0,0.2);border:none;border-radius:4px;cursor:pointer;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:500;">Cancel</button>
+      </div>
+    `;
+    document.getElementById('cancelStationSelect').addEventListener('click', cancelStationSelection);
 
     // Position centered over the map viewport (or center of screen on mobile)
     const isMobile = window.innerWidth <= 768;
     if (isMobile) {
-      overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:150;pointer-events:auto;max-width:calc(100vw - 32px);';
+      overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1100;pointer-events:auto;max-width:calc(100vw - 32px);display:block;';
     } else if (mapViewport) {
       const rect = mapViewport.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
-      overlay.style.cssText = `position:fixed;top:${centerY}px;left:${centerX}px;transform:translate(-50%,-50%);z-index:150;pointer-events:auto;`;
+      overlay.style.cssText = `position:fixed;top:${centerY}px;left:${centerX}px;transform:translate(-50%,-50%);z-index:1100;pointer-events:auto;display:block;`;
     } else {
-      overlay.style.cssText = 'position:fixed;top:50vh;left:50vw;transform:translate(-50%,-50%);z-index:150;pointer-events:auto;';
+      overlay.style.cssText = 'position:fixed;top:50vh;left:50vw;transform:translate(-50%,-50%);z-index:1100;pointer-events:auto;display:block;';
     }
-    overlay.style.display = 'block';
 
     // Highlight stations for selection
     svgStations.forEach(station => {

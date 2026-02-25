@@ -1641,7 +1641,7 @@
                 <span data-icon="thermometer"><i data-lucide="thermometer"></i></span>
                 <span data-icon="scan"><i data-lucide="scan"></i></span>
                 <span data-icon="diamond"><i data-lucide="diamond"></i></span>
-                <span data-icon="stairs"><i data-lucide="stairs"></i></span>
+                <span data-icon="trending-down"><i data-lucide="trending-down"></i></span>
               </div>
             </div>
             <input type="hidden" id="idea-icon" value="diamond">
@@ -1844,11 +1844,11 @@
     'The Hindsight Station': 'scan',
     // Default stations
     'The Great Cascade': 'chevrons-down',
-    'The Bamboo Grove': 'tree-palm',
+    'The Bamboo Grove': 'trees',
     'The Spray Gate': 'sparkles',
-    'The Ottoman Staircase': 'stairs',
-    'Candle Lane': 'flame-kindling',
-    'The Great Unroll': 'unfold-vertical',
+    'The Ottoman Staircase': 'trending-down',
+    'Candle Lane': 'flame',
+    'The Great Unroll': 'scroll',
     'The Ball Wash': 'droplet',
     'The Throne Stomp': 'footprints',
     'The Bidet Symphony': 'music-2',
@@ -1883,9 +1883,7 @@
 
   // Create icon SVG elements for embedding in SVG map (uses DOMParser for reliable namespace handling)
   function createLucideIconElements(iconName, targetSvg) {
-    console.log('Creating icon:', iconName);
     const pathsHtml = getLucideIconSvg(iconName);
-    console.log('Paths HTML:', pathsHtml ? pathsHtml.substring(0, 100) + '...' : 'NULL');
     if (pathsHtml) {
       // Parse as SVG to get properly namespaced elements
       const parser = new DOMParser();
@@ -1898,15 +1896,11 @@
         Array.from(parsedSvg.childNodes).forEach(node => {
           targetSvg.appendChild(document.importNode(node, true));
         });
-        console.log('Icon created successfully:', iconName);
         return true;
-      } else {
-        console.log('Parse error for icon:', iconName);
       }
     }
     // Fallback to diamond
     if (iconName !== 'diamond') {
-      console.log('Falling back to diamond for:', iconName);
       return createLucideIconElements('diamond', targetSvg);
     }
     return false;
@@ -3017,7 +3011,6 @@ Respond with ONLY valid JSON (no markdown, no explanation):
 
   // Initialize icons on all default station cards
   function initializeDefaultStationIcons() {
-    console.log('Initializing station icons...');
     document.querySelectorAll('.station').forEach(station => {
       const stationName = station.dataset.name || '';
       // Extract title - remove circled numbers and trailing emoji/text
@@ -3026,7 +3019,6 @@ Respond with ONLY valid JSON (no markdown, no explanation):
         .replace(/\s+[\u270B\u{1F3B5}].*/u, '') // Remove emoji suffixes
         .trim();
       const iconName = getIdeaIcon(title);
-      console.log('Station:', stationName, '-> Title:', title, '-> Icon:', iconName);
 
       const rect = station.querySelector('rect');
       if (rect && iconName) {
@@ -3063,18 +3055,14 @@ Respond with ONLY valid JSON (no markdown, no explanation):
 
   // Initialize Lucide icons and pre-cache all used icons
   try {
-    console.error('DEBUG: Lucide available:', typeof lucide !== 'undefined');
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
-      console.error('DEBUG: Lucide icons created, pre-caching...');
       // Pre-cache all icons used in ideaIcons mapping
       Object.values(ideaIcons).forEach(iconName => getLucideIconSvg(iconName));
-      console.error('DEBUG: Calling initializeDefaultStationIcons');
       // Initialize icons on default station cards
       initializeDefaultStationIcons();
-      console.error('DEBUG: Done initializing station icons');
     }
-  } catch (e) { console.error('Lucide init error:', e); }
+  } catch (e) { console.warn('Lucide init error:', e); }
   renderAllUserIdeas();
 </script>
 

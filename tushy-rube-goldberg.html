@@ -1884,6 +1884,7 @@
   // Create icon SVG elements for embedding in SVG map (uses DOMParser for reliable namespace handling)
   function createLucideIconElements(iconName, targetSvg) {
     const pathsHtml = getLucideIconSvg(iconName);
+    console.error('getLucideIconSvg for', iconName, ':', pathsHtml ? 'GOT HTML' : 'NULL');
     if (pathsHtml) {
       // Parse as SVG to get properly namespaced elements
       const parser = new DOMParser();
@@ -3011,6 +3012,7 @@ Respond with ONLY valid JSON (no markdown, no explanation):
 
   // Initialize icons on all default station cards
   function initializeDefaultStationIcons() {
+    console.error('=== INIT STATION ICONS ===');
     document.querySelectorAll('.station').forEach(station => {
       const stationName = station.dataset.name || '';
       // Extract title - remove circled numbers and trailing emoji/text
@@ -3019,6 +3021,7 @@ Respond with ONLY valid JSON (no markdown, no explanation):
         .replace(/\s+[\u270B\u{1F3B5}].*/u, '') // Remove emoji suffixes
         .trim();
       const iconName = getIdeaIcon(title);
+      console.error('Station:', title, '-> Icon:', iconName);
 
       const rect = station.querySelector('rect');
       if (rect && iconName) {
@@ -3046,9 +3049,12 @@ Respond with ONLY valid JSON (no markdown, no explanation):
         iconSvg.setAttribute('stroke-width', '2');
         iconSvg.setAttribute('stroke-linecap', 'round');
         iconSvg.setAttribute('stroke-linejoin', 'round');
-        createLucideIconElements(iconName, iconSvg);
+        const result = createLucideIconElements(iconName, iconSvg);
+        console.error('Icon created:', iconName, '-> Result:', result, '-> SVG children:', iconSvg.childNodes.length);
         iconContainer.appendChild(iconSvg);
         station.classList.add('has-icon');
+      } else {
+        console.error('No rect or iconName for station:', stationName);
       }
     });
   }

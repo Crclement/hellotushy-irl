@@ -424,17 +424,12 @@
   .station { cursor: pointer; }
   .station:hover rect { stroke: #007AFF !important; stroke-width: 2.5 !important; }
   .station.has-idea rect { fill: #e8f5e9 !important; }
-  /* Hide original illustrations when icon is shown */
-  .station .idea-icon-container ~ circle,
-  .station .idea-icon-container ~ path,
-  .station .idea-icon-container ~ line,
-  .station .idea-icon-container ~ ellipse,
-  .station .idea-icon-container ~ polygon { display: none; }
-  .station:has(.idea-icon-container) > circle,
-  .station:has(.idea-icon-container) > path,
-  .station:has(.idea-icon-container) > line,
-  .station:has(.idea-icon-container) > ellipse,
-  .station:has(.idea-icon-container) > polygon { display: none; }
+  /* Hide original illustrations when station has icon */
+  .station.has-icon > circle,
+  .station.has-icon > path,
+  .station.has-icon > line,
+  .station.has-icon > ellipse,
+  .station.has-icon > polygon { display: none !important; }
   .station .hidden-illustration { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
   .station .hidden-illustration.interactive-pulse { animation: none !important; opacity: 0 !important; }
 
@@ -2167,6 +2162,7 @@
             iconSvg.setAttribute('stroke-linejoin', 'round');
             createLucideIconElements(ideaIconName, iconSvg);
             iconContainer.appendChild(iconSvg);
+            svgStation.classList.add('has-icon');
           }
         }
       }
@@ -2627,6 +2623,7 @@
           iconSvg.setAttribute('stroke-linejoin', 'round');
           createLucideIconElements(ideaIconName, iconSvg);
           iconContainer.appendChild(iconSvg);
+          svgStation.classList.add('has-icon');
         }
       }
 
@@ -3157,6 +3154,7 @@ Respond with ONLY valid JSON (no markdown, no explanation):
         iconSvg.setAttribute('stroke-linejoin', 'round');
         createLucideIconElements(iconName, iconSvg);
         iconContainer.appendChild(iconSvg);
+        station.classList.add('has-icon');
       }
     });
   }

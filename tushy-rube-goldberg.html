@@ -1883,7 +1883,9 @@
 
   // Create icon SVG elements for embedding in SVG map (uses DOMParser for reliable namespace handling)
   function createLucideIconElements(iconName, targetSvg) {
+    console.log('Creating icon:', iconName);
     const pathsHtml = getLucideIconSvg(iconName);
+    console.log('Paths HTML:', pathsHtml ? pathsHtml.substring(0, 100) + '...' : 'NULL');
     if (pathsHtml) {
       // Parse as SVG to get properly namespaced elements
       const parser = new DOMParser();
@@ -1896,11 +1898,15 @@
         Array.from(parsedSvg.childNodes).forEach(node => {
           targetSvg.appendChild(document.importNode(node, true));
         });
+        console.log('Icon created successfully:', iconName);
         return true;
+      } else {
+        console.log('Parse error for icon:', iconName);
       }
     }
     // Fallback to diamond
     if (iconName !== 'diamond') {
+      console.log('Falling back to diamond for:', iconName);
       return createLucideIconElements('diamond', targetSvg);
     }
     return false;
@@ -3057,10 +3063,17 @@ Respond with ONLY valid JSON (no markdown, no explanation):
 
   // Initialize Lucide icons and pre-cache all used icons
   try {
+    console.log('Lucide available:', typeof lucide !== 'undefined');
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
+      console.log('Lucide icons created');
       // Pre-cache all icons used in ideaIcons mapping
-      Object.values(ideaIcons).forEach(iconName => getLucideIconSvg(iconName));
+      const iconNames = Object.values(ideaIcons);
+      console.log('Pre-caching icons:', iconNames);
+      iconNames.forEach(iconName => {
+        const result = getLucideIconSvg(iconName);
+        console.log('Cached', iconName, ':', result ? 'OK' : 'FAILED');
+      });
       // Initialize icons on default station cards
       initializeDefaultStationIcons();
     }

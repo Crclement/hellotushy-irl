@@ -424,12 +424,6 @@
   .station { cursor: pointer; }
   .station:hover rect { stroke: #007AFF !important; stroke-width: 2.5 !important; }
   .station.has-idea rect { fill: #e8f5e9 !important; }
-  /* Hide original illustrations when station has icon */
-  .station.has-icon > circle,
-  .station.has-icon > path,
-  .station.has-icon > line,
-  .station.has-icon > ellipse,
-  .station.has-icon > polygon { display: none !important; }
   .station .hidden-illustration { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
   .station .hidden-illustration.interactive-pulse { animation: none !important; opacity: 0 !important; }
 
@@ -1007,12 +1001,6 @@
   <!-- STATION 1: GREAT CASCADE -->
   <g class="station" data-station="1" data-name="&#9312; The Great Cascade" data-desc="A TUSHY Classic 3.0 mounted on a real toilet fires a jet of water that launches the 💩 jumbo ball down the first ramp. Water feeds into the recirculating channel. AUTO-RESET: Return track from Finale drops ball into starting position.">
     <rect x="225" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
-    <!-- Bidet/water icon -->
-    <circle cx="290" cy="85" r="16" fill="none" stroke="#555" stroke-width="1.2"/>
-    <path d="M284,79 L290,92 L296,79" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="290" cy="100" r="1.5" fill="#999"/>
-    <circle cx="286" cy="104" r="1" fill="#bbb"/>
-    <circle cx="294" cy="103" r="1" fill="#bbb"/>
     <text x="290" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">THE GREAT CASCADE</text>
     <text x="290" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9312; START</text>
   </g>
@@ -1020,18 +1008,6 @@
   <!-- STATION 2: BAMBOO GROVE -->
   <g class="station" data-station="2" data-name="&#9313; The Bamboo Grove" data-desc="Dense grove of real bamboo poles with TUSHY Bamboo TP rolls and fabric. Jumbo ball weaves through, triggering TP to unroll like scrolls — counterweights that lower bridges and release gates. AUTO-RESET: Motorized rewind spools.">
     <rect x="375" y="55" width="150" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
-    <!-- Bamboo poles (black vertical lines) -->
-    <line x1="400" y1="62" x2="400" y2="128" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
-    <line x1="418" y1="62" x2="418" y2="128" stroke="#444" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
-    <line x1="436" y1="62" x2="436" y2="128" stroke="#666" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
-    <line x1="454" y1="62" x2="454" y2="128" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
-    <line x1="472" y1="62" x2="472" y2="128" stroke="#444" stroke-width="3" stroke-linecap="round" opacity="0.4"/>
-    <line x1="490" y1="62" x2="490" y2="128" stroke="#666" stroke-width="2" stroke-linecap="round" opacity="0.3"/>
-    <line x1="505" y1="62" x2="505" y2="128" stroke="#555" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
-    <!-- TP rolls on poles -->
-    <circle cx="418" cy="82" r="6" fill="none" stroke="#999" stroke-width="1.2"/>
-    <circle cx="454" cy="90" r="5" fill="none" stroke="#999" stroke-width="1"/>
-    <circle cx="490" cy="78" r="6" fill="none" stroke="#999" stroke-width="1.2"/>
     <text x="450" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">THE BAMBOO GROVE</text>
     <text x="450" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9313;</text>
   </g>
@@ -1039,13 +1015,6 @@
   <!-- STATION 3: SPRAY GATE -->
   <g class="station interactive" data-station="3" data-name="&#9314; The Spray Gate &#x270B;" data-desc="INTERACTIVE: Jumbo ball jams behind a translucent gate. Visitors press a lit arcade button that triggers real wall-mounted bidets to spray the gate clean. Counterweighted gate swings open. AUTO-RESET: Gate springs back.">
     <rect x="545" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
-    <circle class="interactive-pulse" cx="610" cy="85" r="6" fill="rgba(0,0,0,0.1)"/>
-    <circle cx="610" cy="85" r="14" fill="none" stroke="#444" stroke-width="1.2"/>
-    <circle cx="610" cy="85" r="7" fill="none" stroke="#333" stroke-width="1"/>
-    <text x="610" y="89" fill="#111" font-size="7" text-anchor="middle" font-weight="700">&#x23FA;</text>
-    <line x1="595" y1="104" x2="590" y2="114" stroke="#999" stroke-width="0.8" opacity="0.4"/>
-    <line x1="610" y1="106" x2="610" y2="116" stroke="#999" stroke-width="0.8" opacity="0.4"/>
-    <line x1="625" y1="104" x2="630" y2="114" stroke="#999" stroke-width="0.8" opacity="0.4"/>
     <text x="610" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">SPRAY GATE</text>
     <text x="610" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9314; &#x270B; INTERACTIVE</text>
   </g>
@@ -1053,13 +1022,6 @@
   <!-- STATION 4: OTTOMAN STAIRCASE -->
   <g class="station" data-station="4" data-name="&#9315; The Ottoman Staircase" data-desc="Descending staircase of TUSHY Ottoman Original (9&quot;) stools. Jumbo ball bounces down each padded step. Final Ottoman triggers a seesaw lever. AUTO-RESET: Spring-loaded surfaces pop back.">
     <rect x="695" y="55" width="140" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
-    <rect x="715" y="75" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
-    <rect x="745" y="82" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
-    <rect x="775" y="89" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
-    <rect x="805" y="96" width="24" height="11" rx="4" fill="none" stroke="#555" stroke-width="1.2"/>
-    <path d="M727,73 Q736,63 746,80" fill="none" stroke="#999" stroke-width="0.7" stroke-dasharray="2,2"/>
-    <path d="M757,80 Q766,70 776,87" fill="none" stroke="#999" stroke-width="0.7" stroke-dasharray="2,2"/>
-    <path d="M787,87 Q796,77 806,94" fill="none" stroke="#999" stroke-width="0.7" stroke-dasharray="2,2"/>
     <text x="765" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">OTTOMAN STAIRCASE</text>
     <text x="765" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9315;</text>
   </g>
@@ -1067,15 +1029,6 @@
   <!-- STATION 5: CANDLE LANE -->
   <g class="station" data-station="5" data-name="&#9316; Candle Lane" data-desc="Corridor of TUSHY candles with LED flickering flames. Pressure plates trigger LEDs in sequence. Room Spray misters release scent. OPTION: Real flames with torch igniters — mini balls trigger vacuum tubes to extinguish and pull smoke. AUTO-RESET: 30s timer.">
     <rect x="855" y="55" width="130" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
-    <!-- Candle shapes (monochrome) -->
-    <rect x="878" y="72" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
-    <text x="882" y="69" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
-    <rect x="898" y="78" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
-    <text x="902" y="75" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
-    <rect x="918" y="70" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
-    <text x="922" y="67" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
-    <rect x="938" y="76" width="8" height="18" rx="2" fill="none" stroke="#777" stroke-width="0.8"/>
-    <text x="942" y="73" fill="#333" font-size="5" text-anchor="middle">&#x2727;</text>
     <text x="920" y="124" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">CANDLE LANE</text>
     <text x="920" y="50" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9316;</text>
   </g>
@@ -1085,10 +1038,6 @@
   <!-- STATION 6: GREAT UNROLL -->
   <g class="station interactive" data-station="6" data-name="&#9317; The Great Unroll &#x270B;" data-desc="INTERACTIVE: Giant spool of fabric (cut to look like a giant TP roll) mounted on the wall. Visitors physically pull it — acts as a pulley rope lifting a gate and releasing the jumbo ball. AUTO-RESET: Motorized spool rewinds (~90s).">
     <rect x="920" y="155" width="65" height="120" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
-    <circle class="interactive-pulse" cx="952" cy="205" r="6" fill="rgba(0,0,0,0.08)"/>
-    <circle cx="952" cy="205" r="20" fill="none" stroke="#555" stroke-width="1"/>
-    <circle cx="952" cy="205" r="9" fill="none" stroke="#333" stroke-width="0.8"/>
-    <path d="M972,205 Q988,195 992,210" fill="none" stroke="#999" stroke-width="1" stroke-dasharray="3,2"/>
     <text x="952" y="250" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GREAT</text>
     <text x="952" y="260" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">UNROLL</text>
     <text x="952" y="150" fill="#999" font-size="5" text-anchor="middle" font-family="Inter, sans-serif">&#9317; &#x270B;</text>
@@ -1097,18 +1046,6 @@
   <!-- STATION 7: SCRUB ZONE -->
   <g class="station" data-station="7" data-name="&#9318; The Ball Wash" data-desc="TUSHY Toilet Brushes with scrubbing pads as spinning paddle wheels. Jumbo ball enters a cleaning gauntlet lined with Bum Towels that dry it off. Lemon + tea tree scent. AUTO-RESET: Always running.">
     <rect x="920" y="295" width="65" height="120" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
-    <g transform="translate(948,330)">
-      <circle r="12" fill="none" stroke="#555" stroke-width="1"/>
-      <line x1="-8" y1="0" x2="8" y2="0" stroke="#555" stroke-width="1.2"/>
-      <line x1="0" y1="-8" x2="0" y2="8" stroke="#555" stroke-width="1.2"/>
-      <line x1="-6" y1="-6" x2="6" y2="6" stroke="#777" stroke-width="0.8"/>
-      <line x1="6" y1="-6" x2="-6" y2="6" stroke="#777" stroke-width="0.8"/>
-    </g>
-    <g transform="translate(958,365)">
-      <circle r="9" fill="none" stroke="#555" stroke-width="0.8"/>
-      <line x1="-6" y1="0" x2="6" y2="0" stroke="#555" stroke-width="1"/>
-      <line x1="0" y1="-6" x2="0" y2="6" stroke="#555" stroke-width="1"/>
-    </g>
     <text x="952" y="395" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">SCRUB</text>
     <text x="952" y="405" fill="#000" font-size="6" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">ZONE</text>
     <text x="952" y="290" fill="#999" font-size="5" text-anchor="middle" font-family="Inter, sans-serif">&#9318;</text>
@@ -1119,9 +1056,6 @@
   <!-- STATION 8: THRONE STOMP -->
   <g class="station interactive" data-station="8" data-name="&#9319; The Throne Stomp &#x270B;" data-desc="INTERACTIVE: TUSHY Ottoman with pressure plate. Visitor steps on it to release the jumbo ball. TUSHY Ace / Aura displayed as the Royal Throne. AUTO-RESET: Pressure plate springs back.">
     <rect x="765" y="460" width="140" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" stroke-dasharray="5,3" filter="url(#ss)"/>
-    <circle class="interactive-pulse" cx="835" cy="490" r="6" fill="rgba(0,0,0,0.08)"/>
-    <rect x="812" y="480" width="46" height="20" rx="7" fill="none" stroke="#555" stroke-width="1.2"/>
-    <text x="835" y="495" fill="#333" font-size="10" text-anchor="middle">&#x1F463;</text>
     <text x="835" y="527" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">THRONE STOMP</text>
     <text x="835" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9319; &#x270B;</text>
   </g>
@@ -1129,37 +1063,6 @@
   <!-- STATION 9: BIDET SYMPHONY -->
   <g class="station" data-station="9" data-name="&#9320; The Bidet Symphony &#x1F3B5;" data-desc="10 real bidets with Arduino-controlled solenoids play water choreography to classical music. Jumbo ball triggers each bidet in sequence. Visitors freestyle with arcade buttons between runs. Screen plays original TUSHY commercial. AUTO-RESET: Solenoids auto-off.">
     <rect x="530" y="460" width="215" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="1.5" filter="url(#ss)"/>
-    <!-- Music notes (monochrome) -->
-    <text x="565" y="487" fill="#555" font-size="9" text-anchor="middle">&#9833;</text>
-    <text x="585" y="482" fill="#777" font-size="7" text-anchor="middle">&#9834;</text>
-    <text x="605" y="490" fill="#444" font-size="10" text-anchor="middle">&#9835;</text>
-    <text x="625" y="484" fill="#777" font-size="7" text-anchor="middle">&#9833;</text>
-    <text x="645" y="488" fill="#555" font-size="9" text-anchor="middle">&#9834;</text>
-    <text x="665" y="482" fill="#666" font-size="8" text-anchor="middle">&#9835;</text>
-    <text x="685" y="487" fill="#555" font-size="9" text-anchor="middle">&#9833;</text>
-    <text x="705" y="484" fill="#777" font-size="7" text-anchor="middle">&#9834;</text>
-    <text x="725" y="490" fill="#666" font-size="8" text-anchor="middle">&#9835;</text>
-    <!-- Bidet row -->
-    <g opacity="0.5">
-      <rect x="555" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="570" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="585" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="600" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="615" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="630" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="645" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="660" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="675" y="496" width="7" height="4" rx="1" fill="#555"/>
-      <rect x="690" y="496" width="7" height="4" rx="1" fill="#555"/>
-    </g>
-    <!-- Arcade console -->
-    <rect x="700" y="506" width="35" height="14" rx="3" fill="none" stroke="#555" stroke-width="0.8" stroke-dasharray="2,2"/>
-    <circle cx="710" cy="513" r="2.5" fill="none" stroke="#555" stroke-width="0.6"/>
-    <circle cx="720" cy="513" r="2.5" fill="none" stroke="#555" stroke-width="0.6"/>
-    <circle cx="730" cy="513" r="2.5" fill="none" stroke="#555" stroke-width="0.6"/>
-    <!-- Video screen -->
-    <rect x="555" y="508" width="30" height="15" rx="2" fill="#f5f5f5" stroke="#bbb" stroke-width="0.6"/>
-    <text x="570" y="517" fill="#999" font-size="3.5" text-anchor="middle" font-family="Inter, sans-serif">VIDEO</text>
     <text x="637" y="527" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">BIDET SYMPHONY</text>
     <text x="637" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9320; &#x270B; + MACHINE</text>
   </g>
@@ -1167,17 +1070,6 @@
   <!-- STATION 10: GRAND FLUSH FINALE -->
   <g class="station" data-station="10" data-name="&#9321; The Grand Flush Finale" data-desc="Jumbo ball drops into giant illuminated toilet bowl. Flush triggers LED light show. Bowl fills with mini 💩 balls that swirl and drain. TUSHY logo blazes. AUTO-RESET: Gravity track returns jumbo ball to Station 1.">
     <rect x="225" y="460" width="285" height="80" rx="5" fill="#fff" stroke="#333" stroke-width="2" filter="url(#ss)"/>
-    <circle cx="368" cy="492" r="20" fill="none" stroke="#ccc" stroke-width="0.8"/>
-    <circle cx="368" cy="492" r="12" fill="none" stroke="#555" stroke-width="1"/>
-    <!-- Burst lines -->
-    <line x1="368" y1="470" x2="368" y2="463" stroke="#555" stroke-width="1"/>
-    <line x1="386" y1="476" x2="393" y2="470" stroke="#555" stroke-width="1"/>
-    <line x1="390" y1="492" x2="398" y2="492" stroke="#555" stroke-width="1"/>
-    <line x1="350" y1="476" x2="343" y2="470" stroke="#555" stroke-width="1"/>
-    <line x1="346" y1="492" x2="338" y2="492" stroke="#555" stroke-width="1"/>
-    <line x1="386" y1="508" x2="393" y2="514" stroke="#777" stroke-width="1"/>
-    <line x1="350" y1="508" x2="343" y2="514" stroke="#777" stroke-width="1"/>
-    <text x="368" y="496" fill="#000" font-size="8" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="800" letter-spacing="0.04em">TUSHY</text>
     <text x="368" y="527" fill="#000" font-size="7" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700">GRAND FLUSH FINALE</text>
     <text x="368" y="455" fill="#999" font-size="5.5" text-anchor="middle" font-family="Inter, sans-serif">&#9321; FINALE</text>
   </g>
@@ -3129,7 +3021,6 @@ Respond with ONLY valid JSON (no markdown, no explanation):
         .replace(/\s*[\u270B\u270C\u1F3B5\u{1F3B5}].*$/u, '') // Remove emoji suffixes
         .trim();
       const iconName = getIdeaIcon(title);
-      console.log('Station:', stationName, '-> Title:', title, '-> Icon:', iconName);
 
       const rect = station.querySelector('rect');
       if (rect && iconName) {

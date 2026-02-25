@@ -422,9 +422,19 @@
 
   /* SVG station styling */
   .station { cursor: pointer; }
-  .station:hover rect,
-  .station:hover path { stroke: #007AFF !important; stroke-width: 2.5 !important; }
+  .station:hover rect { stroke: #007AFF !important; stroke-width: 2.5 !important; }
   .station.has-idea rect { fill: #e8f5e9 !important; }
+  /* Hide original illustrations when icon is shown */
+  .station .idea-icon-container ~ circle,
+  .station .idea-icon-container ~ path,
+  .station .idea-icon-container ~ line,
+  .station .idea-icon-container ~ ellipse,
+  .station .idea-icon-container ~ polygon { display: none; }
+  .station:has(.idea-icon-container) > circle,
+  .station:has(.idea-icon-container) > path,
+  .station:has(.idea-icon-container) > line,
+  .station:has(.idea-icon-container) > ellipse,
+  .station:has(.idea-icon-container) > polygon { display: none; }
   .station .hidden-illustration { opacity: 0 !important; visibility: hidden !important; pointer-events: none !important; }
   .station .hidden-illustration.interactive-pulse { animation: none !important; opacity: 0 !important; }
 
@@ -3110,12 +3120,55 @@ Respond with ONLY valid JSON (no markdown, no explanation):
     if (!iconPicker.contains(e.target)) iconGrid.classList.remove('open');
   });
 
+  // Initialize icons on all default station cards
+  function initializeDefaultStationIcons() {
+    document.querySelectorAll('.station').forEach(station => {
+      const stationName = station.dataset.name || '';
+      // Extract the title after the number/circle (e.g., "① The Great Cascade" -> "The Great Cascade")
+      const titleMatch = stationName.match(/(?:[\u2460-\u2473]|Station \d+:?)?\s*(.+)/);
+      const title = titleMatch ? titleMatch[1].trim() : stationName;
+      const iconName = getIdeaIcon(title);
+
+      const rect = station.querySelector('rect');
+      if (rect && iconName) {
+        // Create icon container if it doesn't exist
+        let iconContainer = station.querySelector('.idea-icon-container');
+        if (!iconContainer) {
+          iconContainer = document.createElementNS(svgNS, 'g');
+          iconContainer.classList.add('idea-icon-container');
+          station.appendChild(iconContainer);
+        }
+        iconContainer.innerHTML = '';
+
+        const cx = parseFloat(rect.getAttribute('x')) + parseFloat(rect.getAttribute('width')) / 2;
+        const cy = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2;
+        const iconSize = 20;
+
+        const iconSvg = document.createElementNS(svgNS, 'svg');
+        iconSvg.setAttribute('x', cx - iconSize / 2);
+        iconSvg.setAttribute('y', cy - iconSize / 2);
+        iconSvg.setAttribute('width', iconSize);
+        iconSvg.setAttribute('height', iconSize);
+        iconSvg.setAttribute('viewBox', '0 0 24 24');
+        iconSvg.setAttribute('fill', 'none');
+        iconSvg.setAttribute('stroke', '#111');
+        iconSvg.setAttribute('stroke-width', '2');
+        iconSvg.setAttribute('stroke-linecap', 'round');
+        iconSvg.setAttribute('stroke-linejoin', 'round');
+        createLucideIconElements(iconName, iconSvg);
+        iconContainer.appendChild(iconSvg);
+      }
+    });
+  }
+
   // Initialize Lucide icons and pre-cache all used icons
   try {
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
       // Pre-cache all icons used in ideaIcons mapping
       Object.values(ideaIcons).forEach(iconName => getLucideIconSvg(iconName));
+      // Initialize icons on default station cards
+      initializeDefaultStationIcons();
     }
   } catch (e) { console.warn('Lucide init error:', e); }
   renderAllUserIdeas();

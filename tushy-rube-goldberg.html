@@ -3121,10 +3121,15 @@ Respond with ONLY valid JSON (no markdown, no explanation):
   function initializeDefaultStationIcons() {
     document.querySelectorAll('.station').forEach(station => {
       const stationName = station.dataset.name || '';
-      // Extract the title after the number/circle (e.g., "① The Great Cascade" -> "The Great Cascade")
-      const titleMatch = stationName.match(/(?:[\u2460-\u2473]|Station \d+:?)?\s*(.+)/);
-      const title = titleMatch ? titleMatch[1].trim() : stationName;
+      // Extract the title - remove circled numbers, emojis, and clean up
+      // Circled numbers: ①②③④⑤⑥⑦⑧⑨⑩ (U+2460-U+2473)
+      // Also remove common emoji like ✋🎵 at end
+      let title = stationName
+        .replace(/^[\u2460-\u2473]\s*/, '') // Remove circled number at start
+        .replace(/\s*[\u270B\u270C\u1F3B5\u{1F3B5}].*$/u, '') // Remove emoji suffixes
+        .trim();
       const iconName = getIdeaIcon(title);
+      console.log('Station:', stationName, '-> Title:', title, '-> Icon:', iconName);
 
       const rect = station.querySelector('rect');
       if (rect && iconName) {

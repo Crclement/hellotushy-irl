@@ -2533,7 +2533,7 @@
   // Load ideas for panel (used by renderIdeasPanel)
   async function loadIdeasForPanel() {
     try {
-      const res = await fetch(`https://jsonblob.com/api/jsonBlob/${SHARED_BLOB_ID}`);
+      const res = await fetch(`/api/jsonBlob/${SHARED_BLOB_ID}`);
       const data = await res.json();
       return data.ideas || [];
     } catch (e) { console.error('JSONBlob load failed:', e); }
@@ -2704,7 +2704,7 @@
     const blobId = await getBlobId();
     if (blobId) {
       try {
-        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`);
+        const res = await fetch(`/api/jsonBlob/${blobId}`);
         const data = await res.json();
         return data.ideas || [];
       } catch (e) { console.error('JSONBlob load failed:', e); }
@@ -2723,7 +2723,7 @@
     const blobId = await getBlobId();
     if (blobId) {
       try {
-        await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`, {
+        await fetch(`/api/jsonBlob/${blobId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ideas })

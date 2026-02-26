@@ -2,7 +2,7 @@
 (function() {
   var ANALYTICS_BLOB = '019c9a55-618a-7306-a12f-aa09e40c52ee';
   var VID_KEY = 'tushy_visitor_id';
-  var API = 'https://jsonblob.com/api/jsonBlob/' + ANALYTICS_BLOB;
+  var API = '/api/jsonBlob/' + ANALYTICS_BLOB;
 
   // Don't double-track embeds (the parent page already tracks)
   var isEmbed = new URLSearchParams(window.location.search).get('embed') === '1';

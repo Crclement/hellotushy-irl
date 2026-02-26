@@ -1,0 +1,14 @@
+:{$PORT:3000} {
+	# Reverse proxy for JSONBlob API (avoids CORS issues)
+	handle /api/jsonBlob/* {
+		reverse_proxy https://jsonblob.com {
+			header_up Host jsonblob.com
+		}
+	}
+
+	# Serve static files
+	handle {
+		root * .
+		file_server
+	}
+}

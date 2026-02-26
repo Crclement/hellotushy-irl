@@ -645,8 +645,8 @@
     if (testMode) {
       sessionStorage.setItem('tushy_auth', '1');
     }
-    // Initialize Lucide icons
-    lucide.createIcons();
+    // Initialize Lucide icons (guard against CDN failure)
+    if (typeof lucide !== 'undefined') { try { lucide.createIcons(); } catch(e) {} }
     navigateFromHash();
     codeInput.focus();
   })();
@@ -662,14 +662,20 @@
     document.getElementById('analyticsOverlay').classList.remove('open');
   }
 
+  // Escape HTML to prevent XSS from tampered analytics data
+  function esc(s) { const d = document.createElement('div'); d.textContent = String(s); return d.innerHTML; }
+
   function loadAnalytics() {
     const el = document.getElementById('analyticsContent');
     el.innerHTML = '<div class="a-loading">Loading...</div>';
 
     fetch(ANALYTICS_BLOB_URL)
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
       .then(data => {
-        const views = data.views || [];
+        const views = Array.isArray(data.views) ? data.views : [];
         if (views.length === 0) {
           el.innerHTML = '<div class="a-loading">No data yet. Views will appear after visitors load the site.</div>';
           return;
@@ -689,15 +695,15 @@
           '': 'Dashboard'
         };
         views.forEach(v => {
-          const name = PAGE_NAMES[v.p] || v.p;
+          const name = PAGE_NAMES[v.p] || String(v.p || 'unknown');
           pageCounts[name] = (pageCounts[name] || 0) + 1;
         });
-        const maxPageCount = Math.max(...Object.values(pageCounts));
+        const maxPageCount = Math.max(...Object.values(pageCounts), 1);
         const pageRows = Object.entries(pageCounts)
           .sort((a, b) => b[1] - a[1])
           .map(([page, count]) =>
             '<div class="a-bar-row">' +
-              '<span class="a-bar-label">' + page + '</span>' +
+              '<span class="a-bar-label">' + esc(page) + '</span>' +
               '<div class="a-bar-track"><div class="a-bar-fill" style="width:' + Math.round(count / maxPageCount * 100) + '%"></div></div>' +
               '<span class="a-bar-val">' + count + '</span>' +
             '</div>'
@@ -723,7 +729,7 @@
             const d = new Date(day + 'T12:00:00');
             const label = dayNames[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate();
             return '<div class="a-bar-row">' +
-              '<span class="a-bar-label">' + label + '</span>' +
+              '<span class="a-bar-label">' + esc(label) + '</span>' +
               '<div class="a-bar-track"><div class="a-bar-fill" style="width:' + Math.round(count / maxDaily * 100) + '%"></div></div>' +
               '<span class="a-bar-val">' + count + '</span>' +
             '</div>';
@@ -731,9 +737,9 @@
 
         // Recent views (last 8)
         const recent = views.slice(-8).reverse().map(v => {
-          const page = PAGE_NAMES[v.p] || v.p;
+          const page = PAGE_NAMES[v.p] || String(v.p || 'unknown');
           const ago = timeAgo(v.t);
-          return '<div class="a-recent-row"><span class="a-recent-page">' + page + '</span><span class="a-recent-time">' + ago + '</span></div>';
+          return '<div class="a-recent-row"><span class="a-recent-page">' + esc(page) + '</span><span class="a-recent-time">' + esc(ago) + '</span></div>';
         }).join('');
 
         el.innerHTML =
@@ -746,12 +752,14 @@
           '<div class="a-section"><h3>Pages</h3>' + pageRows + '</div>' +
           '<div class="a-section"><h3>Recent Activity</h3><div class="a-recent">' + recent + '</div></div>';
       })
-      .catch(() => {
+      .catch(e => {
+        console.error('Analytics load error:', e);
         el.innerHTML = '<div class="a-loading">Failed to load analytics data.</div>';
       });
   }
 
   function timeAgo(ts) {
+    if (!ts || isNaN(new Date(ts).getTime())) return 'unknown';
     const diff = Date.now() - new Date(ts).getTime();
     const mins = Math.floor(diff / 60000);
     if (mins < 1) return 'just now';

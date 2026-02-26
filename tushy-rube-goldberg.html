@@ -2024,7 +2024,7 @@
         // Also restore SVG map station
         const svgStation = document.querySelector(`.station[data-station="${action.data.stationNum}"]`);
         if (svgStation) {
-          const icon = stationIcons[action.data.stationNum] || '⑩';
+          const icon = stationNumbers[action.data.stationNum] || '⑩';
           svgStation.dataset.name = icon + ' ' + action.data.previousTitle;
           svgStation.dataset.desc = action.data.previousDesc;
           svgStation.classList.remove('has-idea');
@@ -2061,7 +2061,7 @@
         // Also update SVG map station
         const svgStation = document.querySelector(`.station[data-station="${action.data.stationNum}"]`);
         if (svgStation) {
-          const icon = stationIcons[action.data.stationNum] || '⑩';
+          const icon = stationNumbers[action.data.stationNum] || '⑩';
           svgStation.dataset.name = icon + ' ' + action.data.redoTitle;
           svgStation.dataset.desc = action.data.redoDesc;
           svgStation.classList.add('has-idea');
@@ -2838,7 +2838,6 @@
         lucide.createIcons({ nodes: iconSelected.querySelectorAll('[data-lucide]') });
       }
     } catch (e) { console.warn('Lucide error:', e); }
-    document.getElementById('idea-tags').value = '';
     ideaModal.classList.add('visible');
   }
 
@@ -2852,7 +2851,6 @@
     const author = document.getElementById('idea-author').value.trim();
     const title = document.getElementById('idea-title').value.trim();
     const desc = document.getElementById('idea-desc').value.trim();
-    const tagsStr = document.getElementById('idea-tags').value.trim();
     const category = document.getElementById('idea-category').value;
     const icon = document.getElementById('idea-icon').value.trim();
 
@@ -2867,8 +2865,6 @@
     saveBtn.textContent = 'Saving...';
     saveBtn.disabled = true;
 
-    const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(Boolean) : [];
-
     const idea = {
       id: genId(),
       author: author || null,
@@ -2876,7 +2872,7 @@
       title,
       description: desc,
       icon: icon || null,
-      tags,
+      tags: [],
       is_core: false,
       created_at: new Date().toISOString()
     };
@@ -2894,7 +2890,6 @@
       document.getElementById('idea-title').value = '';
       document.getElementById('idea-desc').value = '';
       document.getElementById('idea-icon').value = 'diamond';
-      document.getElementById('idea-tags').value = '';
 
       // Re-render ideas panel with new idea
       await renderIdeasPanel();
@@ -2922,7 +2917,7 @@
   const generateAiBtn = document.getElementById('generate-ai-btn');
   function getAnthropicKey() {
     // Check for config file first, then localStorage, then prompt
-    if (typeof ANTHROPIC_API_KEY !== 'undefined' && ANTHROPIC_API_KEY) {
+    if (typeof ANTHROPIC_API_KEY !== 'undefined' && ANTHROPIC_API_KEY && ANTHROPIC_API_KEY !== 'your-api-key-here') {
       return ANTHROPIC_API_KEY;
     }
     let key = localStorage.getItem('anthropic_api_key');

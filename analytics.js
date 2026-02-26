@@ -4,14 +4,21 @@
   var VID_KEY = 'tushy_visitor_id';
   var API = 'https://jsonblob.com/api/jsonBlob/' + ANALYTICS_BLOB;
 
-  // Get or create persistent visitor ID
-  var vid = localStorage.getItem(VID_KEY);
-  if (!vid) {
-    vid = Date.now().toString(36) + Math.random().toString(36).substr(2, 8);
-    localStorage.setItem(VID_KEY, vid);
-  }
-
+  // Don't double-track embeds (the parent page already tracks)
   var isEmbed = new URLSearchParams(window.location.search).get('embed') === '1';
+  if (isEmbed) return;
+
+  // Get or create persistent visitor ID (try/catch for restricted contexts)
+  var vid;
+  try {
+    vid = localStorage.getItem(VID_KEY);
+    if (!vid) {
+      vid = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem(VID_KEY, vid);
+    }
+  } catch(e) {
+    vid = 'anon-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  }
 
   var view = {
     p: location.pathname.split('/').pop() || 'index.html',
@@ -19,28 +26,27 @@
     t: new Date().toISOString(),
     v: vid,
     r: document.referrer || null,
-    s: screen.width + 'x' + screen.height,
-    e: isEmbed
+    s: screen.width + 'x' + screen.height
   };
-
-  // Don't double-track embeds (the parent page already tracks)
-  if (isEmbed) return;
 
   // Load current data, append view, save back
   fetch(API)
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      if (!r.ok) throw new Error('GET failed: ' + r.status);
+      return r.json();
+    })
     .then(function(data) {
-      data.views = data.views || [];
-      data.views.push(view);
+      var views = Array.isArray(data.views) ? data.views : [];
+      views.push(view);
       // Cap at 5000 entries to prevent blob from growing too large
-      if (data.views.length > 5000) {
-        data.views = data.views.slice(-5000);
+      if (views.length > 5000) {
+        views = views.slice(-5000);
       }
       return fetch(API, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ views: views })
       });
     })
-    .catch(function() {});
+    .catch(function(e) { console.warn('Analytics:', e); });
 })();

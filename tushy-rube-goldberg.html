@@ -3041,11 +3041,15 @@ Respond with ONLY valid JSON (no markdown, no explanation):
 
   generateAiBtn.addEventListener('click', generateWithAI);
 
-  // Hide AI generation button if no API key is available (live site has no config.js)
-  if (typeof ANTHROPIC_API_KEY === 'undefined' || !ANTHROPIC_API_KEY || ANTHROPIC_API_KEY === 'your-api-key-here') {
-    generateAiBtn.style.display = 'none';
-    const divider = document.querySelector('.modal-divider');
-    if (divider) divider.style.display = 'none';
+  // Hide AI generation button if no valid API key is available anywhere
+  {
+    let hasKey = typeof ANTHROPIC_API_KEY !== 'undefined' && ANTHROPIC_API_KEY && ANTHROPIC_API_KEY !== 'your-api-key-here';
+    if (!hasKey) { try { hasKey = !!localStorage.getItem('anthropic_api_key'); } catch(e) {} }
+    if (!hasKey) {
+      generateAiBtn.style.display = 'none';
+      const divider = document.querySelector('.modal-divider');
+      if (divider) divider.style.display = 'none';
+    }
   }
 
   // Event listeners

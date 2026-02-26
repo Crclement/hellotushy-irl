@@ -1,4 +1,10 @@
 :{$PORT:3000} {
+	# Serve config.js dynamically from environment variable
+	handle /config.js {
+		header Content-Type "application/javascript"
+		respond "const ANTHROPIC_API_KEY = '{$ANTHROPIC_API_KEY:your-api-key-here}';" 200
+	}
+
 	# Reverse proxy for JSONBlob API (avoids CORS issues)
 	handle /api/jsonBlob/* {
 		reverse_proxy https://jsonblob.com {

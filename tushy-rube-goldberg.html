@@ -2532,16 +2532,13 @@
 
   // Load ideas for panel (used by renderIdeasPanel)
   async function loadIdeasForPanel() {
-    const blobId = localStorage.getItem('tushy_rube_blob_id');
-    if (blobId) {
-      try {
-        const res = await fetch(`https://jsonblob.com/api/jsonBlob/${blobId}`);
-        const data = await res.json();
-        return data.ideas || [];
-      } catch (e) { console.error('JSONBlob load failed:', e); }
-    }
     try {
-      return JSON.parse(localStorage.getItem('tushy_rube_ideas')) || [];
+      const res = await fetch(`https://jsonblob.com/api/jsonBlob/${SHARED_BLOB_ID}`);
+      const data = await res.json();
+      return data.ideas || [];
+    } catch (e) { console.error('JSONBlob load failed:', e); }
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     } catch { return []; }
   }
 
@@ -2666,8 +2663,8 @@
 
 
   // === IDEA MANAGEMENT SYSTEM ===
-  // JSONBlob - free cloud storage, no account needed
-  const BLOB_ID_KEY = 'tushy_rube_blob_id';
+  // JSONBlob - free cloud storage, shared across all visitors
+  const SHARED_BLOB_ID = '019c9a55-5eb5-7e0e-9fb9-3abae3cbfb6a';
   const STORAGE_KEY = 'tushy_rube_ideas';
 
   const userIdeasContainer = document.getElementById('user-ideas-container');
@@ -2697,26 +2694,9 @@
     return 'Feature';
   }
 
-  // Get or create blob ID
-  async function getBlobId() {
-    let blobId = localStorage.getItem(BLOB_ID_KEY);
-    if (!blobId) {
-      // Create new blob
-      try {
-        const res = await fetch('https://jsonblob.com/api/jsonBlob', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ideas: [] })
-        });
-        const location = res.headers.get('Location');
-        blobId = location.split('/').pop();
-        localStorage.setItem(BLOB_ID_KEY, blobId);
-      } catch (e) {
-        console.error('Failed to create blob:', e);
-        return null;
-      }
-    }
-    return blobId;
+  // Shared blob ID - all visitors use the same database
+  function getBlobId() {
+    return SHARED_BLOB_ID;
   }
 
   // Load ideas from JSONBlob
@@ -3196,5 +3176,6 @@ Respond with ONLY valid JSON (no markdown, no explanation):
   // Ensure all details elements start closed (prevent browser caching open state)
   document.querySelectorAll('details.cost-category').forEach(d => d.removeAttribute('open'));
 </script>
+<script src="analytics.js"></script>
 </body>
 </html>
